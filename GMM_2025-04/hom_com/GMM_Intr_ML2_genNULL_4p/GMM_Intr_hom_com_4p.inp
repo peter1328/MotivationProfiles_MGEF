@@ -1,0 +1,288 @@
+
+TITLE:
+GMM_Intr_hom_com_4p
+
+DATA:
+FILE IS
+"C:/local user data/OPFE/OPFE_R/mot_mplus_fullgender_sp_noschaffhausen.txt";
+
+VARIABLE:
+
+NAMES ARE
+ID Class Male1 Age1
+AutoMA1 AutoMA2 AutoMA3 AutoDE1 AutoDE2 AutoDE3
+AutoEN1 AutoEN2 AutoEN3 AutoFR1 AutoFR2 AutoFR3
+KomMA1 KomMA2 KomMA3 KomEN1 KomEN2 KomEN3
+KomFR1 KomFR2 KomFR3 KomDE1 KomDE2 KomDE3
+SozMA1 SozMA2 SozMA3 SozEN1 SozEN2 SozEN3
+SozFR1 SozFR2 SozFR3 SozDE1 SozDE2 SozDE3
+Neurot1 Extrav1 Offen1 Toler1 Consc1
+Consc3 Offen3 Neurot3 Extrav3 Toler3
+ExtrMA1 IntrMA1 ExtrEN1 IntrEN1 ExtrFR1 IntrFR1 ExtrDE1 IntrDE1
+ExtrMA2 IntrMA2 ExtrEN2 IntrEN2 ExtrFR2 IntrFR2 ExtrDE2 IntrDE2
+ExtrMA3 IntrMA3 ExtrEN3 IntrEN3 ExtrFR3 IntrFR3 ExtrDE3 IntrDE3
+male1ful sp
+;
+
+MISSING ARE ALL(9999);
+
+USEVARIABLES ARE IntrMA1
+                 IntrDE1
+                 IntrEN1
+                 IntrFR1
+                 IntrMA2
+                 IntrDE2
+                 IntrEN2
+                 IntrFR2
+                 IntrMA3
+                 IntrDE3
+                 IntrEN3
+                 IntrFR3
+;
+
+CLASSES = 
+          Intr_p (4)
+
+;
+
+
+ANALYSIS:
+TYPE IS MIXTURE;
+
+STARTS = 1000 400;
+PROCESS = 8 1;
+STSEED = 666;
+
+MODEL:
+
+%OVERALL%
+
+! Define latent growth factors for each process
+  iMA sMA | IntrMA1@0 IntrMA2@1 IntrMA3@2;
+  iDE sDE | IntrDE1@0 IntrDE2@1 IntrDE3@2;
+  iEN sEN | IntrEN1@0 IntrEN2@1 IntrEN3@2;
+  iFR sFR | IntrFR1@0 IntrFR2@1 IntrFR3@2;
+
+%Intr_p#1%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+ !homogeneous variances, exchangeable residual variances
+
+IntrMA1 (MAvar1);
+IntrMA2 (MAvar1);
+IntrMA3 (MAvar1);
+
+IntrMA1 WITH IntrMA2 (MAa1);
+IntrMA2 WITH IntrMA3 (MAa1);
+IntrMA1 WITH IntrMA3 (MAa1);
+
+IntrDE1 (DEvar1);
+IntrDE2 (DEvar1);
+IntrDE3 (DEvar1);
+
+IntrDE1 WITH IntrDE2 (DEa1);
+IntrDE2 WITH IntrDE3 (DEa1);
+IntrDE1 WITH IntrDE3 (DEa1);
+
+IntrEN1 (ENvar1);
+IntrEN2 (ENvar1);
+IntrEN3 (ENvar1);
+
+IntrEN1 WITH IntrEN2 (ENa1);
+IntrEN2 WITH IntrEN3 (ENa1);
+IntrEN1 WITH IntrEN3 (ENa1);
+
+IntrFR1 (FRvar1);
+IntrFR2 (FRvar1);
+IntrFR3 (FRvar1);
+
+IntrFR1 WITH IntrFR2 (FRa1);
+IntrFR2 WITH IntrFR3 (FRa1);
+IntrFR1 WITH IntrFR3 (FRa1);
+
+
+
+
+!Residual variance structure
+
+
+
+
+
+
+
+%Intr_p#2%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+ !homogeneous variances, exchangeable residual variances
+
+IntrMA1 (MAvar2);
+IntrMA2 (MAvar2);
+IntrMA3 (MAvar2);
+
+IntrMA1 WITH IntrMA2 (MAb1);
+IntrMA2 WITH IntrMA3 (MAb1);
+IntrMA1 WITH IntrMA3 (MAb1);
+
+IntrDE1 (DEvar2);
+IntrDE2 (DEvar2);
+IntrDE3 (DEvar2);
+
+IntrDE1 WITH IntrDE2 (DEb1);
+IntrDE2 WITH IntrDE3 (DEb1);
+IntrDE1 WITH IntrDE3 (DEb1);
+
+IntrEN1 (ENvar2);
+IntrEN2 (ENvar2);
+IntrEN3 (ENvar2);
+
+IntrEN1 WITH IntrEN2 (ENb1);
+IntrEN2 WITH IntrEN3 (ENb1);
+IntrEN1 WITH IntrEN3 (ENb1);
+
+IntrFR1 (FRvar2);
+IntrFR2 (FRvar2);
+IntrFR3 (FRvar2);
+
+IntrFR1 WITH IntrFR2 (FRb1);
+IntrFR2 WITH IntrFR3 (FRb1);
+IntrFR1 WITH IntrFR3 (FRb1);
+
+
+
+
+!Residual variance structure
+
+
+
+
+
+
+%Intr_p#3%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+ !homogeneous variances, exchangeable residual variances
+
+IntrMA1 (MAvar3);
+IntrMA2 (MAvar3);
+IntrMA3 (MAvar3);
+
+IntrMA1 WITH IntrMA2 (MAc1);
+IntrMA2 WITH IntrMA3 (MAc1);
+IntrMA1 WITH IntrMA3 (MAc1);
+
+IntrDE1 (DEvar3);
+IntrDE2 (DEvar3);
+IntrDE3 (DEvar3);
+
+IntrDE1 WITH IntrDE2 (DEc1);
+IntrDE2 WITH IntrDE3 (DEc1);
+IntrDE1 WITH IntrDE3 (DEc1);
+
+IntrEN1 (ENvar3);
+IntrEN2 (ENvar3);
+IntrEN3 (ENvar3);
+
+IntrEN1 WITH IntrEN2 (ENc1);
+IntrEN2 WITH IntrEN3 (ENc1);
+IntrEN1 WITH IntrEN3 (ENc1);
+
+IntrFR1 (FRvar3);
+IntrFR2 (FRvar3);
+IntrFR3 (FRvar3);
+
+IntrFR1 WITH IntrFR2 (FRc1);
+IntrFR2 WITH IntrFR3 (FRc1);
+IntrFR1 WITH IntrFR3 (FRc1);
+
+
+
+
+!Residual variance structure
+
+
+
+
+
+
+
+%Intr_p#4%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+ !homogeneous variances, exchangeable residual variances
+
+IntrMA1 (MAvar4);
+IntrMA2 (MAvar4);
+IntrMA3 (MAvar4);
+
+IntrMA1 WITH IntrMA2 (MAd1);
+IntrMA2 WITH IntrMA3 (MAd1);
+IntrMA1 WITH IntrMA3 (MAd1);
+
+IntrDE1 (DEvar4);
+IntrDE2 (DEvar4);
+IntrDE3 (DEvar4);
+
+IntrDE1 WITH IntrDE2 (DEd1);
+IntrDE2 WITH IntrDE3 (DEd1);
+IntrDE1 WITH IntrDE3 (DEd1);
+
+IntrEN1 (ENvar4);
+IntrEN2 (ENvar4);
+IntrEN3 (ENvar4);
+
+IntrEN1 WITH IntrEN2 (ENd1);
+IntrEN2 WITH IntrEN3 (ENd1);
+IntrEN1 WITH IntrEN3 (ENd1);
+
+IntrFR1 (FRvar4);
+IntrFR2 (FRvar4);
+IntrFR3 (FRvar4);
+
+IntrFR1 WITH IntrFR2 (FRd1);
+IntrFR2 WITH IntrFR3 (FRd1);
+IntrFR1 WITH IntrFR3 (FRd1);
+
+
+
+
+!Residual variance structure
+
+
+
+
+
+
+
+
+
+
+
+
+
+OUTPUT:
+sampstat residual tech1 tech4 tech15;
+
+
+
+

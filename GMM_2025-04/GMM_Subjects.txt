@@ -1,0 +1,2303 @@
+
+
+[[init]]
+iterators = var p m;
+var = 1 2;
+p = 2:6;
+m = 1:8;
+VarNames#var = Intr Extr;
+
+MNames#m =
+hom_uns
+hom_com
+hom_aut
+hom_toe
+
+het_uns
+het_com
+het_aut
+het_toe
+;
+
+filename = "GMM_[[VarNames#var]]_[[MNames#m]]_[[p]]p.inp";
+outputDirectory = "C:/local user data/OPFE/OPFE_R/GMM_2025-04/[[MNames#m]]/GMM_[[VarNames#var]]_ML[[m]]_gen[[g]]_[[p]]p/";
+
+[[/init]]
+
+TITLE:
+GMM_[[VarNames#var]]_[[MNames#m]]_[[p]]p
+
+DATA:
+FILE IS
+"C:/local user data/OPFE/OPFE_R/mot_mplus_fullgender_sp_noschaffhausen.txt";
+
+VARIABLE:
+
+NAMES ARE
+ID Class Male1 Age1
+AutoMA1 AutoMA2 AutoMA3 AutoDE1 AutoDE2 AutoDE3
+AutoEN1 AutoEN2 AutoEN3 AutoFR1 AutoFR2 AutoFR3
+KomMA1 KomMA2 KomMA3 KomEN1 KomEN2 KomEN3
+KomFR1 KomFR2 KomFR3 KomDE1 KomDE2 KomDE3
+SozMA1 SozMA2 SozMA3 SozEN1 SozEN2 SozEN3
+SozFR1 SozFR2 SozFR3 SozDE1 SozDE2 SozDE3
+Neurot1 Extrav1 Offen1 Toler1 Consc1
+Consc3 Offen3 Neurot3 Extrav3 Toler3
+ExtrMA1 IntrMA1 ExtrEN1 IntrEN1 ExtrFR1 IntrFR1 ExtrDE1 IntrDE1
+ExtrMA2 IntrMA2 ExtrEN2 IntrEN2 ExtrFR2 IntrFR2 ExtrDE2 IntrDE2
+ExtrMA3 IntrMA3 ExtrEN3 IntrEN3 ExtrFR3 IntrFR3 ExtrDE3 IntrDE3
+male1ful sp
+;
+
+MISSING ARE ALL(9999);
+
+USEVARIABLES ARE [[VarNames#var]]MA1
+                 [[VarNames#var]]DE1
+                 [[VarNames#var]]EN1
+                 [[VarNames#var]]FR1
+                 [[VarNames#var]]MA2
+                 [[VarNames#var]]DE2
+                 [[VarNames#var]]EN2
+                 [[VarNames#var]]FR2
+                 [[VarNames#var]]MA3
+                 [[VarNames#var]]DE3
+                 [[VarNames#var]]EN3
+                 [[VarNames#var]]FR3
+;
+
+CLASSES = 
+          [[VarNames#var]]_p ([[p]])
+
+;
+
+
+ANALYSIS:
+TYPE IS MIXTURE;
+
+STARTS = 1000 400;
+PROCESS = 8 1;
+STSEED = 666;
+
+MODEL:
+
+%OVERALL%
+
+! Define latent growth factors for each process
+  iMA sMA | [[VarNames#var]]MA1@0 [[VarNames#var]]MA2@1 [[VarNames#var]]MA3@2;
+  iDE sDE | [[VarNames#var]]DE1@0 [[VarNames#var]]DE2@1 [[VarNames#var]]DE3@2;
+  iEN sEN | [[VarNames#var]]EN1@0 [[VarNames#var]]EN2@1 [[VarNames#var]]EN3@2;
+  iFR sFR | [[VarNames#var]]FR1@0 [[VarNames#var]]FR2@1 [[VarNames#var]]FR3@2;
+
+%[[VarNames#var]]_p#1%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+[[m = 1]] !homogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar1);
+[[VarNames#var]]MA2 (MAvar1);
+[[VarNames#var]]MA3 (MAvar1);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAa1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAa2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAa3);
+
+[[VarNames#var]]DE1 (DEvar1);
+[[VarNames#var]]DE2 (DEvar1);
+[[VarNames#var]]DE3 (DEvar1);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEa1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEa2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEa3);
+
+[[VarNames#var]]EN1 (ENvar1);
+[[VarNames#var]]EN2 (ENvar1);
+[[VarNames#var]]EN3 (ENvar1);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENa1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENa2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENa3);
+
+[[VarNames#var]]FR1 (FRvar1);
+[[VarNames#var]]FR2 (FRvar1);
+[[VarNames#var]]FR3 (FRvar1);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRa1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRa2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRa3);
+
+[[/m = 1]]
+
+[[m = 2]] !homogeneous variances, exchangeable residual variances
+
+[[VarNames#var]]MA1 (MAvar1);
+[[VarNames#var]]MA2 (MAvar1);
+[[VarNames#var]]MA3 (MAvar1);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAa1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAa1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAa1);
+
+[[VarNames#var]]DE1 (DEvar1);
+[[VarNames#var]]DE2 (DEvar1);
+[[VarNames#var]]DE3 (DEvar1);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEa1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEa1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEa1);
+
+[[VarNames#var]]EN1 (ENvar1);
+[[VarNames#var]]EN2 (ENvar1);
+[[VarNames#var]]EN3 (ENvar1);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENa1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENa1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENa1);
+
+[[VarNames#var]]FR1 (FRvar1);
+[[VarNames#var]]FR2 (FRvar1);
+[[VarNames#var]]FR3 (FRvar1);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRa1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRa1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRa1);
+
+[[/m = 2]]
+
+[[m = 3]] !homogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar1);
+[[VarNames#var]]MA2 (MAvar1);
+[[VarNames#var]]MA3 (MAvar1);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAa1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAa2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAa1);
+
+[[VarNames#var]]DE1 (DEvar1);
+[[VarNames#var]]DE2 (DEvar1);
+[[VarNames#var]]DE3 (DEvar1);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEa1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEa2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEa1);
+
+[[VarNames#var]]EN1 (ENvar1);
+[[VarNames#var]]EN2 (ENvar1);
+[[VarNames#var]]EN3 (ENvar1);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENa1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENa2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENa1);
+
+[[VarNames#var]]FR1 (FRvar1);
+[[VarNames#var]]FR2 (FRvar1);
+[[VarNames#var]]FR3 (FRvar1);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRa1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRa2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRa1);
+
+[[/m = 3]]
+
+[[m = 4]] !homogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar1);
+[[VarNames#var]]MA2 (MAvar1);
+[[VarNames#var]]MA3 (MAvar1);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAa1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAa2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAa1);
+
+[[VarNames#var]]DE1 (DEvar1);
+[[VarNames#var]]DE2 (DEvar1);
+[[VarNames#var]]DE3 (DEvar1);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEa1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEa2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEa1);
+
+[[VarNames#var]]EN1 (ENvar1);
+[[VarNames#var]]EN2 (ENvar1);
+[[VarNames#var]]EN3 (ENvar1);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENa1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENa2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENa1);
+
+[[VarNames#var]]FR1 (FRvar1);
+[[VarNames#var]]FR2 (FRvar1);
+[[VarNames#var]]FR3 (FRvar1);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRa1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRa2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRa1);
+
+[[/m = 4]]
+
+!Residual variance structure
+
+[[m = 5]] !heterogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar1a);
+[[VarNames#var]]MA2 (MAvar2a);
+[[VarNames#var]]MA3 (MAvar3a);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAa1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAa1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAa1);
+
+[[VarNames#var]]DE1 (DEvar1a);
+[[VarNames#var]]DE2 (DEvar2a);
+[[VarNames#var]]DE3 (DEvar3a);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEa1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEa1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEa1);
+
+[[VarNames#var]]EN1 (ENvar1a);
+[[VarNames#var]]EN2 (ENvar2a);
+[[VarNames#var]]EN3 (ENvar3a);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENa1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENa1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENa1);
+
+[[VarNames#var]]FR1 (FRvar1a);
+[[VarNames#var]]FR2 (FRvar2a);
+[[VarNames#var]]FR3 (FRvar3a);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRa1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRa1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRa1);
+
+[[/m = 5]]
+
+[[m = 6]] !heterogeneous variances, compound symmetry residual variances
+
+[[VarNames#var]]MA1 (MAvar1a);
+[[VarNames#var]]MA2 (MAvar2a);
+[[VarNames#var]]MA3 (MAvar3a);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAa1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAa2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAa3);
+
+[[VarNames#var]]DE1 (DEvar1a);
+[[VarNames#var]]DE2 (DEvar2a);
+[[VarNames#var]]DE3 (DEvar3a);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEa1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEa2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEa3);
+
+[[VarNames#var]]EN1 (ENvar1a);
+[[VarNames#var]]EN2 (ENvar2a);
+[[VarNames#var]]EN3 (ENvar3a);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENa1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENa2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENa3);
+
+[[VarNames#var]]FR1 (FRvar1a);
+[[VarNames#var]]FR2 (FRvar2a);
+[[VarNames#var]]FR3 (FRvar3a);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRa1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRa2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRa3);
+
+[[/m = 6]]
+
+[[m = 7]] !heterogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar1a);
+[[VarNames#var]]MA2 (MAvar2a);
+[[VarNames#var]]MA3 (MAvar3a);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAa1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAa2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAa1);
+
+[[VarNames#var]]DE1 (DEvar1a);
+[[VarNames#var]]DE2 (DEvar2a);
+[[VarNames#var]]DE3 (DEvar3a);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEa1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEa2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEa1);
+
+[[VarNames#var]]EN1 (ENvar1a);
+[[VarNames#var]]EN2 (ENvar2a);
+[[VarNames#var]]EN3 (ENvar3a);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENa1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENa2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENa1);
+
+[[VarNames#var]]FR1 (FRvar1a);
+[[VarNames#var]]FR2 (FRvar2a);
+[[VarNames#var]]FR3 (FRvar3a);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRa1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRa2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRa1);
+
+[[/m = 7]]
+
+[[m = 8]] !heterogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar1a);
+[[VarNames#var]]MA2 (MAvar2a);
+[[VarNames#var]]MA3 (MAvar3a);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAa1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAa2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAa1);
+
+[[VarNames#var]]DE1 (DEvar1a);
+[[VarNames#var]]DE2 (DEvar2a);
+[[VarNames#var]]DE3 (DEvar3a);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEa1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEa2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEa1);
+
+[[VarNames#var]]EN1 (ENvar1a);
+[[VarNames#var]]EN2 (ENvar2a);
+[[VarNames#var]]EN3 (ENvar3a);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENa1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENa2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENa1);
+
+[[VarNames#var]]FR1 (FRvar1a);
+[[VarNames#var]]FR2 (FRvar2a);
+[[VarNames#var]]FR3 (FRvar3a);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRa1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRa2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRa1);
+
+[[/m = 8]] 
+
+
+
+%[[VarNames#var]]_p#2%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+[[m = 1]] !homogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar2);
+[[VarNames#var]]MA2 (MAvar2);
+[[VarNames#var]]MA3 (MAvar2);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAb1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAb2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAb3);
+
+[[VarNames#var]]DE1 (DEvar2);
+[[VarNames#var]]DE2 (DEvar2);
+[[VarNames#var]]DE3 (DEvar2);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEb1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEb2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEb3);
+
+[[VarNames#var]]EN1 (ENvar2);
+[[VarNames#var]]EN2 (ENvar2);
+[[VarNames#var]]EN3 (ENvar2);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENb1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENb2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENb3);
+
+[[VarNames#var]]FR1 (FRvar2);
+[[VarNames#var]]FR2 (FRvar2);
+[[VarNames#var]]FR3 (FRvar2);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRb1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRb2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRb3);
+
+[[/m = 1]]
+
+[[m = 2]] !homogeneous variances, exchangeable residual variances
+
+[[VarNames#var]]MA1 (MAvar2);
+[[VarNames#var]]MA2 (MAvar2);
+[[VarNames#var]]MA3 (MAvar2);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAb1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAb1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAb1);
+
+[[VarNames#var]]DE1 (DEvar2);
+[[VarNames#var]]DE2 (DEvar2);
+[[VarNames#var]]DE3 (DEvar2);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEb1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEb1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEb1);
+
+[[VarNames#var]]EN1 (ENvar2);
+[[VarNames#var]]EN2 (ENvar2);
+[[VarNames#var]]EN3 (ENvar2);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENb1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENb1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENb1);
+
+[[VarNames#var]]FR1 (FRvar2);
+[[VarNames#var]]FR2 (FRvar2);
+[[VarNames#var]]FR3 (FRvar2);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRb1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRb1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRb1);
+
+[[/m = 2]]
+
+[[m = 3]] !homogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar2);
+[[VarNames#var]]MA2 (MAvar2);
+[[VarNames#var]]MA3 (MAvar2);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAb1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAb2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAb1);
+
+[[VarNames#var]]DE1 (DEvar2);
+[[VarNames#var]]DE2 (DEvar2);
+[[VarNames#var]]DE3 (DEvar2);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEb1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEb2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEb1);
+
+[[VarNames#var]]EN1 (ENvar2);
+[[VarNames#var]]EN2 (ENvar2);
+[[VarNames#var]]EN3 (ENvar2);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENb1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENb2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENb1);
+
+[[VarNames#var]]FR1 (FRvar2);
+[[VarNames#var]]FR2 (FRvar2);
+[[VarNames#var]]FR3 (FRvar2);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRb1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRb2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRb1);
+
+[[/m = 3]]
+
+[[m = 4]] !homogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar2);
+[[VarNames#var]]MA2 (MAvar2);
+[[VarNames#var]]MA3 (MAvar2);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAb1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAb2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAb1);
+
+[[VarNames#var]]DE1 (DEvar2);
+[[VarNames#var]]DE2 (DEvar2);
+[[VarNames#var]]DE3 (DEvar2);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEb1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEb2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEb1);
+
+[[VarNames#var]]EN1 (ENvar2);
+[[VarNames#var]]EN2 (ENvar2);
+[[VarNames#var]]EN3 (ENvar2);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENb1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENb2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENb1);
+
+[[VarNames#var]]FR1 (FRvar2);
+[[VarNames#var]]FR2 (FRvar2);
+[[VarNames#var]]FR3 (FRvar2);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRb1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRb2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRb1);
+
+[[/m = 4]]
+
+!Residual variance structure
+
+[[m = 5]] !heterogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar1b);
+[[VarNames#var]]MA2 (MAvar2b);
+[[VarNames#var]]MA3 (MAvar3b);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAb1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAb1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAb1);
+
+[[VarNames#var]]DE1 (DEvar1b);
+[[VarNames#var]]DE2 (DEvar2b);
+[[VarNames#var]]DE3 (DEvar3b);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEb1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEb1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEb1);
+
+[[VarNames#var]]EN1 (ENvar1b);
+[[VarNames#var]]EN2 (ENvar2b);
+[[VarNames#var]]EN3 (ENvar3b);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENb1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENb1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENb1);
+
+[[VarNames#var]]FR1 (FRvar1b);
+[[VarNames#var]]FR2 (FRvar2b);
+[[VarNames#var]]FR3 (FRvar3b);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRb1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRb1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRb1);
+
+[[/m = 5]]
+
+[[m = 6]] !heterogeneous variances, compound symmetry residual variances
+
+[[VarNames#var]]MA1 (MAvar1b);
+[[VarNames#var]]MA2 (MAvar2b);
+[[VarNames#var]]MA3 (MAvar3b);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAb1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAb2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAb3);
+
+[[VarNames#var]]DE1 (DEvar1b);
+[[VarNames#var]]DE2 (DEvar2b);
+[[VarNames#var]]DE3 (DEvar3b);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEb1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEb2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEb3);
+
+[[VarNames#var]]EN1 (ENvar1b);
+[[VarNames#var]]EN2 (ENvar2b);
+[[VarNames#var]]EN3 (ENvar3b);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENb1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENb2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENb3);
+
+[[VarNames#var]]FR1 (FRvar1b);
+[[VarNames#var]]FR2 (FRvar2b);
+[[VarNames#var]]FR3 (FRvar3b);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRb1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRb2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRb3);
+
+[[/m = 6]]
+
+[[m = 7]] !heterogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar1b);
+[[VarNames#var]]MA2 (MAvar2b);
+[[VarNames#var]]MA3 (MAvar3b);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAb1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAb2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAb1);
+
+[[VarNames#var]]DE1 (DEvar1b);
+[[VarNames#var]]DE2 (DEvar2b);
+[[VarNames#var]]DE3 (DEvar3b);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEb1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEb2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEb1);
+
+[[VarNames#var]]EN1 (ENvar1b);
+[[VarNames#var]]EN2 (ENvar2b);
+[[VarNames#var]]EN3 (ENvar3b);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENb1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENb2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENb1);
+
+[[VarNames#var]]FR1 (FRvar1b);
+[[VarNames#var]]FR2 (FRvar2b);
+[[VarNames#var]]FR3 (FRvar3b);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRb1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRb2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRb1);
+
+[[/m = 7]]
+
+[[m = 8]] !heterogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar1b);
+[[VarNames#var]]MA2 (MAvar2b);
+[[VarNames#var]]MA3 (MAvar3b);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAb1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAb2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAb1);
+
+[[VarNames#var]]DE1 (DEvar1b);
+[[VarNames#var]]DE2 (DEvar2b);
+[[VarNames#var]]DE3 (DEvar3b);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEb1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEb2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEb1);
+
+[[VarNames#var]]EN1 (ENvar1b);
+[[VarNames#var]]EN2 (ENvar2b);
+[[VarNames#var]]EN3 (ENvar3b);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENb1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENb2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENb1);
+
+[[VarNames#var]]FR1 (FRvar1b);
+[[VarNames#var]]FR2 (FRvar2b);
+[[VarNames#var]]FR3 (FRvar3b);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRb1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRb2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRb1);
+
+[[/m = 8]] 
+
+[[p > 2]] 
+
+%[[VarNames#var]]_p#3%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+[[m = 1]] !homogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar3);
+[[VarNames#var]]MA2 (MAvar3);
+[[VarNames#var]]MA3 (MAvar3);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAc1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAc2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAc3);
+
+[[VarNames#var]]DE1 (DEvar3);
+[[VarNames#var]]DE2 (DEvar3);
+[[VarNames#var]]DE3 (DEvar3);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEc1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEc2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEc3);
+
+[[VarNames#var]]EN1 (ENvar3);
+[[VarNames#var]]EN2 (ENvar3);
+[[VarNames#var]]EN3 (ENvar3);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENc1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENc2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENc3);
+
+[[VarNames#var]]FR1 (FRvar3);
+[[VarNames#var]]FR2 (FRvar3);
+[[VarNames#var]]FR3 (FRvar3);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRc1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRc2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRc3);
+
+[[/m = 1]]
+
+[[m = 2]] !homogeneous variances, exchangeable residual variances
+
+[[VarNames#var]]MA1 (MAvar3);
+[[VarNames#var]]MA2 (MAvar3);
+[[VarNames#var]]MA3 (MAvar3);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAc1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAc1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAc1);
+
+[[VarNames#var]]DE1 (DEvar3);
+[[VarNames#var]]DE2 (DEvar3);
+[[VarNames#var]]DE3 (DEvar3);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEc1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEc1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEc1);
+
+[[VarNames#var]]EN1 (ENvar3);
+[[VarNames#var]]EN2 (ENvar3);
+[[VarNames#var]]EN3 (ENvar3);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENc1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENc1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENc1);
+
+[[VarNames#var]]FR1 (FRvar3);
+[[VarNames#var]]FR2 (FRvar3);
+[[VarNames#var]]FR3 (FRvar3);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRc1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRc1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRc1);
+
+[[/m = 2]]
+
+[[m = 3]] !homogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar3);
+[[VarNames#var]]MA2 (MAvar3);
+[[VarNames#var]]MA3 (MAvar3);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAc1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAc2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAc1);
+
+[[VarNames#var]]DE1 (DEvar3);
+[[VarNames#var]]DE2 (DEvar3);
+[[VarNames#var]]DE3 (DEvar3);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEc1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEc2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEc1);
+
+[[VarNames#var]]EN1 (ENvar3);
+[[VarNames#var]]EN2 (ENvar3);
+[[VarNames#var]]EN3 (ENvar3);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENc1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENc2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENc1);
+
+[[VarNames#var]]FR1 (FRvar3);
+[[VarNames#var]]FR2 (FRvar3);
+[[VarNames#var]]FR3 (FRvar3);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRc1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRc2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRc1);
+
+[[/m = 3]]
+
+[[m = 4]] !homogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar3);
+[[VarNames#var]]MA2 (MAvar3);
+[[VarNames#var]]MA3 (MAvar3);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAc1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAc2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAc1);
+
+[[VarNames#var]]DE1 (DEvar3);
+[[VarNames#var]]DE2 (DEvar3);
+[[VarNames#var]]DE3 (DEvar3);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEc1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEc2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEc1);
+
+[[VarNames#var]]EN1 (ENvar3);
+[[VarNames#var]]EN2 (ENvar3);
+[[VarNames#var]]EN3 (ENvar3);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENc1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENc2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENc1);
+
+[[VarNames#var]]FR1 (FRvar3);
+[[VarNames#var]]FR2 (FRvar3);
+[[VarNames#var]]FR3 (FRvar3);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRc1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRc2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRc1);
+
+[[/m = 4]]
+
+!Residual variance structure
+
+[[m = 5]] !heterogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar1c);
+[[VarNames#var]]MA2 (MAvar2c);
+[[VarNames#var]]MA3 (MAvar3c);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAc1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAc1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAc1);
+
+[[VarNames#var]]DE1 (DEvar1c);
+[[VarNames#var]]DE2 (DEvar2c);
+[[VarNames#var]]DE3 (DEvar3c);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEc1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEc1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEc1);
+
+[[VarNames#var]]EN1 (ENvar1c);
+[[VarNames#var]]EN2 (ENvar2c);
+[[VarNames#var]]EN3 (ENvar3c);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENc1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENc1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENc1);
+
+[[VarNames#var]]FR1 (FRvar1c);
+[[VarNames#var]]FR2 (FRvar2c);
+[[VarNames#var]]FR3 (FRvar3c);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRc1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRc1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRc1);
+
+[[/m = 5]]
+
+[[m = 6]] !heterogeneous variances, compound symmetry residual variances
+
+[[VarNames#var]]MA1 (MAvar1c);
+[[VarNames#var]]MA2 (MAvar2c);
+[[VarNames#var]]MA3 (MAvar3c);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAc1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAc2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAc3);
+
+[[VarNames#var]]DE1 (DEvar1c);
+[[VarNames#var]]DE2 (DEvar2c);
+[[VarNames#var]]DE3 (DEvar3c);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEc1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEc2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEc3);
+
+[[VarNames#var]]EN1 (ENvar1c);
+[[VarNames#var]]EN2 (ENvar2c);
+[[VarNames#var]]EN3 (ENvar3c);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENc1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENc2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENc3);
+
+[[VarNames#var]]FR1 (FRvar1c);
+[[VarNames#var]]FR2 (FRvar2c);
+[[VarNames#var]]FR3 (FRvar3c);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRc1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRc2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRc3);
+
+[[/m = 6]]
+
+[[m = 7]] !heterogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar1c);
+[[VarNames#var]]MA2 (MAvar2c);
+[[VarNames#var]]MA3 (MAvar3c);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAc1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAc2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAc1);
+
+[[VarNames#var]]DE1 (DEvar1c);
+[[VarNames#var]]DE2 (DEvar2c);
+[[VarNames#var]]DE3 (DEvar3c);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEc1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEc2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEc1);
+
+[[VarNames#var]]EN1 (ENvar1c);
+[[VarNames#var]]EN2 (ENvar2c);
+[[VarNames#var]]EN3 (ENvar3c);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENc1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENc2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENc1);
+
+[[VarNames#var]]FR1 (FRvar1c);
+[[VarNames#var]]FR2 (FRvar2c);
+[[VarNames#var]]FR3 (FRvar3c);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRc1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRc2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRc1);
+
+[[/m = 7]]
+
+[[m = 8]] !heterogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar1c);
+[[VarNames#var]]MA2 (MAvar2c);
+[[VarNames#var]]MA3 (MAvar3c);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAc1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAc2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAc1);
+
+[[VarNames#var]]DE1 (DEvar1c);
+[[VarNames#var]]DE2 (DEvar2c);
+[[VarNames#var]]DE3 (DEvar3c);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEc1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEc2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEc1);
+
+[[VarNames#var]]EN1 (ENvar1c);
+[[VarNames#var]]EN2 (ENvar2c);
+[[VarNames#var]]EN3 (ENvar3c);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENc1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENc2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENc1);
+
+[[VarNames#var]]FR1 (FRvar1c);
+[[VarNames#var]]FR2 (FRvar2c);
+[[VarNames#var]]FR3 (FRvar3c);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRc1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRc2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRc1);
+
+[[/m = 8]] 
+
+[[/p > 2]]
+
+[[p > 3]] 
+
+%[[VarNames#var]]_p#4%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+[[m = 1]] !homogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar4);
+[[VarNames#var]]MA2 (MAvar4);
+[[VarNames#var]]MA3 (MAvar4);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAd1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAd2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAd3);
+
+[[VarNames#var]]DE1 (DEvar4);
+[[VarNames#var]]DE2 (DEvar4);
+[[VarNames#var]]DE3 (DEvar4);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEd1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEd2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEd3);
+
+[[VarNames#var]]EN1 (ENvar4);
+[[VarNames#var]]EN2 (ENvar4);
+[[VarNames#var]]EN3 (ENvar4);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENd1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENd2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENd3);
+
+[[VarNames#var]]FR1 (FRvar4);
+[[VarNames#var]]FR2 (FRvar4);
+[[VarNames#var]]FR3 (FRvar4);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRd1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRd2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRd3);
+
+[[/m = 1]]
+
+[[m = 2]] !homogeneous variances, exchangeable residual variances
+
+[[VarNames#var]]MA1 (MAvar4);
+[[VarNames#var]]MA2 (MAvar4);
+[[VarNames#var]]MA3 (MAvar4);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAd1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAd1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAd1);
+
+[[VarNames#var]]DE1 (DEvar4);
+[[VarNames#var]]DE2 (DEvar4);
+[[VarNames#var]]DE3 (DEvar4);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEd1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEd1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEd1);
+
+[[VarNames#var]]EN1 (ENvar4);
+[[VarNames#var]]EN2 (ENvar4);
+[[VarNames#var]]EN3 (ENvar4);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENd1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENd1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENd1);
+
+[[VarNames#var]]FR1 (FRvar4);
+[[VarNames#var]]FR2 (FRvar4);
+[[VarNames#var]]FR3 (FRvar4);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRd1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRd1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRd1);
+
+[[/m = 2]]
+
+[[m = 3]] !homogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar4);
+[[VarNames#var]]MA2 (MAvar4);
+[[VarNames#var]]MA3 (MAvar4);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAd1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAd2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAd1);
+
+[[VarNames#var]]DE1 (DEvar4);
+[[VarNames#var]]DE2 (DEvar4);
+[[VarNames#var]]DE3 (DEvar4);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEd1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEd2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEd1);
+
+[[VarNames#var]]EN1 (ENvar4);
+[[VarNames#var]]EN2 (ENvar4);
+[[VarNames#var]]EN3 (ENvar4);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENd1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENd2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENd1);
+
+[[VarNames#var]]FR1 (FRvar4);
+[[VarNames#var]]FR2 (FRvar4);
+[[VarNames#var]]FR3 (FRvar4);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRd1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRd2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRd1);
+
+[[/m = 3]]
+
+[[m = 4]] !homogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar4);
+[[VarNames#var]]MA2 (MAvar4);
+[[VarNames#var]]MA3 (MAvar4);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAd1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAd2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAd1);
+
+[[VarNames#var]]DE1 (DEvar4);
+[[VarNames#var]]DE2 (DEvar4);
+[[VarNames#var]]DE3 (DEvar4);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEd1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEd2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEd1);
+
+[[VarNames#var]]EN1 (ENvar4);
+[[VarNames#var]]EN2 (ENvar4);
+[[VarNames#var]]EN3 (ENvar4);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENd1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENd2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENd1);
+
+[[VarNames#var]]FR1 (FRvar4);
+[[VarNames#var]]FR2 (FRvar4);
+[[VarNames#var]]FR3 (FRvar4);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRd1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRd2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRd1);
+
+[[/m = 4]]
+
+!Residual variance structure
+
+[[m = 5]] !heterogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar1d);
+[[VarNames#var]]MA2 (MAvar2d);
+[[VarNames#var]]MA3 (MAvar3d);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAd1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAd1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAd1);
+
+[[VarNames#var]]DE1 (DEvar1d);
+[[VarNames#var]]DE2 (DEvar2d);
+[[VarNames#var]]DE3 (DEvar3d);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEd1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEd1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEd1);
+
+[[VarNames#var]]EN1 (ENvar1d);
+[[VarNames#var]]EN2 (ENvar2d);
+[[VarNames#var]]EN3 (ENvar3d);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENd1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENd1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENd1);
+
+[[VarNames#var]]FR1 (FRvar1d);
+[[VarNames#var]]FR2 (FRvar2d);
+[[VarNames#var]]FR3 (FRvar3d);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRd1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRd1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRd1);
+
+[[/m = 5]]
+
+[[m = 6]] !heterogeneous variances, compound symmetry residual variances
+
+[[VarNames#var]]MA1 (MAvar1d);
+[[VarNames#var]]MA2 (MAvar2d);
+[[VarNames#var]]MA3 (MAvar3d);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAd1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAd2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAd3);
+
+[[VarNames#var]]DE1 (DEvar1d);
+[[VarNames#var]]DE2 (DEvar2d);
+[[VarNames#var]]DE3 (DEvar3d);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEd1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEd2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEd3);
+
+[[VarNames#var]]EN1 (ENvar1d);
+[[VarNames#var]]EN2 (ENvar2d);
+[[VarNames#var]]EN3 (ENvar3d);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENd1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENd2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENd3);
+
+[[VarNames#var]]FR1 (FRvar1d);
+[[VarNames#var]]FR2 (FRvar2d);
+[[VarNames#var]]FR3 (FRvar3d);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRd1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRd2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRd3);
+
+[[/m = 6]]
+
+[[m = 7]] !heterogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar1d);
+[[VarNames#var]]MA2 (MAvar2d);
+[[VarNames#var]]MA3 (MAvar3d);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAd1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAd2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAd1);
+
+[[VarNames#var]]DE1 (DEvar1d);
+[[VarNames#var]]DE2 (DEvar2d);
+[[VarNames#var]]DE3 (DEvar3d);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEd1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEd2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEd1);
+
+[[VarNames#var]]EN1 (ENvar1d);
+[[VarNames#var]]EN2 (ENvar2d);
+[[VarNames#var]]EN3 (ENvar3d);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENd1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENd2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENd1);
+
+[[VarNames#var]]FR1 (FRvar1d);
+[[VarNames#var]]FR2 (FRvar2d);
+[[VarNames#var]]FR3 (FRvar3d);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRd1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRd2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRd1);
+
+[[/m = 7]]
+
+[[m = 8]] !heterogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar1d);
+[[VarNames#var]]MA2 (MAvar2d);
+[[VarNames#var]]MA3 (MAvar3d);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAd1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAd2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAd1);
+
+[[VarNames#var]]DE1 (DEvar1d);
+[[VarNames#var]]DE2 (DEvar2d);
+[[VarNames#var]]DE3 (DEvar3d);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEd1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEd2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEd1);
+
+[[VarNames#var]]EN1 (ENvar1d);
+[[VarNames#var]]EN2 (ENvar2d);
+[[VarNames#var]]EN3 (ENvar3d);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENd1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENd2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENd1);
+
+[[VarNames#var]]FR1 (FRvar1d);
+[[VarNames#var]]FR2 (FRvar2d);
+[[VarNames#var]]FR3 (FRvar3d);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRd1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRd2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRd1);
+
+[[/m = 8]] 
+
+[[/p > 3]]
+
+[[p > 4]] 
+
+%[[VarNames#var]]_p#5%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+[[m = 1]] !homogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar5);
+[[VarNames#var]]MA2 (MAvar5);
+[[VarNames#var]]MA3 (MAvar5);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAe1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAe2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAe3);
+
+[[VarNames#var]]DE1 (DEvar5);
+[[VarNames#var]]DE2 (DEvar5);
+[[VarNames#var]]DE3 (DEvar5);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEe1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEe2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEe3);
+
+[[VarNames#var]]EN1 (ENvar5);
+[[VarNames#var]]EN2 (ENvar5);
+[[VarNames#var]]EN3 (ENvar5);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENe1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENe2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENe3);
+
+[[VarNames#var]]FR1 (FRvar5);
+[[VarNames#var]]FR2 (FRvar5);
+[[VarNames#var]]FR3 (FRvar5);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRe1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRe2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRe3);
+
+[[/m = 1]]
+
+[[m = 2]] !homogeneous variances, exchangeable residual variances
+
+[[VarNames#var]]MA1 (MAvar5);
+[[VarNames#var]]MA2 (MAvar5);
+[[VarNames#var]]MA3 (MAvar5);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAe1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAe1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAe1);
+
+[[VarNames#var]]DE1 (DEvar5);
+[[VarNames#var]]DE2 (DEvar5);
+[[VarNames#var]]DE3 (DEvar5);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEe1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEe1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEe1);
+
+[[VarNames#var]]EN1 (ENvar5);
+[[VarNames#var]]EN2 (ENvar5);
+[[VarNames#var]]EN3 (ENvar5);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENe1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENe1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENe1);
+
+[[VarNames#var]]FR1 (FRvar5);
+[[VarNames#var]]FR2 (FRvar5);
+[[VarNames#var]]FR3 (FRvar5);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRe1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRe1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRe1);
+
+[[/m = 2]]
+
+[[m = 3]] !homogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar5);
+[[VarNames#var]]MA2 (MAvar5);
+[[VarNames#var]]MA3 (MAvar5);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAe1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAe2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAe1);
+
+[[VarNames#var]]DE1 (DEvar5);
+[[VarNames#var]]DE2 (DEvar5);
+[[VarNames#var]]DE3 (DEvar5);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEe1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEe2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEe1);
+
+[[VarNames#var]]EN1 (ENvar5);
+[[VarNames#var]]EN2 (ENvar5);
+[[VarNames#var]]EN3 (ENvar5);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENe1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENe2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENe1);
+
+[[VarNames#var]]FR1 (FRvar5);
+[[VarNames#var]]FR2 (FRvar5);
+[[VarNames#var]]FR3 (FRvar5);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRe1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRe2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRe1);
+
+[[/m = 3]]
+
+[[m = 4]] !homogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar5);
+[[VarNames#var]]MA2 (MAvar5);
+[[VarNames#var]]MA3 (MAvar5);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAe1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAe2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAe1);
+
+[[VarNames#var]]DE1 (DEvar5);
+[[VarNames#var]]DE2 (DEvar5);
+[[VarNames#var]]DE3 (DEvar5);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEe1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEe2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEe1);
+
+[[VarNames#var]]EN1 (ENvar5);
+[[VarNames#var]]EN2 (ENvar5);
+[[VarNames#var]]EN3 (ENvar5);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENe1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENe2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENe1);
+
+[[VarNames#var]]FR1 (FRvar5);
+[[VarNames#var]]FR2 (FRvar5);
+[[VarNames#var]]FR3 (FRvar5);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRe1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRe2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRe1);
+
+[[/m = 4]]
+
+!Residual variance structure
+
+[[m = 5]] !heterogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar1e);
+[[VarNames#var]]MA2 (MAvar2e);
+[[VarNames#var]]MA3 (MAvar3e);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAe1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAe1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAe1);
+
+[[VarNames#var]]DE1 (DEvar1e);
+[[VarNames#var]]DE2 (DEvar2e);
+[[VarNames#var]]DE3 (DEvar3e);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEe1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEe1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEe1);
+
+[[VarNames#var]]EN1 (ENvar1e);
+[[VarNames#var]]EN2 (ENvar2e);
+[[VarNames#var]]EN3 (ENvar3e);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENe1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENe1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENe1);
+
+[[VarNames#var]]FR1 (FRvar1e);
+[[VarNames#var]]FR2 (FRvar2e);
+[[VarNames#var]]FR3 (FRvar3e);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRe1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRe1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRe1);
+
+[[/m = 5]]
+
+[[m = 6]] !heterogeneous variances, compound symmetry residual variances
+
+[[VarNames#var]]MA1 (MAvar1e);
+[[VarNames#var]]MA2 (MAvar2e);
+[[VarNames#var]]MA3 (MAvar3e);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAe1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAe2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAe3);
+
+[[VarNames#var]]DE1 (DEvar1e);
+[[VarNames#var]]DE2 (DEvar2e);
+[[VarNames#var]]DE3 (DEvar3e);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEe1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEe2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEe3);
+
+[[VarNames#var]]EN1 (ENvar1e);
+[[VarNames#var]]EN2 (ENvar2e);
+[[VarNames#var]]EN3 (ENvar3e);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENe1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENe2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENe3);
+
+[[VarNames#var]]FR1 (FRvar1e);
+[[VarNames#var]]FR2 (FRvar2e);
+[[VarNames#var]]FR3 (FRvar3e);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRe1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRe2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRe3);
+
+[[/m = 6]]
+
+[[m = 7]] !heterogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar1e);
+[[VarNames#var]]MA2 (MAvar2e);
+[[VarNames#var]]MA3 (MAvar3e);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAe1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAe2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAe1);
+
+[[VarNames#var]]DE1 (DEvar1e);
+[[VarNames#var]]DE2 (DEvar2e);
+[[VarNames#var]]DE3 (DEvar3e);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEe1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEe2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEe1);
+
+[[VarNames#var]]EN1 (ENvar1e);
+[[VarNames#var]]EN2 (ENvar2e);
+[[VarNames#var]]EN3 (ENvar3e);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENe1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENe2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENe1);
+
+[[VarNames#var]]FR1 (FRvar1e);
+[[VarNames#var]]FR2 (FRvar2e);
+[[VarNames#var]]FR3 (FRvar3e);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRe1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRe2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRe1);
+
+[[/m = 7]]
+
+[[m = 8]] !heterogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar1e);
+[[VarNames#var]]MA2 (MAvar2e);
+[[VarNames#var]]MA3 (MAvar3e);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAe1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAe2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAe1);
+
+[[VarNames#var]]DE1 (DEvar1e);
+[[VarNames#var]]DE2 (DEvar2e);
+[[VarNames#var]]DE3 (DEvar3e);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEe1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEe2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEe1);
+
+[[VarNames#var]]EN1 (ENvar1e);
+[[VarNames#var]]EN2 (ENvar2e);
+[[VarNames#var]]EN3 (ENvar3e);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENe1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENe2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENe1);
+
+[[VarNames#var]]FR1 (FRvar1e);
+[[VarNames#var]]FR2 (FRvar2e);
+[[VarNames#var]]FR3 (FRvar3e);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRe1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRe2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRe1);
+
+[[/m = 8]] 
+[[/p > 4]]
+
+[[p > 5]] 
+
+%[[VarNames#var]]_p#6%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+[[m = 1]] !homogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar6);
+[[VarNames#var]]MA2 (MAvar6);
+[[VarNames#var]]MA3 (MAvar6);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAf1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAf2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAf3);
+
+[[VarNames#var]]DE1 (DEvar6);
+[[VarNames#var]]DE2 (DEvar6);
+[[VarNames#var]]DE3 (DEvar6);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEf1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEf2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEf3);
+
+[[VarNames#var]]EN1 (ENvar6);
+[[VarNames#var]]EN2 (ENvar6);
+[[VarNames#var]]EN3 (ENvar6);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENf1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENf2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENf3);
+
+[[VarNames#var]]FR1 (FRvar6);
+[[VarNames#var]]FR2 (FRvar6);
+[[VarNames#var]]FR3 (FRvar6);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRf1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRf2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRf3);
+
+[[/m = 1]]
+
+[[m = 2]] !homogeneous variances, exchangeable residual variances
+
+[[VarNames#var]]MA1 (MAvar6);
+[[VarNames#var]]MA2 (MAvar6);
+[[VarNames#var]]MA3 (MAvar6);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAf1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAf1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAf1);
+
+[[VarNames#var]]DE1 (DEvar6);
+[[VarNames#var]]DE2 (DEvar6);
+[[VarNames#var]]DE3 (DEvar6);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEf1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEf1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEf1);
+
+[[VarNames#var]]EN1 (ENvar6);
+[[VarNames#var]]EN2 (ENvar6);
+[[VarNames#var]]EN3 (ENvar6);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENf1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENf1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENf1);
+
+[[VarNames#var]]FR1 (FRvar6);
+[[VarNames#var]]FR2 (FRvar6);
+[[VarNames#var]]FR3 (FRvar6);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRf1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRf1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRf1);
+
+[[/m = 2]]
+
+[[m = 3]] !homogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar6);
+[[VarNames#var]]MA2 (MAvar6);
+[[VarNames#var]]MA3 (MAvar6);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAf1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAf2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAf1);
+
+[[VarNames#var]]DE1 (DEvar6);
+[[VarNames#var]]DE2 (DEvar6);
+[[VarNames#var]]DE3 (DEvar6);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEf1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEf2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEf1);
+
+[[VarNames#var]]EN1 (ENvar6);
+[[VarNames#var]]EN2 (ENvar6);
+[[VarNames#var]]EN3 (ENvar6);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENf1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENf2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENf1);
+
+[[VarNames#var]]FR1 (FRvar6);
+[[VarNames#var]]FR2 (FRvar6);
+[[VarNames#var]]FR3 (FRvar6);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRf1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRf2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRf1);
+
+[[/m = 3]]
+
+[[m = 4]] !homogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar6);
+[[VarNames#var]]MA2 (MAvar6);
+[[VarNames#var]]MA3 (MAvar6);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAf1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAf2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAf1);
+
+[[VarNames#var]]DE1 (DEvar6);
+[[VarNames#var]]DE2 (DEvar6);
+[[VarNames#var]]DE3 (DEvar6);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEf1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEf2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEf1);
+
+[[VarNames#var]]EN1 (ENvar6);
+[[VarNames#var]]EN2 (ENvar6);
+[[VarNames#var]]EN3 (ENvar6);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENf1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENf2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENf1);
+
+[[VarNames#var]]FR1 (FRvar6);
+[[VarNames#var]]FR2 (FRvar6);
+[[VarNames#var]]FR3 (FRvar6);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRf1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRf2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRf1);
+
+[[/m = 4]]
+
+!Residual variance structure
+
+[[m = 5]] !heterogeneous variances, unstructured residual variances
+
+[[VarNames#var]]MA1 (MAvar1f);
+[[VarNames#var]]MA2 (MAvar2f);
+[[VarNames#var]]MA3 (MAvar3f);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAf1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAf1);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAf1);
+
+[[VarNames#var]]DE1 (DEvar1f);
+[[VarNames#var]]DE2 (DEvar2f);
+[[VarNames#var]]DE3 (DEvar3f);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEf1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEf1);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEf1);
+
+[[VarNames#var]]EN1 (ENvar1f);
+[[VarNames#var]]EN2 (ENvar2f);
+[[VarNames#var]]EN3 (ENvar3f);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENf1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENf1);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENf1);
+
+[[VarNames#var]]FR1 (FRvar1f);
+[[VarNames#var]]FR2 (FRvar2f);
+[[VarNames#var]]FR3 (FRvar3f);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRf1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRf1);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRf1);
+
+[[/m = 5]]
+
+[[m = 6]] !heterogeneous variances, compound symmetry residual variances
+
+[[VarNames#var]]MA1 (MAvar1f);
+[[VarNames#var]]MA2 (MAvar2f);
+[[VarNames#var]]MA3 (MAvar3f);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAf1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAf2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAf3);
+
+[[VarNames#var]]DE1 (DEvar1f);
+[[VarNames#var]]DE2 (DEvar2f);
+[[VarNames#var]]DE3 (DEvar3f);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEf1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEf2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEf3);
+
+[[VarNames#var]]EN1 (ENvar1f);
+[[VarNames#var]]EN2 (ENvar2f);
+[[VarNames#var]]EN3 (ENvar3f);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENf1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENf2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENf3);
+
+[[VarNames#var]]FR1 (FRvar1f);
+[[VarNames#var]]FR2 (FRvar2f);
+[[VarNames#var]]FR3 (FRvar3f);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRf1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRf2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRf3);
+
+[[/m = 6]]
+
+[[m = 7]] !heterogeneous variances, autoregressive residual variances
+
+[[VarNames#var]]MA1 (MAvar1f);
+[[VarNames#var]]MA2 (MAvar2f);
+[[VarNames#var]]MA3 (MAvar3f);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAf1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAf2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAf1);
+
+[[VarNames#var]]DE1 (DEvar1f);
+[[VarNames#var]]DE2 (DEvar2f);
+[[VarNames#var]]DE3 (DEvar3f);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEf1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEf2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEf1);
+
+[[VarNames#var]]EN1 (ENvar1f);
+[[VarNames#var]]EN2 (ENvar2f);
+[[VarNames#var]]EN3 (ENvar3f);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENf1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENf2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENf1);
+
+[[VarNames#var]]FR1 (FRvar1f);
+[[VarNames#var]]FR2 (FRvar2f);
+[[VarNames#var]]FR3 (FRvar3f);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRf1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRf2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRf1);
+
+[[/m = 7]]
+
+[[m = 8]] !heterogeneous variances, toeplitz residual variances
+
+[[VarNames#var]]MA1 (MAvar1f);
+[[VarNames#var]]MA2 (MAvar2f);
+[[VarNames#var]]MA3 (MAvar3f);
+
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA2 (MAf1);
+[[VarNames#var]]MA2 WITH [[VarNames#var]]MA3 (MAf2);
+[[VarNames#var]]MA1 WITH [[VarNames#var]]MA3 (MAf1);
+
+[[VarNames#var]]DE1 (DEvar1f);
+[[VarNames#var]]DE2 (DEvar2f);
+[[VarNames#var]]DE3 (DEvar3f);
+
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE2 (DEf1);
+[[VarNames#var]]DE2 WITH [[VarNames#var]]DE3 (DEf2);
+[[VarNames#var]]DE1 WITH [[VarNames#var]]DE3 (DEf1);
+
+[[VarNames#var]]EN1 (ENvar1f);
+[[VarNames#var]]EN2 (ENvar2f);
+[[VarNames#var]]EN3 (ENvar3f);
+
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN2 (ENf1);
+[[VarNames#var]]EN2 WITH [[VarNames#var]]EN3 (ENf2);
+[[VarNames#var]]EN1 WITH [[VarNames#var]]EN3 (ENf1);
+
+[[VarNames#var]]FR1 (FRvar1f);
+[[VarNames#var]]FR2 (FRvar2f);
+[[VarNames#var]]FR3 (FRvar3f);
+
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR2 (FRf1);
+[[VarNames#var]]FR2 WITH [[VarNames#var]]FR3 (FRf2);
+[[VarNames#var]]FR1 WITH [[VarNames#var]]FR3 (FRf1);
+
+[[/m = 8]] 
+
+[[/p > 5]]
+
+
+
+[[m = 3]]
+
+Model Constraint:
+new(rho1MA); ! create autoregressive parameter for class 1;
+new(rho2MA); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3MA); [[/p > 2]]
+[[p > 3]] new(rho4MA); [[/p > 3]]
+[[p > 4]] new(rho5MA); [[/p > 4]]
+[[p > 5]] new(rho6MA); [[/p > 5]]
+
+MAa1= rho1MA; ! 1 lag apart equal rho;
+MAa2= rho1MA*rho1MA; ! 2 lags apart equals rho squared;
+MAb1= rho2MA; ! same as with MAa1,MAa2, and MAa3 but with rho2MA so that Class 2 
+MAb2= rho2MA*rho2MA;
+
+[[p > 2]]
+MAc1= rho3MA;
+MAc2= rho3MA*rho3MA;
+[[/p > 2]]
+[[p > 3]]
+MAd1= rho4MA;
+MAd2= rho4MA*rho4MA;
+[[/p > 3]]
+[[p > 4]]
+MAe1= rho5MA;
+MAe2= rho5MA*rho5MA;
+[[/p > 4]]
+[[p > 5]]
+MAf1= rho6MA;
+MAf2= rho6MA*rho6MA;
+[[/p > 5]]
+
+new(rho1DE); ! create autoregressive parameter for class 1;
+new(rho2DE); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3DE); [[/p > 2]]
+[[p > 3]] new(rho4DE); [[/p > 3]]
+[[p > 4]] new(rho5DE); [[/p > 4]]
+[[p > 5]] new(rho6DE); [[/p > 5]]
+
+DEa1= rho1DE; ! 1 lag apart equal rho;
+DEa2= rho1DE*rho1DE; ! 2 lags apart equals rho squared;
+DEb1= rho2DE; ! same scheme as with DEa1,DEa2, and DEa3 but with rho2DE so that Class 2 
+
+DEb2= rho2DE*rho2DE;
+
+[[p > 2]]
+DEc1= rho3DE;
+DEc2= rho3DE*rho3DE;
+[[/p > 2]]
+[[p > 3]]
+DEd1= rho4DE;
+DEd2= rho4DE*rho4DE;
+[[/p > 3]]
+[[p > 4]]
+DEe1= rho5DE;
+DEe2= rho5DE*rho5DE;
+[[/p > 4]]
+[[p > 5]]
+DEf1= rho6DE;
+DEf2= rho6DE*rho6DE;
+[[/p > 5]]
+
+new(rho1EN); ! create autoregressive parameter for class 1;
+new(rho2EN); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3EN); [[/p > 2]]
+[[p > 3]] new(rho4EN); [[/p > 3]]
+[[p > 4]] new(rho5EN); [[/p > 4]]
+[[p > 5]] new(rho6EN); [[/p > 5]]
+
+ENa1= rho1EN; ! 1 lag apart equal rho;
+ENa2= rho1EN*rho1EN; ! 2 lags apart equals rho squared;
+ENb1= rho2EN; ! same scheme as with ENa1,ENa2, and ENa3 but with rho2EN so that Class 2 
+
+ENb2= rho2EN*rho2EN;
+
+[[p > 2]]
+ENc1= rho3EN;
+ENc2= rho3EN*rho3EN;
+[[/p > 2]]
+[[p > 3]]
+ENd1= rho4EN;
+ENd2= rho4EN*rho4EN;
+[[/p > 3]]
+[[p > 4]]
+ENe1= rho5EN;
+ENe2= rho5EN*rho5EN;
+[[/p > 4]]
+[[p > 5]]
+ENf1= rho6EN;
+ENf2= rho6EN*rho6EN;
+[[/p > 5]]
+
+new(rho1FR); ! create autoregressive parameter for class 1;
+new(rho2FR); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3FR); [[/p > 2]]
+[[p > 3]] new(rho4FR); [[/p > 3]]
+[[p > 4]] new(rho5FR); [[/p > 4]]
+[[p > 5]] new(rho6FR); [[/p > 5]]
+
+FRa1= rho1FR; ! 1 lag apart equal rho;
+FRa2= rho1FR*rho1FR; ! 2 lags apart equals rho squared;
+FRb1= rho2FR; ! same scheme as with FRa1,FRa2, and FRa3 but with rho2FR so that Class 2 
+
+FRb2= rho2FR*rho2FR;
+
+[[p > 2]]
+FRc1= rho3FR;
+FRc2= rho3FR*rho3FR;
+[[/p > 2]]
+[[p > 3]]
+FRd1= rho4FR;
+FRd2= rho4FR*rho4FR;
+[[/p > 3]]
+[[p > 4]]
+FRe1= rho5FR;
+FRe2= rho5FR*rho5FR;
+[[/p > 4]]
+[[p > 5]]
+FRf1= rho6FR;
+FRf2= rho6FR*rho6FR;
+[[/p > 5]]
+
+[[/m = 3]]
+
+[[m = 6]]
+
+Model Constraint:
+new(rho1MA); ! create autoregressive parameter for class 1;
+new(rho2MA); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3MA); [[/p > 2]]
+[[p > 3]] new(rho4MA); [[/p > 3]]
+[[p > 4]] new(rho5MA); [[/p > 4]]
+[[p > 5]] new(rho6MA); [[/p > 5]]
+
+MAa1= rho1MA*sqrt(MAvar1a)*sqrt(MAvar2a);
+MAa2= rho1MA*sqrt(MAvar1a)*sqrt(MAvar3a);
+MAa3= rho1MA*sqrt(MAvar2a)*sqrt(MAvar3a);
+
+MAb1= rho2MA*sqrt(MAvar1b)*sqrt(MAvar2b);
+MAb2= rho2MA*sqrt(MAvar1b)*sqrt(MAvar3b);
+MAb3= rho2MA*sqrt(MAvar2b)*sqrt(MAvar3b);
+
+[[p > 2]]
+MAc1= rho3MA*sqrt(MAvar1c)*sqrt(MAvar2c);
+MAc2= rho3MA*sqrt(MAvar1c)*sqrt(MAvar3c);
+MAc3= rho3MA*sqrt(MAvar2c)*sqrt(MAvar3c);
+[[/p > 2]]
+
+[[p > 3]]
+MAd1= rho4MA*sqrt(MAvar1d)*sqrt(MAvar2d);
+MAd2= rho4MA*sqrt(MAvar1d)*sqrt(MAvar3d);
+MAd3= rho4MA*sqrt(MAvar2d)*sqrt(MAvar3d);
+[[/p > 3]]
+
+[[p > 4]]
+MAe1= rho5MA*sqrt(MAvar1e)*sqrt(MAvar2e);
+MAe2= rho5MA*sqrt(MAvar1e)*sqrt(MAvar3e);
+MAe3= rho5MA*sqrt(MAvar2e)*sqrt(MAvar3e);
+[[/p > 4]]
+
+[[p > 5]]
+MAf1= rho6MA*sqrt(MAvar1f)*sqrt(MAvar2f);
+MAf2= rho6MA*sqrt(MAvar1f)*sqrt(MAvar3f);
+MAf3= rho6MA*sqrt(MAvar2f)*sqrt(MAvar3f);
+[[/p > 5]]
+
+new(rho1DE); ! create autoregressive parameter for class 1;
+new(rho2DE); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3DE); [[/p > 2]]
+[[p > 3]] new(rho4DE); [[/p > 3]]
+[[p > 4]] new(rho5DE); [[/p > 4]]
+[[p > 5]] new(rho6DE); [[/p > 5]]
+
+DEa1= rho1DE*sqrt(DEvar1a)*sqrt(DEvar2a);
+DEa2= rho1DE*sqrt(DEvar1a)*sqrt(DEvar3a);
+DEa3= rho1DE*sqrt(DEvar2a)*sqrt(DEvar3a);
+
+DEb1= rho2DE*sqrt(DEvar1b)*sqrt(DEvar2b);
+DEb2= rho2DE*sqrt(DEvar1b)*sqrt(DEvar3b);
+DEb3= rho2DE*sqrt(DEvar2b)*sqrt(DEvar3b);
+
+[[p > 2]]
+DEc1= rho3DE*sqrt(DEvar1c)*sqrt(DEvar2c);
+DEc2= rho3DE*sqrt(DEvar1c)*sqrt(DEvar3c);
+DEc3= rho3DE*sqrt(DEvar2c)*sqrt(DEvar3c);
+[[/p > 2]]
+
+[[p > 3]]
+DEd1= rho4DE*sqrt(DEvar1d)*sqrt(DEvar2d);
+DEd2= rho4DE*sqrt(DEvar1d)*sqrt(DEvar3d);
+DEd3= rho4DE*sqrt(DEvar2d)*sqrt(DEvar3d);
+[[/p > 3]]
+
+[[p > 4]]
+DEe1= rho5DE*sqrt(DEvar1e)*sqrt(DEvar2e);
+DEe2= rho5DE*sqrt(DEvar1e)*sqrt(DEvar3e);
+DEe3= rho5DE*sqrt(DEvar2e)*sqrt(DEvar3e);
+[[/p > 4]]
+
+[[p > 5]]
+DEf1= rho6DE*sqrt(DEvar1f)*sqrt(DEvar2f);
+DEf2= rho6DE*sqrt(DEvar1f)*sqrt(DEvar3f);
+DEf3= rho6DE*sqrt(DEvar2f)*sqrt(DEvar3f);
+[[/p > 5]]
+
+new(rho1EN); ! create autoregressive parameter for class 1;
+new(rho2EN); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3EN); [[/p > 2]]
+[[p > 3]] new(rho4EN); [[/p > 3]]
+[[p > 4]] new(rho5EN); [[/p > 4]]
+[[p > 5]] new(rho6EN); [[/p > 5]]
+
+ENa1= rho1EN*sqrt(ENvar1a)*sqrt(ENvar2a);
+ENa2= rho1EN*sqrt(ENvar1a)*sqrt(ENvar3a);
+ENa3= rho1EN*sqrt(ENvar2a)*sqrt(ENvar3a);
+
+ENb1= rho2EN*sqrt(ENvar1b)*sqrt(ENvar2b);
+ENb2= rho2EN*sqrt(ENvar1b)*sqrt(ENvar3b);
+ENb3= rho2EN*sqrt(ENvar2b)*sqrt(ENvar3b);
+
+[[p > 2]]
+ENc1= rho3EN*sqrt(ENvar1c)*sqrt(ENvar2c);
+ENc2= rho3EN*sqrt(ENvar1c)*sqrt(ENvar3c);
+ENc3= rho3EN*sqrt(ENvar2c)*sqrt(ENvar3c);
+[[/p > 2]]
+
+[[p > 3]]
+ENd1= rho4EN*sqrt(ENvar1d)*sqrt(ENvar2d);
+ENd2= rho4EN*sqrt(ENvar1d)*sqrt(ENvar3d);
+ENd3= rho4EN*sqrt(ENvar2d)*sqrt(ENvar3d);
+[[/p > 3]]
+
+[[p > 4]]
+ENe1= rho5EN*sqrt(ENvar1e)*sqrt(ENvar2e);
+ENe2= rho5EN*sqrt(ENvar1e)*sqrt(ENvar3e);
+ENe3= rho5EN*sqrt(ENvar2e)*sqrt(ENvar3e);
+[[/p > 4]]
+
+[[p > 5]]
+ENf1= rho6EN*sqrt(ENvar1f)*sqrt(ENvar2f);
+ENf2= rho6EN*sqrt(ENvar1f)*sqrt(ENvar3f);
+ENf3= rho6EN*sqrt(ENvar2f)*sqrt(ENvar3f);
+[[/p > 5]]
+
+new(rho1FR); ! create autoregressive parameter for class 1;
+new(rho2FR); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3FR); [[/p > 2]]
+[[p > 3]] new(rho4FR); [[/p > 3]]
+[[p > 4]] new(rho5FR); [[/p > 4]]
+[[p > 5]] new(rho6FR); [[/p > 5]]
+
+FRa1= rho1FR*sqrt(FRvar1a)*sqrt(FRvar2a);
+FRa2= rho1FR*sqrt(FRvar1a)*sqrt(FRvar3a);
+FRa3= rho1FR*sqrt(FRvar2a)*sqrt(FRvar3a);
+
+FRb1= rho2FR*sqrt(FRvar1b)*sqrt(FRvar2b);
+FRb2= rho2FR*sqrt(FRvar1b)*sqrt(FRvar3b);
+FRb3= rho2FR*sqrt(FRvar2b)*sqrt(FRvar3b);
+
+[[p > 2]]
+FRc1= rho3FR*sqrt(FRvar1c)*sqrt(FRvar2c);
+FRc2= rho3FR*sqrt(FRvar1c)*sqrt(FRvar3c);
+FRc3= rho3FR*sqrt(FRvar2c)*sqrt(FRvar3c);
+[[/p > 2]]
+
+[[p > 3]]
+FRd1= rho4FR*sqrt(FRvar1d)*sqrt(FRvar2d);
+FRd2= rho4FR*sqrt(FRvar1d)*sqrt(FRvar3d);
+FRd3= rho4FR*sqrt(FRvar2d)*sqrt(FRvar3d);
+[[/p > 3]]
+
+[[p > 4]]
+FRe1= rho5FR*sqrt(FRvar1e)*sqrt(FRvar2e);
+FRe2= rho5FR*sqrt(FRvar1e)*sqrt(FRvar3e);
+FRe3= rho5FR*sqrt(FRvar2e)*sqrt(FRvar3e);
+[[/p > 4]]
+
+[[p > 5]]
+FRf1= rho6FR*sqrt(FRvar1f)*sqrt(FRvar2f);
+FRf2= rho6FR*sqrt(FRvar1f)*sqrt(FRvar3f);
+FRf3= rho6FR*sqrt(FRvar2f)*sqrt(FRvar3f);
+[[/p > 5]]
+
+[[/m = 6]]
+
+[[m = 7]]
+
+Model Constraint:
+new(rho1MA); ! create autoregressive parameter for class 1;
+new(rho2MA); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3MA); [[/p > 2]]
+[[p > 3]] new(rho4MA); [[/p > 3]]
+[[p > 4]] new(rho5MA); [[/p > 4]]
+[[p > 5]] new(rho6MA); [[/p > 5]]
+MAa1= rho1MA; ! 1 lag apart equal rho;
+MAa2= rho1MA*rho1MA; ! 2 lags apart equals rho squared;
+MAb1= rho2MA; ! same scheme as with MAa1,MAa2, and MAa3 but with rho2MA so that Class 2 
+
+MAb2= rho2MA*rho2MA;
+
+[[p > 2]]
+MAc1= rho3MA;
+MAc2= rho3MA*rho3MA;
+[[/p > 2]]
+[[p > 3]]
+MAd1= rho4MA;
+MAd2= rho4MA*rho4MA;
+[[/p > 3]]
+[[p > 4]]
+MAe1= rho5MA;
+MAe2= rho5MA*rho5MA;
+[[/p > 4]]
+[[p > 5]]
+MAf1= rho6MA;
+MAf2= rho6MA*rho6MA;
+[[/p > 5]]
+
+new(rho1DE); ! create autoregressive parameter for class 1;
+new(rho2DE); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3DE); [[/p > 2]]
+[[p > 3]] new(rho4DE); [[/p > 3]]
+[[p > 4]] new(rho5DE); [[/p > 4]]
+[[p > 5]] new(rho6DE); [[/p > 5]]
+DEa1= rho1DE; ! 1 lag apart equal rho;
+DEa2= rho1DE*rho1DE; ! 2 lags apart equals rho squared;
+DEb1= rho2DE; ! same scheme as with DEa1,DEa2, and DEa3 but with rho2DE so that Class 2 
+
+DEb2= rho2DE*rho2DE;
+
+[[p > 2]]
+DEc1= rho3DE;
+DEc2= rho3DE*rho3DE;
+[[/p > 2]]
+[[p > 3]]
+DEd1= rho4DE;
+DEd2= rho4DE*rho4DE;
+[[/p > 3]]
+[[p > 4]]
+DEe1= rho5DE;
+DEe2= rho5DE*rho5DE;
+[[/p > 4]]
+[[p > 5]]
+DEf1= rho6DE;
+DEf2= rho6DE*rho6DE;
+[[/p > 5]]
+
+new(rho1EN); ! create autoregressive parameter for class 1;
+new(rho2EN); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3EN); [[/p > 2]]
+[[p > 3]] new(rho4EN); [[/p > 3]]
+[[p > 4]] new(rho5EN); [[/p > 4]]
+[[p > 5]] new(rho6EN); [[/p > 5]]
+ENa1= rho1EN; ! 1 lag apart equal rho;
+ENa2= rho1EN*rho1EN; ! 2 lags apart equals rho squared;
+ENb1= rho2EN; ! same scheme as with ENa1,ENa2, and ENa3 but with rho2EN so that Class 2 
+
+ENb2= rho2EN*rho2EN;
+
+[[p > 2]]
+ENc1= rho3EN;
+ENc2= rho3EN*rho3EN;
+[[/p > 2]]
+[[p > 3]]
+ENd1= rho4EN;
+ENd2= rho4EN*rho4EN;
+[[/p > 3]]
+[[p > 4]]
+ENe1= rho5EN;
+ENe2= rho5EN*rho5EN;
+[[/p > 4]]
+[[p > 5]]
+ENf1= rho6EN;
+ENf2= rho6EN*rho6EN;
+[[/p > 5]]
+
+new(rho1FR); ! create autoregressive parameter for class 1;
+new(rho2FR); ! create autoregressive parameter for class 2;
+[[p > 2]] new(rho3FR); [[/p > 2]]
+[[p > 3]] new(rho4FR); [[/p > 3]]
+[[p > 4]] new(rho5FR); [[/p > 4]]
+[[p > 5]] new(rho6FR); [[/p > 5]]
+FRa1= rho1FR; ! 1 lag apart equal rho;
+FRa2= rho1FR*rho1FR; ! 2 lags apart equals rho squared;
+FRb1= rho2FR; ! same scheme as with FRa1,FRa2, and FRa3 but with rho2FR so that Class 2 
+
+FRb2= rho2FR*rho2FR;
+
+[[p > 2]]
+FRc1= rho3FR;
+FRc2= rho3FR*rho3FR;
+[[/p > 2]]
+[[p > 3]]
+FRd1= rho4FR;
+FRd2= rho4FR*rho4FR;
+[[/p > 3]]
+[[p > 4]]
+FRe1= rho5FR;
+FRe2= rho5FR*rho5FR;
+[[/p > 4]]
+[[p > 5]]
+FRf1= rho6FR;
+FRf2= rho6FR*rho6FR;
+[[/p > 5]]
+
+[[/m = 7]]
+
+OUTPUT:
+sampstat residual tech1 tech4 tech15;
+
+
+
+
