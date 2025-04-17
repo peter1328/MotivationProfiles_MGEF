@@ -1,0 +1,1407 @@
+Mplus VERSION 8.4
+MUTHEN & MUTHEN
+07/21/2020   2:34 PM
+
+INPUT INSTRUCTIONS
+
+  DATA: file = transiprobs_mplus.dat;
+  VARIABLE:
+  NAMES ARE
+  Class male spgroupe sp_Langu sp_STEM sp_Other
+  NSF_M1 NSF_M2 NSF_M3 NSF_D1 NSF_D2 NSF_D3
+  NSF_E1 NSF_E2 NSF_E3 NSF_F1 NSF_F2 NSF_F3
+  Consc3_z Neurot3_ Offen3_z Extrav3_ Toler3_z
+  c_t1_ext c_t1_int
+  extrmodl extrhila extrhimo intrhimo intrhimm
+  extrlose maleexlo femaexlo intrlose maleinlo femainlo
+  ;
+
+  MISSING = all(9999);
+
+  USEVARIABLES ARE
+  NSF_M1 NSF_M2 NSF_M3
+  NSF_F1 NSF_F2 NSF_F3
+  extrlose
+  intrlose
+  sp_STEM
+  male
+  Consc3_z
+  ;
+
+  CATEGORICAL ARE
+  extrlose
+  intrlose
+  ;
+
+  useobservations = extrlose == 0 OR extrlose == 1 OR intrlose == 0 OR intrlose == 1;
+
+  CLUSTER = Class;
+
+  ANALYSIS:
+  TYPE IS COMPLEX;
+
+  MODEL:
+
+  extrlose WITH intrlose;
+
+    NSF_RIM BY NSF_M1@1
+    NSF_M2@1
+    NSF_M3@1
+    ;
+
+    NSF_M1wi BY NSF_M1;
+    NSF_M2wi BY NSF_M2;
+    NSF_M3wi BY NSF_M3;
+
+    NSF_M2wi ON NSF_M1wi@1;
+    NSF_M3wi ON NSF_M2wi@1;
+
+    NSF_RIM WITH NSF_m1wi@0
+    NSF_F1wi@0
+    ;
+
+    NSF_m12c BY nsf_m2wi@1;
+    NSF_m2wi@0;
+    [NSF_m12c@0];
+    NSF_m12c;
+    NSF_m12c ON NSF_m1wi;
+
+    NSF_m23c BY nsf_m3wi@1;
+    NSF_m3wi@0;
+    [NSF_m23c@0];
+    NSF_m23c;
+    NSF_m23c ON NSF_m2wi;
+
+    NSF_M1@0;
+    NSF_M2@0;
+    NSF_M3@0;
+
+  !French
+
+  NSF_RIF BY NSF_F1@1
+  NSF_F2@1
+  NSF_F3@1
+  ;
+
+  NSF_F1wi BY NSF_F1;
+  NSF_F2wi BY NSF_F2;
+  NSF_F3wi BY NSF_F3;
+
+  NSF_F2wi ON NSF_F1wi@1;
+  NSF_F3wi ON NSF_F2wi@1;
+
+  NSF_RIF WITH NSF_M1wi@0
+  NSF_F1wi@0
+  ;
+
+  NSF_f12c BY nsf_f2wi@1;
+  NSF_f2wi@0;
+  [NSF_f12c@0];
+  NSF_f12c;
+  NSF_f12c ON NSF_f1wi;
+
+  NSF_f23c BY nsf_f3wi@1;
+  NSF_f3wi@0;
+  [NSF_f23c@0];
+  NSF_f23c;
+  NSF_f23c ON NSF_f2wi;
+
+  NSF_F1@0;
+  NSF_F2@0;
+  NSF_F3@0;
+
+  [NSF_RIM@0 NSF_RIF@0];
+
+  [NSF_M1wi@0 NSF_M2wi@0 NSF_M3wi@0];
+  [NSF_F1wi@0 NSF_F2wi@0 NSF_F3wi@0];
+
+  NSF_m12c WITH NSF_f12c;
+  NSF_m23c WITH NSF_f23c;
+
+  extrlose WITH intrlose;
+
+  extrlose ON
+  !NSF_RIM NSF_RID
+  !NSF_M1wi! (em)
+  !NSF_M12c! (em)
+  NSF_M23c! (em)
+  !NSF_f1wi! (ef)
+  NSF_f12c! (ef)
+  NSF_f23c! (ef)
+  !Consc3_z Neurot3_ Offen3_z Extrav3_ Toler3_z
+  male sp_STEM Consc3_z
+  ;
+
+  intrlose ON
+  !NSF_RIM NSF_RID
+  NSF_M1wi! (im)
+  !NSF_M12c! (im)
+  !NSF_M23c! (im)
+  NSF_f1wi! (if)
+  NSF_f12c! (if)
+  NSF_f23c! (if)
+  male
+  ;
+
+  !NSF_RIM@0
+  !NSF_RID@0
+  !NSF_RIE@0
+  !NSF_RIF@0
+  !;
+
+
+  sp_STEM WITH NSF_RIM NSF_RIF;
+
+  sp_STEM WITH NSF_M1wi@0
+  NSF_F1wi@0
+  ;
+
+  male WITH sp_STEM NSF_RIM
+  NSF_RIF;
+
+  male WITH NSF_M1wi@0
+  NSF_F1wi@0;
+
+  Consc3_z WITH male sp_STEM NSF_RIM NSF_RIF;
+
+  Consc3_z WITH NSF_M1wi@0
+  NSF_F1wi@0;
+
+
+  OUTPUT:
+  stdyx tech4 modindices;
+
+
+
+*** WARNING in VARIABLE command
+  When a subpopulation is analyzed with TYPE=COMPLEX, standard errors
+  may be incorrect.  Use the SUBPOPULATION option instead of the
+  USEOBSERVATIONS option to obtain correct standard errors.
+   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         617
+
+Number of dependent variables                                    8
+Number of independent variables                                  3
+Number of continuous latent variables                           12
+
+Observed dependent variables
+
+  Continuous
+   NSF_M1      NSF_M2      NSF_M3      NSF_F1      NSF_F2      NSF_F3
+
+  Binary and ordered categorical (ordinal)
+   EXTRLOSE    INTRLOSE
+
+Observed independent variables
+   SP_STEM     MALE        CONSC3_Z
+
+Continuous latent variables
+   NSF_RIM     NSF_M1WI    NSF_M2WI    NSF_M3WI    NSF_M12C    NSF_M23C
+   NSF_RIF     NSF_F1WI    NSF_F2WI    NSF_F3WI    NSF_F12C    NSF_F23C
+
+Variables with special functions
+
+  Cluster variable      CLASS
+
+Estimator                                                    WLSMV
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Parameterization                                             DELTA
+Link                                                        PROBIT
+
+Input data file(s)
+  transiprobs_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            54
+     Number of clusters                         37
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              NSF_M1        NSF_M2        NSF_M3        NSF_F1        NSF_F2
+              ________      ________      ________      ________      ________
+ NSF_M1         0.904
+ NSF_M2         0.729         0.784
+ NSF_M3         0.708         0.676         0.796
+ NSF_F1         0.900         0.728         0.707         0.900
+ NSF_F2         0.726         0.780         0.676         0.724         0.780
+ NSF_F3         0.697         0.669         0.784         0.695         0.669
+ EXTRLOSE       0.731         0.637         0.637         0.729         0.635
+ INTRLOSE       0.592         0.517         0.520         0.588         0.512
+ SP_STEM        0.859         0.773         0.780         0.856         0.768
+ MALE           0.904         0.784         0.796         0.900         0.780
+ CONSC3_Z       0.671         0.639         0.716         0.669         0.637
+
+
+           Covariance Coverage
+              NSF_F3        EXTRLOSE      INTRLOSE      SP_STEM       MALE
+              ________      ________      ________      ________      ________
+ NSF_F3         0.784
+ EXTRLOSE       0.632         0.806
+ INTRLOSE       0.512         0.462         0.656
+ SP_STEM        0.770         0.775         0.611         0.948
+ MALE           0.784         0.806         0.656         0.948         1.000
+ CONSC3_Z       0.707         0.601         0.485         0.741         0.749
+
+
+           Covariance Coverage
+              CONSC3_Z
+              ________
+ CONSC3_Z       0.749
+
+
+UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+
+    EXTRLOSE
+      Category 1    0.684          340.000
+      Category 2    0.316          157.000
+    INTRLOSE
+      Category 1    0.867          351.000
+      Category 2    0.133           54.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     NSF_M1                3.201      -0.502       1.000    0.36%       2.611      3.111      3.278
+             558.000       0.532       0.010       5.000    0.36%       3.500      3.833
+     NSF_M2                3.294      -0.258       1.000    0.21%       2.556      3.111      3.333
+             484.000       0.617      -0.607       4.944    0.21%       3.556      4.000
+     NSF_M3                3.369      -0.486       1.222    0.20%       2.722      3.278      3.500
+             491.000       0.576      -0.313       4.889    0.41%       3.667      4.056
+     NSF_F1                3.407      -0.466       1.222    0.18%       2.889      3.333      3.444
+             555.000       0.350       0.343       5.000    0.18%       3.611      3.889
+     NSF_F2                3.347      -0.651       1.000    0.21%       2.889      3.278      3.389
+             481.000       0.436       0.711       4.833    0.42%       3.556      3.889
+     NSF_F3                3.331      -0.689       1.000    0.62%       2.778      3.278      3.444
+             484.000       0.512       0.344       4.833    0.83%       3.611      3.889
+     SP_STEM               0.386       0.467       0.000   61.37%       0.000      0.000      0.000
+             585.000       0.237      -1.782       1.000   38.63%       0.000      1.000
+     MALE                  0.478       0.088       0.000   52.19%       0.000      0.000      0.000
+             617.000       0.250      -1.992       1.000   47.81%       1.000      1.000
+     CONSC3_Z              0.077      -0.382      -2.744    0.43%      -0.880     -0.082      0.185
+             462.000       0.990      -0.255       1.782    5.63%       0.451      0.983
+
+     WARNING:  VARIABLE SP_STEM MAY BE DICHOTOMOUS BUT DECLARED AS CONTINUOUS.
+
+     WARNING:  VARIABLE MALE MAY BE DICHOTOMOUS BUT DECLARED AS CONTINUOUS.
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     WARNING:  THE LATENT VARIABLE COVARIANCE MATRIX (PSI) IS NOT POSITIVE
+     DEFINITE.  THIS COULD INDICATE A NEGATIVE VARIANCE/RESIDUAL VARIANCE FOR A
+     LATENT VARIABLE, A CORRELATION GREATER OR EQUAL TO ONE BETWEEN TWO LATENT
+     VARIABLES, OR A LINEAR DEPENDENCY AMONG MORE THAN TWO LATENT VARIABLES.
+     CHECK THE TECH4 OUTPUT FOR MORE INFORMATION.
+     PROBLEM INVOLVING VARIABLE NSF_RIF.
+
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       53
+
+Chi-Square Test of Model Fit
+
+          Value                             30.781*
+          Degrees of Freedom                    22
+          P-Value                           0.1007
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.025
+          90 Percent C.I.                    0.000  0.045
+          Probability RMSEA <= .05           0.983
+
+CFI/TLI
+
+          CFI                                0.968
+          TLI                                0.919
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            325.909
+          Degrees of Freedom                    55
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.033
+
+Optimum Function Value for Weighted Least-Squares Estimator
+
+          Value                     0.14499296D-01
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ NSF_RIM  BY
+    NSF_M1             1.000      0.000    999.000    999.000
+    NSF_M2             1.000      0.000    999.000    999.000
+    NSF_M3             1.000      0.000    999.000    999.000
+
+ NSF_M1WI BY
+    NSF_M1             1.000      0.000    999.000    999.000
+
+ NSF_M2WI BY
+    NSF_M2             1.000      0.000    999.000    999.000
+
+ NSF_M3WI BY
+    NSF_M3             1.000      0.000    999.000    999.000
+
+ NSF_RIF  BY
+    NSF_F1             1.000      0.000    999.000    999.000
+    NSF_F2             1.000      0.000    999.000    999.000
+    NSF_F3             1.000      0.000    999.000    999.000
+
+ NSF_F1WI BY
+    NSF_F1             1.000      0.000    999.000    999.000
+
+ NSF_F2WI BY
+    NSF_F2             1.000      0.000    999.000    999.000
+
+ NSF_F3WI BY
+    NSF_F3             1.000      0.000    999.000    999.000
+
+ NSF_M12C BY
+    NSF_M2WI           1.000      0.000    999.000    999.000
+
+ NSF_M23C BY
+    NSF_M3WI           1.000      0.000    999.000    999.000
+
+ NSF_F12C BY
+    NSF_F2WI           1.000      0.000    999.000    999.000
+
+ NSF_F23C BY
+    NSF_F3WI           1.000      0.000    999.000    999.000
+
+ NSF_M2WI ON
+    NSF_M1WI           1.000      0.000    999.000    999.000
+
+ NSF_M3WI ON
+    NSF_M2WI           1.000      0.000    999.000    999.000
+
+ NSF_M12C ON
+    NSF_M1WI          -0.895      0.296     -3.025      0.002
+
+ NSF_M23C ON
+    NSF_M2WI          -0.531      0.104     -5.113      0.000
+
+ NSF_F2WI ON
+    NSF_F1WI           1.000      0.000    999.000    999.000
+
+ NSF_F3WI ON
+    NSF_F2WI           1.000      0.000    999.000    999.000
+
+ NSF_F12C ON
+    NSF_F1WI          -0.368      0.150     -2.454      0.014
+
+ NSF_F23C ON
+    NSF_F2WI          -0.289      0.119     -2.427      0.015
+
+ EXTRLOSE ON
+    NSF_M23C          -0.412      0.146     -2.827      0.005
+    NSF_F12C          -0.332      0.098     -3.391      0.001
+    NSF_F23C          -0.228      0.104     -2.190      0.029
+
+ INTRLOSE ON
+    NSF_M1WI          -0.635      0.368     -1.726      0.084
+    NSF_F1WI          -0.371      0.252     -1.470      0.142
+    NSF_F12C          -0.541      0.152     -3.552      0.000
+    NSF_F23C          -0.478      0.152     -3.141      0.002
+
+ EXTRLOSE ON
+    MALE               0.416      0.115      3.626      0.000
+    SP_STEM            0.284      0.109      2.613      0.009
+    CONSC3_Z          -0.129      0.063     -2.052      0.040
+
+ INTRLOSE ON
+    MALE               0.779      0.150      5.202      0.000
+
+ NSF_RIM  WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+    SP_STEM            0.018      0.024      0.774      0.439
+    MALE               0.002      0.018      0.128      0.898
+    CONSC3_Z           0.094      0.029      3.265      0.001
+
+ NSF_RIF  WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+    SP_STEM           -0.033      0.013     -2.631      0.009
+    MALE              -0.030      0.013     -2.359      0.018
+    CONSC3_Z           0.096      0.022      4.325      0.000
+    NSF_RIM            0.033      0.031      1.069      0.285
+
+ NSF_M12C WITH
+    NSF_F12C           0.064      0.023      2.773      0.006
+
+ NSF_M23C WITH
+    NSF_F23C           0.058      0.031      1.882      0.060
+
+ SP_STEM  WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+
+ MALE     WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+
+ CONSC3_Z WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+
+ NSF_F1WI WITH
+    NSF_M1WI           0.049      0.023      2.165      0.030
+
+ EXTRLOSE WITH
+    NSF_M12C          -0.076      0.053     -1.426      0.154
+
+ INTRLOSE WITH
+    NSF_M12C          -0.081      0.101     -0.806      0.420
+
+ EXTRLOSE WITH
+    INTRLOSE           0.252      0.111      2.279      0.023
+
+ MALE     WITH
+    SP_STEM            0.039      0.012      3.158      0.002
+    CONSC3_Z          -0.137      0.021     -6.406      0.000
+
+ CONSC3_Z WITH
+    SP_STEM           -0.007      0.023     -0.288      0.774
+
+ Means
+    SP_STEM            0.386      0.050      7.710      0.000
+    MALE               0.478      0.028     16.838      0.000
+    CONSC3_Z           0.077      0.043      1.816      0.069
+    NSF_RIM            0.000      0.000    999.000    999.000
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_RIF            0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+
+ Intercepts
+    NSF_M1             3.201      0.081     39.649      0.000
+    NSF_M2             3.294      0.090     36.428      0.000
+    NSF_M3             3.369      0.085     39.630      0.000
+    NSF_F1             3.407      0.050     67.618      0.000
+    NSF_F2             3.347      0.059     56.936      0.000
+    NSF_F3             3.331      0.077     43.073      0.000
+    NSF_M2WI           0.000      0.000    999.000    999.000
+    NSF_M3WI           0.000      0.000    999.000    999.000
+    NSF_M12C           0.000      0.000    999.000    999.000
+    NSF_M23C           0.000      0.000    999.000    999.000
+    NSF_F2WI           0.000      0.000    999.000    999.000
+    NSF_F3WI           0.000      0.000    999.000    999.000
+    NSF_F12C           0.000      0.000    999.000    999.000
+    NSF_F23C           0.000      0.000    999.000    999.000
+
+ Thresholds
+    EXTRLOSE$1         0.778      0.097      8.041      0.000
+    INTRLOSE$1         1.483      0.117     12.643      0.000
+
+ Variances
+    SP_STEM            0.237      0.012     19.772      0.000
+    MALE               0.250      0.001    200.953      0.000
+    CONSC3_Z           0.990      0.068     14.620      0.000
+    NSF_RIM            0.276      0.090      3.061      0.002
+    NSF_M1WI           0.258      0.068      3.772      0.000
+    NSF_RIF           -0.081      0.177     -0.458      0.647
+    NSF_F1WI           0.431      0.179      2.402      0.016
+
+ Residual Variances
+    NSF_M1             0.000      0.000    999.000    999.000
+    NSF_M2             0.000      0.000    999.000    999.000
+    NSF_M3             0.000      0.000    999.000    999.000
+    NSF_F1             0.000      0.000    999.000    999.000
+    NSF_F2             0.000      0.000    999.000    999.000
+    NSF_F3             0.000      0.000    999.000    999.000
+    NSF_M2WI           0.000      0.000    999.000    999.000
+    NSF_M3WI           0.000      0.000    999.000    999.000
+    NSF_M12C           0.327      0.087      3.769      0.000
+    NSF_M23C           0.229      0.035      6.478      0.000
+    NSF_F2WI           0.000      0.000    999.000    999.000
+    NSF_F3WI           0.000      0.000    999.000    999.000
+    NSF_F12C           0.334      0.034      9.818      0.000
+    NSF_F23C           0.332      0.055      6.066      0.000
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ NSF_RIM  BY
+    NSF_M1             0.719      0.097      7.450      0.000
+    NSF_M2             0.675      0.107      6.330      0.000
+    NSF_M3             0.691      0.097      7.139      0.000
+
+ NSF_M1WI BY
+    NSF_M1             0.695      0.100      6.964      0.000
+
+ NSF_M2WI BY
+    NSF_M2             0.738      0.098      7.566      0.000
+
+ NSF_M3WI BY
+    NSF_M3             0.723      0.093      7.804      0.000
+
+ NSF_RIF  BY
+    NSF_F1           999.000    999.000    999.000    999.000
+    NSF_F2           999.000    999.000    999.000    999.000
+    NSF_F3           999.000    999.000    999.000    999.000
+
+ NSF_F1WI BY
+    NSF_F1             1.110      0.227      4.881      0.000
+
+ NSF_F2WI BY
+    NSF_F2             1.091      0.191      5.719      0.000
+
+ NSF_F3WI BY
+    NSF_F3             1.077      0.159      6.753      0.000
+
+ NSF_M12C BY
+    NSF_M2WI           1.272      0.196      6.494      0.000
+
+ NSF_M23C BY
+    NSF_M3WI           1.034      0.110      9.439      0.000
+
+ NSF_F12C BY
+    NSF_F2WI           0.881      0.152      5.794      0.000
+
+ NSF_F23C BY
+    NSF_F3WI           0.798      0.132      6.056      0.000
+
+ NSF_M2WI ON
+    NSF_M1WI           0.884      0.113      7.819      0.000
+
+ NSF_M3WI ON
+    NSF_M2WI           1.046      0.082     12.697      0.000
+
+ NSF_M12C ON
+    NSF_M1WI          -0.622      0.129     -4.806      0.000
+
+ NSF_M23C ON
+    NSF_M2WI          -0.538      0.059     -9.107      0.000
+
+ NSF_F2WI ON
+    NSF_F1WI           0.923      0.048     19.082      0.000
+
+ NSF_F3WI ON
+    NSF_F2WI           0.927      0.043     21.366      0.000
+
+ NSF_F12C ON
+    NSF_F1WI          -0.386      0.084     -4.584      0.000
+
+ NSF_F23C ON
+    NSF_F2WI          -0.336      0.086     -3.907      0.000
+
+ EXTRLOSE ON
+    NSF_M23C          -0.234      0.086     -2.713      0.007
+    NSF_F12C          -0.208      0.062     -3.378      0.001
+    NSF_F23C          -0.140      0.064     -2.181      0.029
+
+ INTRLOSE ON
+    NSF_M1WI          -0.322      0.158     -2.039      0.041
+    NSF_F1WI          -0.243      0.123     -1.984      0.047
+    NSF_F12C          -0.339      0.094     -3.623      0.000
+    NSF_F23C          -0.292      0.099     -2.949      0.003
+
+ EXTRLOSE ON
+    MALE               0.208      0.057      3.630      0.000
+    SP_STEM            0.138      0.052      2.646      0.008
+    CONSC3_Z          -0.129      0.062     -2.060      0.039
+
+ INTRLOSE ON
+    MALE               0.389      0.075      5.211      0.000
+
+ NSF_RIM  WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+    SP_STEM            0.072      0.099      0.729      0.466
+    MALE               0.009      0.068      0.127      0.899
+    CONSC3_Z           0.181      0.048      3.803      0.000
+
+ NSF_RIF  WITH
+    NSF_M1WI         999.000    999.000    999.000    999.000
+    NSF_F1WI         999.000    999.000    999.000    999.000
+    SP_STEM          999.000    999.000    999.000    999.000
+    MALE             999.000    999.000    999.000    999.000
+    CONSC3_Z         999.000    999.000    999.000    999.000
+    NSF_RIM          999.000    999.000    999.000    999.000
+
+ NSF_M12C WITH
+    NSF_F12C           0.193      0.073      2.655      0.008
+
+ NSF_M23C WITH
+    NSF_F23C           0.209      0.118      1.763      0.078
+
+ SP_STEM  WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+
+ MALE     WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+
+ CONSC3_Z WITH
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+
+ NSF_F1WI WITH
+    NSF_M1WI           0.148      0.069      2.138      0.033
+
+ EXTRLOSE WITH
+    NSF_M12C          -0.146      0.106     -1.381      0.167
+
+ INTRLOSE WITH
+    NSF_M12C          -0.183      0.242     -0.755      0.450
+
+ EXTRLOSE WITH
+    INTRLOSE           0.358      0.173      2.069      0.039
+
+ MALE     WITH
+    SP_STEM            0.160      0.049      3.248      0.001
+    CONSC3_Z          -0.276      0.042     -6.627      0.000
+
+ CONSC3_Z WITH
+    SP_STEM           -0.014      0.048     -0.288      0.773
+
+ Means
+    SP_STEM            0.793      0.083      9.576      0.000
+    MALE               0.957      0.054     17.574      0.000
+    CONSC3_Z           0.078      0.042      1.837      0.066
+    NSF_RIM            0.000      0.000    999.000    999.000
+    NSF_M1WI           0.000      0.000    999.000    999.000
+    NSF_RIF          999.000    999.000    999.000    999.000
+    NSF_F1WI           0.000      0.000    999.000    999.000
+
+ Intercepts
+    NSF_M1             4.381      0.256     17.084      0.000
+    NSF_M2             4.233      0.277     15.281      0.000
+    NSF_M3             4.433      0.233     18.995      0.000
+    NSF_F1             5.762      0.205     28.127      0.000
+    NSF_F2             5.136      0.172     29.802      0.000
+    NSF_F3             4.679      0.269     17.371      0.000
+    NSF_M2WI           0.000      0.000    999.000    999.000
+    NSF_M3WI           0.000      0.000    999.000    999.000
+    NSF_M12C           0.000      0.000    999.000    999.000
+    NSF_M23C           0.000      0.000    999.000    999.000
+    NSF_F2WI           0.000      0.000    999.000    999.000
+    NSF_F3WI           0.000      0.000    999.000    999.000
+    NSF_F12C           0.000      0.000    999.000    999.000
+    NSF_F23C           0.000      0.000    999.000    999.000
+
+ Thresholds
+    EXTRLOSE$1         0.778      0.097      8.041      0.000
+    INTRLOSE$1         1.483      0.117     12.643      0.000
+
+ Variances
+    SP_STEM            1.000      0.000    999.000    999.000
+    MALE               1.000      0.000    999.000    999.000
+    CONSC3_Z           1.000      0.000    999.000    999.000
+    NSF_RIM            1.000      0.000    999.000    999.000
+    NSF_M1WI           1.000      0.000    999.000    999.000
+    NSF_RIF          999.000    999.000    999.000    999.000
+    NSF_F1WI           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    NSF_M1             0.000    999.000    999.000    999.000
+    NSF_M2             0.000    999.000    999.000    999.000
+    NSF_M3             0.000    999.000    999.000    999.000
+    NSF_F1             0.000    999.000    999.000    999.000
+    NSF_F2             0.000    999.000    999.000    999.000
+    NSF_F3             0.000    999.000    999.000    999.000
+    NSF_M2WI           0.000    999.000    999.000    999.000
+    NSF_M3WI           0.000    999.000    999.000    999.000
+    NSF_M12C           0.613      0.161      3.803      0.000
+    NSF_M23C           0.711      0.063     11.208      0.000
+    NSF_F2WI           0.000    999.000    999.000    999.000
+    NSF_F3WI           0.000    999.000    999.000    999.000
+    NSF_F12C           0.851      0.065     13.102      0.000
+    NSF_F23C           0.887      0.058     15.377      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed   Residual
+    Variable        Estimate       S.E.  Est./S.E.    P-Value    Variance
+
+    NSF_M1             1.000    999.000    999.000    999.000
+    NSF_M2             1.000    999.000    999.000    999.000
+    NSF_M3             1.000    999.000    999.000    999.000
+    NSF_F1             1.000    999.000    999.000    999.000
+    NSF_F2             1.000    999.000    999.000    999.000
+    NSF_F3             1.000    999.000    999.000    999.000
+    EXTRLOSE           0.181      0.037      4.884      0.000      0.819
+    INTRLOSE           0.394      0.133      2.969      0.003      0.606
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    NSF_M2WI           1.000    999.000    999.000    999.000
+    NSF_M3WI           1.000    999.000    999.000    999.000
+    NSF_M12C           0.387      0.161      2.403      0.016
+    NSF_M23C           0.289      0.063      4.554      0.000
+    NSF_F2WI           1.000    999.000    999.000    999.000
+    NSF_F3WI           1.000    999.000    999.000    999.000
+    NSF_F12C           0.149      0.065      2.292      0.022
+    NSF_F23C           0.113      0.058      1.954      0.051
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.413E-05
+       (ratio of smallest to largest eigenvalue)
+
+
+MODEL MODIFICATION INDICES
+
+NOTE:  Modification indices for direct effects of observed dependent variables
+regressed on covariates and residual covariances among observed dependent
+variables may not be included.  To include these, request MODINDICES (ALL).
+
+Minimum M.I. value for printing the modification index    10.000
+
+                                   M.I.     E.P.C.  Std E.P.C.  StdYX E.P.C.
+
+ON/BY Statements
+
+NSF_F1WI ON NSF_RIM  /
+NSF_RIM  BY NSF_F1WI              11.007    -0.686     -0.550       -0.550
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.299         0.372         0.386
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+                0.478         0.077
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+ NSF_RIM        0.276
+ NSF_M1WI       0.000         0.258
+ NSF_M2WI       0.000         0.027         0.330
+ NSF_M3WI       0.000         0.013         0.155         0.302
+ NSF_M12C       0.000        -0.231         0.303         0.142         0.534
+ NSF_M23C       0.000        -0.014        -0.175         0.147        -0.161
+ NSF_RIF        0.033         0.000         0.000         0.000         0.000
+ NSF_F1WI       0.000         0.049         0.005         0.002        -0.044
+ NSF_F2WI       0.000         0.031         0.067         0.031         0.036
+ NSF_F3WI       0.000         0.022         0.048         0.080         0.025
+ NSF_F12C       0.000        -0.018         0.062         0.029         0.080
+ NSF_F23C       0.000        -0.009        -0.019         0.049        -0.010
+ EXTRLOSE      -0.006         0.014        -0.020        -0.117        -0.034
+ INTRLOSE       0.002        -0.168        -0.125        -0.086         0.043
+ SP_STEM        0.018         0.000         0.000         0.000         0.000
+ MALE           0.002         0.000         0.000         0.000         0.000
+ CONSC3_Z       0.094         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+ NSF_M23C       0.322
+ NSF_RIF        0.000        -0.081
+ NSF_F1WI      -0.003         0.000         0.431
+ NSF_F2WI      -0.036         0.000         0.272         0.506
+ NSF_F3WI       0.032         0.000         0.193         0.360         0.588
+ NSF_F12C      -0.033         0.000        -0.159         0.234         0.166
+ NSF_F23C       0.068         0.000        -0.079        -0.146         0.228
+ EXTRLOSE      -0.097        -0.034         0.072        -0.030        -0.121
+ INTRLOSE       0.039        -0.024        -0.068        -0.177        -0.285
+ SP_STEM        0.000        -0.033         0.000         0.000         0.000
+ MALE           0.000        -0.030         0.000         0.000         0.000
+ CONSC3_Z       0.000         0.096         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+ NSF_F12C       0.392
+ NSF_F23C      -0.067         0.374
+ EXTRLOSE      -0.101        -0.091         1.000
+ INTRLOSE      -0.110        -0.108         0.401         1.000
+ SP_STEM        0.000         0.000         0.084         0.030         0.237
+ MALE           0.000         0.000         0.133         0.194         0.039
+ CONSC3_Z       0.000         0.000        -0.187        -0.107        -0.007
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+ MALE           0.250
+ CONSC3_Z      -0.137         0.990
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+ NSF_RIM        1.000
+ NSF_M1WI       0.000         1.000
+ NSF_M2WI       0.000         0.093         1.000
+ NSF_M3WI       0.000         0.045         0.490         1.000
+ NSF_M12C       0.000        -0.622         0.722         0.354         1.000
+ NSF_M23C       0.000        -0.050        -0.538         0.472        -0.388
+ NSF_RIF      999.000       999.000       999.000       999.000       999.000
+ NSF_F1WI       0.000         0.148         0.014         0.007        -0.092
+ NSF_F2WI       0.000         0.087         0.164         0.080         0.069
+ NSF_F3WI       0.000         0.057         0.108         0.190         0.045
+ NSF_F12C       0.000        -0.057         0.172         0.084         0.175
+ NSF_F23C       0.000        -0.029        -0.055         0.144        -0.023
+ EXTRLOSE      -0.012         0.028        -0.034        -0.213        -0.046
+ INTRLOSE       0.003        -0.331        -0.217        -0.157         0.059
+ SP_STEM        0.072         0.000         0.000         0.000         0.000
+ MALE           0.009         0.000         0.000         0.000         0.000
+ CONSC3_Z       0.181         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+ NSF_M23C       1.000
+ NSF_RIF      999.000       999.000
+ NSF_F1WI      -0.007       999.000         1.000
+ NSF_F2WI      -0.088       999.000         0.583         1.000
+ NSF_F3WI       0.074       999.000         0.385         0.660         1.000
+ NSF_F12C      -0.092       999.000        -0.386         0.525         0.346
+ NSF_F23C       0.195       999.000        -0.196        -0.336         0.487
+ EXTRLOSE      -0.171       999.000         0.109        -0.042        -0.157
+ INTRLOSE       0.068       999.000        -0.103        -0.249        -0.372
+ SP_STEM        0.000       999.000         0.000         0.000         0.000
+ MALE           0.000       999.000         0.000         0.000         0.000
+ CONSC3_Z       0.000       999.000         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+ NSF_F12C       1.000
+ NSF_F23C      -0.176         1.000
+ EXTRLOSE      -0.162        -0.149         1.000
+ INTRLOSE      -0.175        -0.176         0.401         1.000
+ SP_STEM        0.000         0.000         0.173         0.062         1.000
+ MALE           0.000         0.000         0.266         0.389         0.160
+ CONSC3_Z       0.000         0.000        -0.188        -0.107        -0.014
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+ MALE           1.000
+ CONSC3_Z      -0.276         1.000
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.063         0.072         0.050
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+                0.028         0.043
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+                0.000         0.000         4.733         5.182         7.710
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+               16.838         1.816
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+                1.000         1.000         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+                1.000         1.000         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+                1.000         1.000         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+                0.000         0.069
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+ NSF_RIM        0.090
+ NSF_M1WI       0.000         0.068
+ NSF_M2WI       0.000         0.083         0.100
+ NSF_M3WI       0.000         0.040         0.075         0.072
+ NSF_M12C       0.000         0.038         0.059         0.048         0.058
+ NSF_M23C       0.000         0.042         0.038         0.032         0.036
+ NSF_RIF        0.031         0.000         0.000         0.000         0.000
+ NSF_F1WI       0.000         0.023         0.016         0.008         0.017
+ NSF_F2WI       0.000         0.016         0.024         0.014         0.021
+ NSF_F3WI       0.000         0.013         0.020         0.035         0.016
+ NSF_F12C       0.000         0.012         0.025         0.012         0.025
+ NSF_F23C       0.000         0.005         0.009         0.033         0.007
+ EXTRLOSE       0.017         0.021         0.049         0.044         0.041
+ INTRLOSE       0.014         0.067         0.090         0.047         0.064
+ SP_STEM        0.024         0.000         0.000         0.000         0.000
+ MALE           0.018         0.000         0.000         0.000         0.000
+ CONSC3_Z       0.029         0.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+ NSF_M23C       0.046
+ NSF_RIF        0.000         0.177
+ NSF_F1WI       0.008         0.000         0.179
+ NSF_F2WI       0.013         0.000         0.176         0.179
+ NSF_F3WI       0.027         0.000         0.156         0.184         0.201
+ NSF_F12C       0.016         0.000         0.019         0.026         0.033
+ NSF_F23C       0.030         0.000         0.023         0.022         0.050
+ EXTRLOSE       0.044         0.011         0.017         0.031         0.029
+ INTRLOSE       0.050         0.012         0.047         0.056         0.054
+ SP_STEM        0.000         0.013         0.000         0.000         0.000
+ MALE           0.000         0.013         0.000         0.000         0.000
+ CONSC3_Z       0.000         0.022         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+ NSF_F12C       0.022
+ NSF_F23C       0.029         0.053
+ EXTRLOSE       0.042         0.039         0.000
+ INTRLOSE       0.060         0.063         0.107         0.000
+ SP_STEM        0.000         0.000         0.027         0.012         0.012
+ MALE           0.000         0.000         0.025         0.037         0.012
+ CONSC3_Z       0.000         0.000         0.059         0.026         0.023
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+ MALE           0.001
+ CONSC3_Z       0.021         0.068
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+ NSF_RIM        3.061
+ NSF_M1WI       0.000         3.772
+ NSF_M2WI       0.000         0.328         3.307
+ NSF_M3WI       0.000         0.313         2.067         4.165
+ NSF_M12C       0.000        -6.112         5.136         2.943         9.188
+ NSF_M23C       0.000        -0.340        -4.596         4.607        -4.422
+ NSF_RIF        1.069         0.000         0.000         0.000         0.000
+ NSF_F1WI       0.000         2.165         0.321         0.307        -2.669
+ NSF_F2WI       0.000         1.974         2.799         2.214         1.701
+ NSF_F3WI       0.000         1.722         2.356         2.288         1.636
+ NSF_F12C       0.000        -1.577         2.498         2.447         3.177
+ NSF_F23C       0.000        -1.835        -2.054         1.477        -1.393
+ EXTRLOSE      -0.359         0.675        -0.400        -2.666        -0.819
+ INTRLOSE       0.128        -2.513        -1.384        -1.816         0.677
+ SP_STEM        0.774         0.000         0.000         0.000         0.000
+ MALE           0.128         0.000         0.000         0.000         0.000
+ CONSC3_Z       3.265         0.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+ NSF_M23C       7.003
+ NSF_RIF        0.000        -0.458
+ NSF_F1WI      -0.333         0.000         2.402
+ NSF_F2WI      -2.655         0.000         1.544         2.830
+ NSF_F3WI       1.211         0.000         1.238         1.950         2.920
+ NSF_F12C      -2.058         0.000        -8.568         9.036         5.022
+ NSF_F23C       2.263         0.000        -3.448        -6.522         4.599
+ EXTRLOSE      -2.217        -3.023         4.306        -0.941        -4.185
+ INTRLOSE       0.778        -1.988        -1.432        -3.189        -5.294
+ SP_STEM        0.000        -2.631         0.000         0.000         0.000
+ MALE           0.000        -2.359         0.000         0.000         0.000
+ CONSC3_Z       0.000         4.325         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+ NSF_F12C      17.660
+ NSF_F23C      -2.334         7.015
+ EXTRLOSE      -2.422        -2.322   ***********
+ INTRLOSE      -1.822        -1.693         3.755   ***********
+ SP_STEM        0.000         0.000         3.109         2.492        19.772
+ MALE           0.000         0.000         5.208         5.219         3.158
+ CONSC3_Z       0.000         0.000        -3.182        -4.046        -0.288
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+ MALE         200.953
+ CONSC3_Z      -6.406        14.620
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+ NSF_RIM        0.002
+ NSF_M1WI       1.000         0.000
+ NSF_M2WI       1.000         0.743         0.001
+ NSF_M3WI       1.000         0.754         0.039         0.000
+ NSF_M12C       1.000         0.000         0.000         0.003         0.000
+ NSF_M23C       1.000         0.734         0.000         0.000         0.000
+ NSF_RIF        0.285         1.000         1.000         1.000         1.000
+ NSF_F1WI       1.000         0.030         0.748         0.759         0.008
+ NSF_F2WI       1.000         0.048         0.005         0.027         0.089
+ NSF_F3WI       1.000         0.085         0.018         0.022         0.102
+ NSF_F12C       1.000         0.115         0.013         0.014         0.001
+ NSF_F23C       1.000         0.067         0.040         0.140         0.164
+ EXTRLOSE       0.720         0.500         0.689         0.008         0.413
+ INTRLOSE       0.898         0.012         0.166         0.069         0.498
+ SP_STEM        0.439         1.000         1.000         1.000         1.000
+ MALE           0.898         1.000         1.000         1.000         1.000
+ CONSC3_Z       0.001         1.000         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+ NSF_M23C       0.000
+ NSF_RIF        1.000         0.647
+ NSF_F1WI       0.739         1.000         0.016
+ NSF_F2WI       0.008         1.000         0.123         0.005
+ NSF_F3WI       0.226         1.000         0.216         0.051         0.004
+ NSF_F12C       0.040         1.000         0.000         0.000         0.000
+ NSF_F23C       0.024         1.000         0.001         0.000         0.000
+ EXTRLOSE       0.027         0.003         0.000         0.347         0.000
+ INTRLOSE       0.437         0.047         0.152         0.001         0.000
+ SP_STEM        1.000         0.009         1.000         1.000         1.000
+ MALE           1.000         0.018         1.000         1.000         1.000
+ CONSC3_Z       1.000         0.000         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+ NSF_F12C       0.000
+ NSF_F23C       0.020         0.000
+ EXTRLOSE       0.015         0.020         0.000
+ INTRLOSE       0.068         0.090         0.000         0.000
+ SP_STEM        1.000         1.000         0.002         0.013         0.000
+ MALE           1.000         1.000         0.000         0.000         0.002
+ CONSC3_Z       1.000         1.000         0.001         0.000         0.774
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+ MALE           0.000
+ CONSC3_Z       0.000         0.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+ NSF_RIM        0.000
+ NSF_M1WI       0.000         0.000
+ NSF_M2WI       0.000         0.261         0.000
+ NSF_M3WI       0.000         0.136         0.119         0.000
+ NSF_M12C       0.000         0.129         0.091         0.083         0.000
+ NSF_M23C       0.000         0.139         0.059         0.105         0.072
+ NSF_RIF      999.000       999.000       999.000       999.000       999.000
+ NSF_F1WI       0.000         0.069         0.042         0.022         0.039
+ NSF_F2WI       0.000         0.034         0.056         0.032         0.043
+ NSF_F3WI       0.000         0.026         0.039         0.080         0.028
+ NSF_F12C       0.000         0.034         0.079         0.033         0.054
+ NSF_F23C       0.000         0.014         0.026         0.109         0.017
+ EXTRLOSE       0.031         0.038         0.088         0.083         0.056
+ INTRLOSE       0.027         0.153         0.170         0.090         0.086
+ SP_STEM        0.099         0.000         0.000         0.000         0.000
+ MALE           0.068         0.000         0.000         0.000         0.000
+ CONSC3_Z       0.048         0.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+ NSF_M23C       0.000
+ NSF_RIF      999.000         0.000
+ NSF_F1WI       0.022       999.000         0.000
+ NSF_F2WI       0.032       999.000         0.156         0.000
+ NSF_F3WI       0.061       999.000         0.168         0.117         0.000
+ NSF_F12C       0.045       999.000         0.084         0.099         0.034
+ NSF_F23C       0.095       999.000         0.026         0.086         0.080
+ EXTRLOSE       0.071       999.000         0.026         0.041         0.036
+ INTRLOSE       0.089       999.000         0.083         0.085         0.074
+ SP_STEM        0.000       999.000         0.000         0.000         0.000
+ MALE           0.000       999.000         0.000         0.000         0.000
+ CONSC3_Z       0.000       999.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+ NSF_F12C       0.000
+ NSF_F23C       0.076         0.000
+ EXTRLOSE       0.066         0.063         0.000
+ INTRLOSE       0.096         0.097         0.107         0.000
+ SP_STEM        0.000         0.000         0.056         0.025         0.000
+ MALE           0.000         0.000         0.051         0.075         0.049
+ CONSC3_Z       0.000         0.000         0.059         0.027         0.048
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+ MALE           0.000
+ CONSC3_Z       0.042         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+ NSF_RIM      999.000
+ NSF_M1WI       0.000       999.000
+ NSF_M2WI       0.000         0.355       999.000
+ NSF_M3WI       0.000         0.336         4.119       999.000
+ NSF_M12C       0.000        -4.806         7.895         4.259       999.000
+ NSF_M23C       0.000        -0.359        -9.107         4.492        -5.406
+ NSF_RIF        1.000         1.000         1.000         1.000         1.000
+ NSF_F1WI       0.000         2.138         0.331         0.313        -2.371
+ NSF_F2WI       0.000         2.516         2.909         2.487         1.592
+ NSF_F3WI       0.000         2.218         2.748         2.377         1.645
+ NSF_F12C       0.000        -1.681         2.164         2.523         3.258
+ NSF_F23C       0.000        -2.042        -2.109         1.321        -1.353
+ EXTRLOSE      -0.372         0.730        -0.389        -2.574        -0.822
+ INTRLOSE       0.126        -2.160        -1.275        -1.740         0.684
+ SP_STEM        0.729         0.000         0.000         0.000         0.000
+ MALE           0.127         0.000         0.000         0.000         0.000
+ CONSC3_Z       3.803         0.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+ NSF_M23C     999.000
+ NSF_RIF        1.000       999.000
+ NSF_F1WI      -0.334         1.000       999.000
+ NSF_F2WI      -2.751         1.000         3.748       999.000
+ NSF_F3WI       1.207         1.000         2.285         5.636       999.000
+ NSF_F12C      -2.030         1.000        -4.584         5.307        10.130
+ NSF_F23C       2.054         1.000        -7.558        -3.907         6.062
+ EXTRLOSE      -2.423         1.000         4.168        -1.005        -4.332
+ INTRLOSE       0.767         1.000        -1.237        -2.921        -5.034
+ SP_STEM        0.000         1.000         0.000         0.000         0.000
+ MALE           0.000         1.000         0.000         0.000         0.000
+ CONSC3_Z       0.000         1.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+ NSF_F12C     999.000
+ NSF_F23C      -2.322       999.000
+ EXTRLOSE      -2.446        -2.353       999.000
+ INTRLOSE      -1.822        -1.803         3.755       999.000
+ SP_STEM        0.000         0.000         3.099         2.528       999.000
+ MALE           0.000         0.000         5.202         5.211         3.248
+ CONSC3_Z       0.000         0.000        -3.199        -3.971        -0.288
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+ MALE         999.000
+ CONSC3_Z      -6.627       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_RIM       NSF_M1WI      NSF_M2WI      NSF_M3WI      NSF_M12C
+              ________      ________      ________      ________      ________
+ NSF_RIM        0.000
+ NSF_M1WI       1.000         0.000
+ NSF_M2WI       1.000         0.722         0.000
+ NSF_M3WI       1.000         0.737         0.000         0.000
+ NSF_M12C       1.000         0.000         0.000         0.000         0.000
+ NSF_M23C       1.000         0.720         0.000         0.000         0.000
+ NSF_RIF        0.317         0.317         0.317         0.317         0.317
+ NSF_F1WI       1.000         0.033         0.741         0.754         0.018
+ NSF_F2WI       1.000         0.012         0.004         0.013         0.111
+ NSF_F3WI       1.000         0.027         0.006         0.017         0.100
+ NSF_F12C       1.000         0.093         0.030         0.012         0.001
+ NSF_F23C       1.000         0.041         0.035         0.186         0.176
+ EXTRLOSE       0.710         0.465         0.697         0.010         0.411
+ INTRLOSE       0.899         0.031         0.202         0.082         0.494
+ SP_STEM        0.466         1.000         1.000         1.000         1.000
+ MALE           0.899         1.000         1.000         1.000         1.000
+ CONSC3_Z       0.000         1.000         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_M23C      NSF_RIF       NSF_F1WI      NSF_F2WI      NSF_F3WI
+              ________      ________      ________      ________      ________
+ NSF_M23C       0.000
+ NSF_RIF        0.317         0.000
+ NSF_F1WI       0.739         0.317         0.000
+ NSF_F2WI       0.006         0.317         0.000         0.000
+ NSF_F3WI       0.228         0.317         0.022         0.000         0.000
+ NSF_F12C       0.042         0.317         0.000         0.000         0.000
+ NSF_F23C       0.040         0.317         0.000         0.000         0.000
+ EXTRLOSE       0.015         0.317         0.000         0.315         0.000
+ INTRLOSE       0.443         0.317         0.216         0.003         0.000
+ SP_STEM        1.000         0.317         1.000         1.000         1.000
+ MALE           1.000         0.317         1.000         1.000         1.000
+ CONSC3_Z       1.000         0.317         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              NSF_F12C      NSF_F23C      EXTRLOSE      INTRLOSE      SP_STEM
+              ________      ________      ________      ________      ________
+ NSF_F12C       0.000
+ NSF_F23C       0.020         0.000
+ EXTRLOSE       0.014         0.019         0.000
+ INTRLOSE       0.068         0.071         0.000         0.000
+ SP_STEM        1.000         1.000         0.002         0.011         0.000
+ MALE           1.000         1.000         0.000         0.000         0.001
+ CONSC3_Z       1.000         1.000         0.001         0.000         0.773
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              MALE          CONSC3_Z
+              ________      ________
+ MALE           0.000
+ CONSC3_Z       0.000         0.000
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\local user data\opfe\opfe_r\pred_extrintrlose_nsf_persk_sp_gender_minimale_consc.dgm
+
+     Beginning Time:  14:34:59
+        Ending Time:  14:34:59
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2019 Muthen & Muthen

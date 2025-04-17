@@ -1,0 +1,2289 @@
+Mplus VERSION 8.6 (Mac)
+MUTHEN & MUTHEN
+07/06/2021  12:58 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: Your title goes here
+  DATA: FILE = "transi_grades.dat";
+  VARIABLE:
+  NAMES = Class male spgroupe sp_Langu sp_STEM sp_Other NSF_M1 NSF_M2 NSF_M3 NSF_D1
+       NSF_D2 NSF_D3 NSF_E1 NSF_E2 NSF_E3 NSF_F1 NSF_F2 NSF_F3 Consc3_z c_t1_ext c_t1_int
+       extrmodl extrhila extrhimo
+       intrhimo intrhimm extrlose maleexlo femaexlo intrlose maleinlo femainlo d1tnote
+       d2tnote d3tnote e1tnote e2tnote e3tnote f1tnote f2tnote f3tnote m1tnote m2tnote
+       m3tnote;
+  MISSING=.;
+
+  USEVARIABLES ARE
+  extrlose ! Dummy: 0 = no decline in extrinsic value, 1 = decline
+  intrlose ! Dummy: 0 = no decline in intrinsic value, 1 = decline
+
+  m1tnote ! Achievement math T1
+  m2tnote
+  m3tnote
+  d1tnote
+  d2tnote
+  d3tnote
+  e1tnote
+  e2tnote
+  e3tnote
+  f1tnote
+  f2tnote
+  f3tnote
+  ;
+
+
+  useobservations = extrlose == 0 OR extrlose == 1 OR intrlose == 0 OR intrlose == 1;
+
+  CLUSTER = Class;
+
+
+  ANALYSIS:
+  TYPE IS COMPLEX;
+
+  MODEL:
+
+  !Math grades
+
+  !Math random intercept
+  RIM BY m1tnote@1 m2tnote@1 m3tnote@1;
+  m1notewi BY m1tnote@1;
+  m2notewi BY m2tnote@1;
+  m3notewi BY m3tnote@1;
+  m1tnote@0;
+  m2tnote@0;
+  m3tnote@0;
+
+  !Math autoregressions
+  m3notewi ON m2notewi;
+  m2notewi ON m1notewi;
+
+  !Math effects of interest:
+  !Prediction of within-person grade variation by extrinsic value loss
+  m1notewi ON extrlose (a);
+  m2notewi ON extrlose (a2);
+  m3notewi ON extrlose (a3);
+
+  !Prediction of within-person grade variation by intrinsic value loss
+  m1notewi ON intrlose (b);
+  m2notewi ON intrlose (b2);
+  m3notewi ON intrlose (b3);
+
+  ! German grades
+
+  !German random intercept
+  RID BY d1tnote@1 d2tnote@1 d3tnote@1;
+  d1notewi BY d1tnote@1;
+  d2notewi BY d2tnote@1;
+  d3notewi BY d3tnote@1;
+  d1tnote@0;
+  d2tnote@0;
+  d3tnote@0;
+
+ !German autoregressions
+  d3notewi ON d2notewi;
+  d2notewi ON d1notewi;
+
+ !German effects of interest:
+  !Prediction of within-person grade variation by extrinsic value loss
+  d1notewi ON extrlose  (c);
+  d2notewi ON extrlose  (c2);
+  d3notewi ON extrlose (c3);
+
+  !Prediction of within-person grade variation by intrinsic value loss
+  d1notewi ON intrlose (d);
+  d2notewi ON intrlose  (d2);
+  d3notewi ON intrlose (d3);
+
+  !English grades
+
+  !English random intercept
+  RIE BY e1tnote@1 e2tnote@1 e3tnote@1;
+  e1notewi BY e1tnote@1;
+  e2notewi BY e2tnote@1;
+  e3notewi BY e3tnote@1;
+  e1tnote@0;
+  e2tnote@0;
+  e3tnote@0;
+
+ !English autoregressions
+  e3notewi ON e2notewi;
+  e2notewi ON e1notewi;
+
+ !English effects of interest:
+  !Prediction of within-person grade variation by extrinsic value loss
+  e1notewi ON extrlose  (e);
+  e2notewi ON extrlose (e2);
+  e3notewi ON extrlose (e3);
+
+  !Prediction of within-person grade variation by intrinsic value loss
+  e1notewi ON intrlose (f);
+  e2notewi ON intrlose (f2);
+  e3notewi ON intrlose (f3);
+
+
+  !French grades
+
+  !French random intercept
+  RIF BY f1tnote@1 f2tnote@1 f3tnote@1;
+  f1notewi BY f1tnote@1;
+  f2notewi BY f2tnote@1;
+  f3notewi BY f3tnote@1;
+  f1tnote@0;
+  f2tnote@0;
+  f3tnote@0;
+
+ !French autoregressions
+  f3notewi ON f2notewi;
+  f2notewi ON f1notewi;
+
+ !French effects of interest:
+  !Prediction of within-person grade variation by extrinsic value loss
+  f1notewi ON extrlose  (g);
+  f2notewi ON extrlose  (g2);
+  f3notewi ON extrlose  (g3);
+
+  !Prediction of within-person grade variation by intrinsic value loss
+  f1notewi ON intrlose  (h);
+  f2notewi ON intrlose  (h2);
+  f3notewi ON intrlose  (h3);
+
+  !Within-variables of grades correlate
+  m1notewi WITH d1notewi e1notewi f1notewi;
+  d1notewi WITH e1notewi f1notewi;
+  e1notewi WITH f1notewi;
+  m2notewi WITH d2notewi e2notewi f2notewi;
+  d2notewi WITH e2notewi f2notewi;
+  e2notewi WITH f2notewi;
+  m3notewi WITH d3notewi e3notewi f3notewi;
+  d3notewi WITH e3notewi f3notewi;
+  e3notewi WITH f3notewi;
+
+  !extrlose WITH intrlose;
+
+  !Center random intercept variables
+  [RIM@0];
+  [RID@0];
+  [RIE@0];
+  [RIF@0];
+
+
+  OUTPUT:
+  sampstat stdyx tech4 modindices;
+
+
+
+*** WARNING in VARIABLE command
+  When a subpopulation is analyzed with TYPE=COMPLEX, standard errors
+  may be incorrect.  Use the SUBPOPULATION option instead of the
+  USEOBSERVATIONS option to obtain correct standard errors.
+*** WARNING
+  Data set contains cases with missing on x-variables.
+  These cases were not included in the analysis.
+  Number of cases with missing on x-variables:  332
+*** WARNING
+  Data set contains cases with missing on all variables except
+  x-variables.  These cases were not included in the analysis.
+  Number of cases with missing on all variables except x-variables:  7
+   3 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+Your title goes here
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         278
+
+Number of dependent variables                                   12
+Number of independent variables                                  2
+Number of continuous latent variables                           16
+
+Observed dependent variables
+
+  Continuous
+   M1TNOTE     M2TNOTE     M3TNOTE     D1TNOTE     D2TNOTE     D3TNOTE
+   E1TNOTE     E2TNOTE     E3TNOTE     F1TNOTE     F2TNOTE     F3TNOTE
+
+Observed independent variables
+   EXTRLOSE    INTRLOSE
+
+Continuous latent variables
+   RIM         M1NOTEWI    M2NOTEWI    M3NOTEWI    RID         D1NOTEWI
+   D2NOTEWI    D3NOTEWI    RIE         E1NOTEWI    E2NOTEWI    E3NOTEWI
+   RIF         F1NOTEWI    F2NOTEWI    F3NOTEWI
+
+Variables with special functions
+
+  Cluster variable      CLASS
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  transi_grades.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            14
+     Number of clusters                         37
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              M1TNOTE       M2TNOTE       M3TNOTE       D1TNOTE       D2TNOTE
+              ________      ________      ________      ________      ________
+ M1TNOTE        0.903
+ M2TNOTE        0.781         0.831
+ M3TNOTE        0.745         0.763         0.827
+ D1TNOTE        0.899         0.781         0.741         0.903
+ D2TNOTE        0.795         0.831         0.777         0.795         0.845
+ D3TNOTE        0.745         0.763         0.827         0.741         0.777
+ E1TNOTE        0.899         0.777         0.741         0.899         0.791
+ E2TNOTE        0.795         0.831         0.777         0.795         0.845
+ E3TNOTE        0.745         0.763         0.827         0.741         0.777
+ F1TNOTE        0.903         0.784         0.748         0.899         0.799
+ F2TNOTE        0.791         0.827         0.773         0.791         0.842
+ F3TNOTE        0.734         0.752         0.817         0.730         0.766
+ EXTRLOSE       0.903         0.831         0.827         0.903         0.845
+ INTRLOSE       0.903         0.831         0.827         0.903         0.845
+
+
+           Covariance Coverage
+              D3TNOTE       E1TNOTE       E2TNOTE       E3TNOTE       F1TNOTE
+              ________      ________      ________      ________      ________
+ D3TNOTE        0.827
+ E1TNOTE        0.741         0.899
+ E2TNOTE        0.777         0.791         0.845
+ E3TNOTE        0.827         0.741         0.777         0.827
+ F1TNOTE        0.748         0.899         0.799         0.748         0.910
+ F2TNOTE        0.773         0.788         0.842         0.773         0.795
+ F3TNOTE        0.817         0.730         0.766         0.817         0.737
+ EXTRLOSE       0.827         0.899         0.845         0.827         0.910
+ INTRLOSE       0.827         0.899         0.845         0.827         0.910
+
+
+           Covariance Coverage
+              F2TNOTE       F3TNOTE       EXTRLOSE      INTRLOSE
+              ________      ________      ________      ________
+ F2TNOTE        0.842
+ F3TNOTE        0.766         0.817
+ EXTRLOSE       0.842         0.817         1.000
+ INTRLOSE       0.842         0.817         1.000         1.000
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              M1TNOTE       M2TNOTE       M3TNOTE       D1TNOTE       D2TNOTE
+              ________      ________      ________      ________      ________
+                4.488         4.447         4.345         4.636         4.615
+
+
+           Means
+              D3TNOTE       E1TNOTE       E2TNOTE       E3TNOTE       F1TNOTE
+              ________      ________      ________      ________      ________
+                4.649         4.628         4.578         4.569         4.510
+
+
+           Means
+              F2TNOTE       F3TNOTE       EXTRLOSE      INTRLOSE
+              ________      ________      ________      ________
+                4.382         4.357         0.295         0.126
+
+
+           Covariances
+              M1TNOTE       M2TNOTE       M3TNOTE       D1TNOTE       D2TNOTE
+              ________      ________      ________      ________      ________
+ M1TNOTE        0.594
+ M2TNOTE        0.320         0.602
+ M3TNOTE        0.427         0.463         0.749
+ D1TNOTE        0.088         0.064         0.065         0.241
+ D2TNOTE        0.065         0.115         0.110         0.121         0.283
+ D3TNOTE        0.056         0.079         0.105         0.137         0.161
+ E1TNOTE        0.122         0.105         0.128         0.119         0.105
+ E2TNOTE        0.127         0.158         0.155         0.113         0.137
+ E3TNOTE        0.086         0.089         0.115         0.090         0.114
+ F1TNOTE        0.254         0.184         0.222         0.117         0.106
+ F2TNOTE        0.187         0.230         0.182         0.123         0.152
+ F3TNOTE        0.145         0.155         0.176         0.114         0.111
+ EXTRLOSE       0.014         0.000        -0.010        -0.036        -0.011
+ INTRLOSE       0.005        -0.009        -0.024        -0.023        -0.005
+
+
+           Covariances
+              D3TNOTE       E1TNOTE       E2TNOTE       E3TNOTE       F1TNOTE
+              ________      ________      ________      ________      ________
+ D3TNOTE        0.288
+ E1TNOTE        0.133         0.420
+ E2TNOTE        0.133         0.307         0.416
+ E3TNOTE        0.137         0.277         0.284         0.403
+ F1TNOTE        0.132         0.235         0.232         0.173         0.502
+ F2TNOTE        0.157         0.220         0.259         0.176         0.340
+ F3TNOTE        0.170         0.234         0.225         0.198         0.327
+ EXTRLOSE      -0.025        -0.031        -0.030        -0.015        -0.010
+ INTRLOSE      -0.020        -0.022        -0.002        -0.020         0.001
+
+
+           Covariances
+              F2TNOTE       F3TNOTE       EXTRLOSE      INTRLOSE
+              ________      ________      ________      ________
+ F2TNOTE        0.573
+ F3TNOTE        0.420         0.526
+ EXTRLOSE      -0.038        -0.049         0.208
+ INTRLOSE       0.004        -0.015         0.031         0.110
+
+
+           Correlations
+              M1TNOTE       M2TNOTE       M3TNOTE       D1TNOTE       D2TNOTE
+              ________      ________      ________      ________      ________
+ M1TNOTE        1.000
+ M2TNOTE        0.535         1.000
+ M3TNOTE        0.640         0.689         1.000
+ D1TNOTE        0.233         0.169         0.154         1.000
+ D2TNOTE        0.159         0.279         0.239         0.462         1.000
+ D3TNOTE        0.135         0.190         0.227         0.520         0.565
+ E1TNOTE        0.245         0.208         0.229         0.375         0.305
+ E2TNOTE        0.256         0.316         0.277         0.357         0.399
+ E3TNOTE        0.175         0.180         0.210         0.287         0.339
+ F1TNOTE        0.465         0.334         0.362         0.336         0.281
+ F2TNOTE        0.320         0.391         0.277         0.330         0.377
+ F3TNOTE        0.260         0.275         0.281         0.318         0.288
+ EXTRLOSE       0.040         0.000        -0.026        -0.159        -0.045
+ INTRLOSE       0.018        -0.034        -0.085        -0.141        -0.028
+
+
+           Correlations
+              D3TNOTE       E1TNOTE       E2TNOTE       E3TNOTE       F1TNOTE
+              ________      ________      ________      ________      ________
+ D3TNOTE        1.000
+ E1TNOTE        0.382         1.000
+ E2TNOTE        0.385         0.735         1.000
+ E3TNOTE        0.402         0.674         0.693         1.000
+ F1TNOTE        0.348         0.512         0.506         0.385         1.000
+ F2TNOTE        0.387         0.448         0.530         0.366         0.634
+ F3TNOTE        0.437         0.498         0.481         0.429         0.635
+ EXTRLOSE      -0.102        -0.103        -0.101        -0.050        -0.031
+ INTRLOSE      -0.115        -0.101        -0.009        -0.095         0.003
+
+
+           Correlations
+              F2TNOTE       F3TNOTE       EXTRLOSE      INTRLOSE
+              ________      ________      ________      ________
+ F2TNOTE        1.000
+ F3TNOTE        0.765         1.000
+ EXTRLOSE      -0.109        -0.150         1.000
+ INTRLOSE       0.015        -0.064         0.206         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -2409.489
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     M1TNOTE               4.508      -0.230       2.000    0.80%       4.000      4.500      4.500
+             251.000       0.592       0.189       6.000    5.18%       4.500      5.000
+     M2TNOTE               4.511      -0.169       2.000    0.43%       4.000      4.500      4.500
+             231.000       0.579      -0.215       6.000    3.90%       4.500      5.000
+     M3TNOTE               4.413      -0.149       2.000    0.43%       3.500      4.000      4.500
+             230.000       0.727      -0.359       6.000    6.09%       4.500      5.000
+     D1TNOTE               4.643      -0.248       3.000    0.80%       4.500      4.500      4.500
+             251.000       0.242       0.129       5.500   10.76%       5.000      5.000
+     D2TNOTE               4.649      -0.193       2.500    0.43%       4.500      4.500      4.500
+             235.000       0.274       1.169       6.000    2.13%       5.000      5.000
+     D3TNOTE               4.683      -0.003       3.500    3.48%       4.000      4.500      4.500
+             230.000       0.275      -0.225       6.000    1.74%       5.000      5.000
+     E1TNOTE               4.626      -0.247       3.000    2.00%       4.000      4.500      4.500
+             250.000       0.427      -0.437       6.000    2.40%       5.000      5.000
+     E2TNOTE               4.628      -0.242       3.000    1.28%       4.000      4.500      4.500
+             235.000       0.390      -0.311       6.000    2.13%       5.000      5.000
+     E3TNOTE               4.604      -0.616       2.500    0.43%       4.000      4.500      4.500
+             230.000       0.387       0.130       6.000    0.43%       5.000      5.000
+     F1TNOTE               4.516      -0.146       2.500    0.79%       4.000      4.500      4.500
+             253.000       0.506      -0.304       6.000    3.16%       4.500      5.000
+     F2TNOTE               4.449      -0.114       2.500    0.43%       4.000      4.500      4.500
+             234.000       0.551      -0.565       6.000    2.56%       4.500      5.000
+     F3TNOTE               4.430      -0.040       2.500    0.44%       4.000      4.000      4.500
+             227.000       0.499      -0.332       6.000    2.64%       4.500      5.000
+     EXTRLOSE              0.295       0.899       0.000   70.50%       0.000      0.000      0.000
+             278.000       0.208      -1.191       1.000   29.50%       0.000      1.000
+     INTRLOSE              0.126       2.255       0.000   87.41%       0.000      0.000      0.000
+             278.000       0.110       3.087       1.000   12.59%       0.000      0.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     THE STANDARD ERRORS OF THE MODEL PARAMETER ESTIMATES MAY NOT BE
+     TRUSTWORTHY FOR SOME PARAMETERS DUE TO A NON-POSITIVE DEFINITE
+     FIRST-ORDER DERIVATIVE PRODUCT MATRIX.  THIS MAY BE DUE TO THE STARTING
+     VALUES BUT MAY ALSO BE AN INDICATION OF MODEL NONIDENTIFICATION.  THE
+     CONDITION NUMBER IS      -0.174D-15.  PROBLEM INVOLVING THE FOLLOWING PARAMETER:
+     Parameter 37, F1NOTEWI ON EXTRLOSE (equality/label)
+
+     THIS IS MOST LIKELY DUE TO HAVING MORE PARAMETERS THAN THE NUMBER
+     OF CLUSTERS MINUS THE NUMBER OF STRATA WITH MORE THAN ONE CLUSTER.
+
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       84
+
+Loglikelihood
+
+          H0 Value                       -2167.727
+          H0 Scaling Correction Factor      1.3489
+            for MLR
+          H1 Value                       -2151.641
+          H1 Scaling Correction Factor      1.3159
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                    4503.454
+          Bayesian (BIC)                  4808.174
+          Sample-Size Adjusted BIC        4541.819
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             26.296*
+          Degrees of Freedom                    30
+          P-Value                           0.6600
+          Scaling Correction Factor         1.2235
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.000
+          90 Percent C.I.                    0.000  0.038
+          Probability RMSEA <= .05           0.992
+
+CFI/TLI
+
+          CFI                                1.000
+          TLI                                1.000
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           1095.580
+          Degrees of Freedom                    90
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.046
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ RIM      BY
+    M1TNOTE            1.000      0.000    999.000    999.000
+    M2TNOTE            1.000      0.000    999.000    999.000
+    M3TNOTE            1.000      0.000    999.000    999.000
+
+ M1NOTEWI BY
+    M1TNOTE            1.000      0.000    999.000    999.000
+
+ M2NOTEWI BY
+    M2TNOTE            1.000      0.000    999.000    999.000
+
+ M3NOTEWI BY
+    M3TNOTE            1.000      0.000    999.000    999.000
+
+ RID      BY
+    D1TNOTE            1.000      0.000    999.000    999.000
+    D2TNOTE            1.000      0.000    999.000    999.000
+    D3TNOTE            1.000      0.000    999.000    999.000
+
+ D1NOTEWI BY
+    D1TNOTE            1.000      0.000    999.000    999.000
+
+ D2NOTEWI BY
+    D2TNOTE            1.000      0.000    999.000    999.000
+
+ D3NOTEWI BY
+    D3TNOTE            1.000      0.000    999.000    999.000
+
+ RIE      BY
+    E1TNOTE            1.000      0.000    999.000    999.000
+    E2TNOTE            1.000      0.000    999.000    999.000
+    E3TNOTE            1.000      0.000    999.000    999.000
+
+ E1NOTEWI BY
+    E1TNOTE            1.000      0.000    999.000    999.000
+
+ E2NOTEWI BY
+    E2TNOTE            1.000      0.000    999.000    999.000
+
+ E3NOTEWI BY
+    E3TNOTE            1.000      0.000    999.000    999.000
+
+ RIF      BY
+    F1TNOTE            1.000      0.000    999.000    999.000
+    F2TNOTE            1.000      0.000    999.000    999.000
+    F3TNOTE            1.000      0.000    999.000    999.000
+
+ F1NOTEWI BY
+    F1TNOTE            1.000      0.000    999.000    999.000
+
+ F2NOTEWI BY
+    F2TNOTE            1.000      0.000    999.000    999.000
+
+ F3NOTEWI BY
+    F3TNOTE            1.000      0.000    999.000    999.000
+
+ M3NOTEWI ON
+    M2NOTEWI           0.151      0.178      0.847      0.397
+
+ M2NOTEWI ON
+    M1NOTEWI          -0.676      0.285     -2.370      0.018
+
+ D3NOTEWI ON
+    D2NOTEWI           0.134      0.111      1.212      0.226
+
+ D2NOTEWI ON
+    D1NOTEWI          -0.107      0.184     -0.579      0.562
+
+ E3NOTEWI ON
+    E2NOTEWI           0.092      0.258      0.358      0.720
+
+ E2NOTEWI ON
+    E1NOTEWI           0.123      0.233      0.529      0.597
+
+ F3NOTEWI ON
+    F2NOTEWI           0.394      0.125      3.159      0.002
+
+ F2NOTEWI ON
+    F1NOTEWI          -0.029      0.240     -0.122      0.903
+
+ M3NOTEWI ON
+    EXTRLOSE          -0.025      0.130     -0.194      0.846
+    INTRLOSE          -0.200      0.140     -1.427      0.154
+
+ M2NOTEWI ON
+    EXTRLOSE           0.056      0.178      0.317      0.752
+    INTRLOSE          -0.063      0.185     -0.341      0.733
+
+ M1NOTEWI ON
+    EXTRLOSE           0.066      0.116      0.571      0.568
+    INTRLOSE           0.019      0.147      0.128      0.898
+
+ D3NOTEWI ON
+    EXTRLOSE          -0.091      0.067     -1.353      0.176
+    INTRLOSE          -0.151      0.106     -1.423      0.155
+
+ D2NOTEWI ON
+    EXTRLOSE          -0.054      0.074     -0.726      0.468
+    INTRLOSE          -0.048      0.096     -0.493      0.622
+
+ D1NOTEWI ON
+    EXTRLOSE          -0.146      0.057     -2.580      0.010
+    INTRLOSE          -0.172      0.094     -1.826      0.068
+
+ E3NOTEWI ON
+    EXTRLOSE          -0.029      0.092     -0.312      0.755
+    INTRLOSE          -0.166      0.121     -1.371      0.170
+
+ E2NOTEWI ON
+    EXTRLOSE          -0.130      0.083     -1.568      0.117
+    INTRLOSE           0.041      0.108      0.378      0.706
+
+ E1NOTEWI ON
+    EXTRLOSE          -0.123      0.067     -1.846      0.065
+    INTRLOSE          -0.171      0.176     -0.968      0.333
+
+ F3NOTEWI ON
+    EXTRLOSE          -0.143      0.065     -2.212      0.027
+    INTRLOSE          -0.105      0.118     -0.889      0.374
+
+ F2NOTEWI ON
+    EXTRLOSE          -0.196      0.089     -2.203      0.028
+    INTRLOSE           0.091      0.143      0.641      0.522
+
+ F1NOTEWI ON
+    EXTRLOSE          -0.046      0.097     -0.479      0.632
+    INTRLOSE           0.014      0.122      0.117      0.907
+
+ M1NOTEWI WITH
+    D1NOTEWI           0.024      0.016      1.501      0.133
+    E1NOTEWI           0.007      0.014      0.537      0.591
+    F1NOTEWI           0.042      0.026      1.628      0.104
+
+ D1NOTEWI WITH
+    E1NOTEWI           0.010      0.016      0.644      0.520
+    F1NOTEWI           0.005      0.017      0.305      0.760
+
+ E1NOTEWI WITH
+    F1NOTEWI           0.016      0.017      0.932      0.351
+
+ M2NOTEWI WITH
+    D2NOTEWI           0.026      0.023      1.135      0.256
+    E2NOTEWI           0.037      0.021      1.781      0.075
+    F2NOTEWI           0.053      0.030      1.743      0.081
+
+ D2NOTEWI WITH
+    E2NOTEWI           0.021      0.016      1.355      0.176
+    F2NOTEWI           0.034      0.019      1.823      0.068
+
+ E2NOTEWI WITH
+    F2NOTEWI           0.037      0.018      2.081      0.037
+
+ M3NOTEWI WITH
+    D3NOTEWI           0.025      0.012      2.087      0.037
+    E3NOTEWI           0.009      0.018      0.525      0.600
+    F3NOTEWI           0.026      0.018      1.426      0.154
+
+ D3NOTEWI WITH
+    E3NOTEWI           0.018      0.011      1.653      0.098
+    F3NOTEWI           0.033      0.015      2.171      0.030
+
+ E3NOTEWI WITH
+    F3NOTEWI           0.020      0.022      0.912      0.362
+
+ RID      WITH
+    RIM                0.073      0.022      3.332      0.001
+
+ RIE      WITH
+    RIM                0.111      0.026      4.200      0.000
+    RID                0.107      0.016      6.509      0.000
+
+ RIF      WITH
+    RIM                0.186      0.031      5.952      0.000
+    RID                0.115      0.022      5.354      0.000
+    RIE                0.205      0.025      8.037      0.000
+
+ Means
+    RIM                0.000      0.000    999.000    999.000
+    RID                0.000      0.000    999.000    999.000
+    RIE                0.000      0.000    999.000    999.000
+    RIF                0.000      0.000    999.000    999.000
+
+ Intercepts
+    M1TNOTE            4.465      0.077     57.950      0.000
+    M2TNOTE            4.457      0.063     70.253      0.000
+    M3TNOTE            4.380      0.063     69.577      0.000
+    D1TNOTE            4.701      0.039    120.015      0.000
+    D2TNOTE            4.631      0.054     85.793      0.000
+    D3TNOTE            4.699      0.056     84.522      0.000
+    E1TNOTE            4.689      0.065     72.347      0.000
+    E2TNOTE            4.624      0.052     89.752      0.000
+    E3TNOTE            4.592      0.063     72.914      0.000
+    F1TNOTE            4.525      0.068     66.067      0.000
+    F2TNOTE            4.430      0.066     67.464      0.000
+    F3TNOTE            4.425      0.064     69.083      0.000
+
+ Variances
+    RIM                0.426      0.049      8.673      0.000
+    RID                0.131      0.022      6.023      0.000
+    RIE                0.279      0.038      7.307      0.000
+    RIF                0.331      0.051      6.531      0.000
+
+ Residual Variances
+    M1TNOTE            0.000      0.000    999.000    999.000
+    M2TNOTE            0.000      0.000    999.000    999.000
+    M3TNOTE            0.000      0.000    999.000    999.000
+    D1TNOTE            0.000      0.000    999.000    999.000
+    D2TNOTE            0.000      0.000    999.000    999.000
+    D3TNOTE            0.000      0.000    999.000    999.000
+    E1TNOTE            0.000      0.000    999.000    999.000
+    E2TNOTE            0.000      0.000    999.000    999.000
+    E3TNOTE            0.000      0.000    999.000    999.000
+    F1TNOTE            0.000      0.000    999.000    999.000
+    F2TNOTE            0.000      0.000    999.000    999.000
+    F3TNOTE            0.000      0.000    999.000    999.000
+    M1NOTEWI           0.158      0.055      2.897      0.004
+    M2NOTEWI           0.110      0.077      1.427      0.154
+    M3NOTEWI           0.292      0.031      9.334      0.000
+    D1NOTEWI           0.107      0.016      6.785      0.000
+    D2NOTEWI           0.147      0.039      3.755      0.000
+    D3NOTEWI           0.138      0.016      8.802      0.000
+    E1NOTEWI           0.126      0.028      4.510      0.000
+    E2NOTEWI           0.120      0.038      3.172      0.002
+    E3NOTEWI           0.144      0.027      5.346      0.000
+    F1NOTEWI           0.155      0.045      3.444      0.001
+    F2NOTEWI           0.231      0.054      4.261      0.000
+    F3NOTEWI           0.171      0.027      6.230      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.526E-03
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ RIM      BY
+    M1TNOTE            0.853      0.046     18.698      0.000
+    M2TNOTE            0.836      0.043     19.453      0.000
+    M3TNOTE            0.765      0.025     30.506      0.000
+
+ M1NOTEWI BY
+    M1TNOTE            0.521      0.075      6.977      0.000
+
+ M2NOTEWI BY
+    M2TNOTE            0.548      0.066      8.359      0.000
+
+ M3NOTEWI BY
+    M3TNOTE            0.644      0.030     21.590      0.000
+
+ RID      BY
+    D1TNOTE            0.728      0.042     17.130      0.000
+    D2TNOTE            0.685      0.065     10.581      0.000
+    D3TNOTE            0.688      0.035     19.683      0.000
+
+ D1NOTEWI BY
+    D1TNOTE            0.686      0.045     15.233      0.000
+
+ D2NOTEWI BY
+    D2TNOTE            0.728      0.061     11.962      0.000
+
+ D3NOTEWI BY
+    D3TNOTE            0.726      0.033     21.922      0.000
+
+ RIE      BY
+    E1TNOTE            0.822      0.042     19.478      0.000
+    E2TNOTE            0.830      0.057     14.508      0.000
+    E3TNOTE            0.807      0.036     22.355      0.000
+
+ E1NOTEWI BY
+    E1TNOTE            0.570      0.061      9.356      0.000
+
+ E2NOTEWI BY
+    E2TNOTE            0.558      0.085      6.551      0.000
+
+ E3NOTEWI BY
+    E3TNOTE            0.591      0.049     11.975      0.000
+
+ RIF      BY
+    F1TNOTE            0.825      0.053     15.503      0.000
+    F2TNOTE            0.762      0.054     14.092      0.000
+    F3TNOTE            0.776      0.041     19.107      0.000
+
+ F1NOTEWI BY
+    F1TNOTE            0.565      0.078      7.264      0.000
+
+ F2NOTEWI BY
+    F2TNOTE            0.648      0.064     10.175      0.000
+
+ F3NOTEWI BY
+    F3TNOTE            0.631      0.050     12.621      0.000
+
+ M3NOTEWI ON
+    M2NOTEWI           0.118      0.149      0.792      0.428
+
+ M2NOTEWI ON
+    M1NOTEWI          -0.630      0.241     -2.614      0.009
+
+ D3NOTEWI ON
+    D2NOTEWI           0.135      0.118      1.150      0.250
+
+ D2NOTEWI ON
+    D1NOTEWI          -0.095      0.166     -0.570      0.569
+
+ E3NOTEWI ON
+    E2NOTEWI           0.085      0.243      0.349      0.727
+
+ E2NOTEWI ON
+    E1NOTEWI           0.127      0.231      0.550      0.582
+
+ F3NOTEWI ON
+    F2NOTEWI           0.412      0.120      3.431      0.001
+
+ F2NOTEWI ON
+    F1NOTEWI          -0.023      0.192     -0.122      0.903
+
+ M3NOTEWI ON
+    EXTRLOSE          -0.021      0.108     -0.194      0.846
+    INTRLOSE          -0.121      0.086     -1.404      0.160
+
+ M2NOTEWI ON
+    EXTRLOSE           0.060      0.191      0.315      0.753
+    INTRLOSE          -0.049      0.144     -0.340      0.734
+
+ M1NOTEWI ON
+    EXTRLOSE           0.076      0.128      0.590      0.555
+    INTRLOSE           0.016      0.123      0.127      0.899
+
+ D3NOTEWI ON
+    EXTRLOSE          -0.108      0.080     -1.349      0.177
+    INTRLOSE          -0.131      0.090     -1.458      0.145
+
+ D2NOTEWI ON
+    EXTRLOSE          -0.064      0.092     -0.695      0.487
+    INTRLOSE          -0.041      0.084     -0.487      0.626
+
+ D1NOTEWI ON
+    EXTRLOSE          -0.195      0.075     -2.620      0.009
+    INTRLOSE          -0.167      0.090     -1.853      0.064
+
+ E3NOTEWI ON
+    EXTRLOSE          -0.034      0.109     -0.310      0.756
+    INTRLOSE          -0.143      0.102     -1.395      0.163
+
+ E2NOTEWI ON
+    EXTRLOSE          -0.167      0.116     -1.443      0.149
+    INTRLOSE           0.038      0.104      0.369      0.712
+
+ E1NOTEWI ON
+    EXTRLOSE          -0.154      0.079     -1.946      0.052
+    INTRLOSE          -0.155      0.155     -0.999      0.318
+
+ F3NOTEWI ON
+    EXTRLOSE          -0.140      0.066     -2.107      0.035
+    INTRLOSE          -0.074      0.083     -0.899      0.368
+
+ F2NOTEWI ON
+    EXTRLOSE          -0.183      0.084     -2.176      0.030
+    INTRLOSE           0.062      0.095      0.651      0.515
+
+ F1NOTEWI ON
+    EXTRLOSE          -0.054      0.113     -0.476      0.634
+    INTRLOSE           0.012      0.103      0.117      0.907
+
+ M1NOTEWI WITH
+    D1NOTEWI           0.184      0.112      1.647      0.099
+    E1NOTEWI           0.052      0.094      0.549      0.583
+    F1NOTEWI           0.266      0.117      2.281      0.023
+
+ D1NOTEWI WITH
+    E1NOTEWI           0.089      0.137      0.651      0.515
+    F1NOTEWI           0.039      0.128      0.309      0.757
+
+ E1NOTEWI WITH
+    F1NOTEWI           0.114      0.112      1.020      0.308
+
+ M2NOTEWI WITH
+    D2NOTEWI           0.208      0.168      1.240      0.215
+    E2NOTEWI           0.324      0.152      2.138      0.033
+    F2NOTEWI           0.331      0.179      1.852      0.064
+
+ D2NOTEWI WITH
+    E2NOTEWI           0.161      0.097      1.670      0.095
+    F2NOTEWI           0.184      0.092      1.995      0.046
+
+ E2NOTEWI WITH
+    F2NOTEWI           0.225      0.093      2.426      0.015
+
+ M3NOTEWI WITH
+    D3NOTEWI           0.125      0.061      2.064      0.039
+    E3NOTEWI           0.045      0.084      0.537      0.591
+    F3NOTEWI           0.116      0.074      1.556      0.120
+
+ D3NOTEWI WITH
+    E3NOTEWI           0.128      0.074      1.736      0.083
+    F3NOTEWI           0.217      0.091      2.376      0.018
+
+ E3NOTEWI WITH
+    F3NOTEWI           0.125      0.126      0.997      0.319
+
+ RID      WITH
+    RIM                0.308      0.095      3.252      0.001
+
+ RIE      WITH
+    RIM                0.322      0.071      4.557      0.000
+    RID                0.561      0.087      6.464      0.000
+
+ RIF      WITH
+    RIM                0.494      0.067      7.388      0.000
+    RID                0.553      0.096      5.795      0.000
+    RIE                0.674      0.051     13.324      0.000
+
+ Means
+    RIM                0.000      0.000    999.000    999.000
+    RID                0.000      0.000    999.000    999.000
+    RIE                0.000      0.000    999.000    999.000
+    RIF                0.000      0.000    999.000    999.000
+
+ Intercepts
+    M1TNOTE            5.839      0.382     15.286      0.000
+    M2TNOTE            5.711      0.303     18.865      0.000
+    M3TNOTE            5.136      0.229     22.399      0.000
+    D1TNOTE            9.443      0.458     20.610      0.000
+    D2TNOTE            8.761      0.540     16.212      0.000
+    D3TNOTE            8.923      0.466     19.129      0.000
+    E1TNOTE            7.300      0.343     21.272      0.000
+    E2TNOTE            7.269      0.373     19.511      0.000
+    E3TNOTE            7.019      0.446     15.745      0.000
+    F1TNOTE            6.491      0.296     21.958      0.000
+    F2TNOTE            5.868      0.273     21.486      0.000
+    F3TNOTE            5.968      0.306     19.514      0.000
+
+ Variances
+    RIM                1.000      0.000    999.000    999.000
+    RID                1.000      0.000    999.000    999.000
+    RIE                1.000      0.000    999.000    999.000
+    RIF                1.000      0.000    999.000    999.000
+
+ Residual Variances
+    M1TNOTE            0.000    999.000    999.000    999.000
+    M2TNOTE            0.000    999.000    999.000    999.000
+    M3TNOTE            0.000    999.000    999.000    999.000
+    D1TNOTE            0.000    999.000    999.000    999.000
+    D2TNOTE            0.000    999.000    999.000    999.000
+    D3TNOTE            0.000    999.000    999.000    999.000
+    E1TNOTE            0.000    999.000    999.000    999.000
+    E2TNOTE            0.000    999.000    999.000    999.000
+    E3TNOTE            0.000    999.000    999.000    999.000
+    F1TNOTE            0.000    999.000    999.000    999.000
+    F2TNOTE            0.000    999.000    999.000    999.000
+    F3TNOTE            0.000    999.000    999.000    999.000
+    M1NOTEWI           0.994      0.018     54.371      0.000
+    M2NOTEWI           0.602      0.301      1.997      0.046
+    M3NOTEWI           0.968      0.041     23.551      0.000
+    D1NOTEWI           0.921      0.045     20.551      0.000
+    D2NOTEWI           0.989      0.031     31.824      0.000
+    D3NOTEWI           0.944      0.037     25.331      0.000
+    E1NOTEWI           0.943      0.069     13.753      0.000
+    E2NOTEWI           0.951      0.056     17.007      0.000
+    E3NOTEWI           0.968      0.063     15.376      0.000
+    F1NOTEWI           0.997      0.012     86.465      0.000
+    F2NOTEWI           0.967      0.029     33.762      0.000
+    F3NOTEWI           0.783      0.096      8.148      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    M1TNOTE            1.000    999.000    999.000    999.000
+    M2TNOTE            1.000    999.000    999.000    999.000
+    M3TNOTE            1.000    999.000    999.000    999.000
+    D1TNOTE            1.000    999.000    999.000    999.000
+    D2TNOTE            1.000    999.000    999.000    999.000
+    D3TNOTE            1.000    999.000    999.000    999.000
+    E1TNOTE            1.000    999.000    999.000    999.000
+    E2TNOTE            1.000    999.000    999.000    999.000
+    E3TNOTE            1.000    999.000    999.000    999.000
+    F1TNOTE            1.000    999.000    999.000    999.000
+    F2TNOTE            1.000    999.000    999.000    999.000
+    F3TNOTE            1.000    999.000    999.000    999.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    M1NOTEWI           0.006      0.018      0.353      0.724
+    M2NOTEWI           0.398      0.301      1.320      0.187
+    M3NOTEWI           0.032      0.041      0.767      0.443
+    D1NOTEWI           0.079      0.045      1.772      0.076
+    D2NOTEWI           0.011      0.031      0.367      0.713
+    D3NOTEWI           0.056      0.037      1.499      0.134
+    E1NOTEWI           0.057      0.069      0.838      0.402
+    E2NOTEWI           0.049      0.056      0.876      0.381
+    E3NOTEWI           0.032      0.063      0.512      0.609
+    F1NOTEWI           0.003      0.012      0.239      0.811
+    F2NOTEWI           0.033      0.029      1.140      0.254
+    F3NOTEWI           0.217      0.096      2.260      0.024
+
+
+MODEL MODIFICATION INDICES
+
+NOTE:  Modification indices for direct effects of observed dependent variables
+regressed on covariates may not be included.  To include these, request
+MODINDICES (ALL).
+
+Minimum M.I. value for printing the modification index    10.000
+
+                                   M.I.     E.P.C.  Std E.P.C.  StdYX E.P.C.
+
+No modification indices above the minimum value.
+
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              M1TNOTE       M2TNOTE       M3TNOTE       D1TNOTE       D2TNOTE
+              ________      ________      ________      ________      ________
+                  1             2             3             4             5
+
+
+           NU
+              D3TNOTE       E1TNOTE       E2TNOTE       E3TNOTE       F1TNOTE
+              ________      ________      ________      ________      ________
+                  6             7             8             9            10
+
+
+           NU
+              F2TNOTE       F3TNOTE       EXTRLOSE      INTRLOSE
+              ________      ________      ________      ________
+                 11            12             0             0
+
+
+           LAMBDA
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ M1TNOTE            0             0             0             0             0
+ M2TNOTE            0             0             0             0             0
+ M3TNOTE            0             0             0             0             0
+ D1TNOTE            0             0             0             0             0
+ D2TNOTE            0             0             0             0             0
+ D3TNOTE            0             0             0             0             0
+ E1TNOTE            0             0             0             0             0
+ E2TNOTE            0             0             0             0             0
+ E3TNOTE            0             0             0             0             0
+ F1TNOTE            0             0             0             0             0
+ F2TNOTE            0             0             0             0             0
+ F3TNOTE            0             0             0             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           LAMBDA
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ M1TNOTE            0             0             0             0             0
+ M2TNOTE            0             0             0             0             0
+ M3TNOTE            0             0             0             0             0
+ D1TNOTE            0             0             0             0             0
+ D2TNOTE            0             0             0             0             0
+ D3TNOTE            0             0             0             0             0
+ E1TNOTE            0             0             0             0             0
+ E2TNOTE            0             0             0             0             0
+ E3TNOTE            0             0             0             0             0
+ F1TNOTE            0             0             0             0             0
+ F2TNOTE            0             0             0             0             0
+ F3TNOTE            0             0             0             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           LAMBDA
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ M1TNOTE            0             0             0             0             0
+ M2TNOTE            0             0             0             0             0
+ M3TNOTE            0             0             0             0             0
+ D1TNOTE            0             0             0             0             0
+ D2TNOTE            0             0             0             0             0
+ D3TNOTE            0             0             0             0             0
+ E1TNOTE            0             0             0             0             0
+ E2TNOTE            0             0             0             0             0
+ E3TNOTE            0             0             0             0             0
+ F1TNOTE            0             0             0             0             0
+ F2TNOTE            0             0             0             0             0
+ F3TNOTE            0             0             0             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           LAMBDA
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ M1TNOTE            0             0             0
+ M2TNOTE            0             0             0
+ M3TNOTE            0             0             0
+ D1TNOTE            0             0             0
+ D2TNOTE            0             0             0
+ D3TNOTE            0             0             0
+ E1TNOTE            0             0             0
+ E2TNOTE            0             0             0
+ E3TNOTE            0             0             0
+ F1TNOTE            0             0             0
+ F2TNOTE            0             0             0
+ F3TNOTE            0             0             0
+ EXTRLOSE           0             0             0
+ INTRLOSE           0             0             0
+
+
+           THETA
+              M1TNOTE       M2TNOTE       M3TNOTE       D1TNOTE       D2TNOTE
+              ________      ________      ________      ________      ________
+ M1TNOTE            0
+ M2TNOTE            0             0
+ M3TNOTE            0             0             0
+ D1TNOTE            0             0             0             0
+ D2TNOTE            0             0             0             0             0
+ D3TNOTE            0             0             0             0             0
+ E1TNOTE            0             0             0             0             0
+ E2TNOTE            0             0             0             0             0
+ E3TNOTE            0             0             0             0             0
+ F1TNOTE            0             0             0             0             0
+ F2TNOTE            0             0             0             0             0
+ F3TNOTE            0             0             0             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           THETA
+              D3TNOTE       E1TNOTE       E2TNOTE       E3TNOTE       F1TNOTE
+              ________      ________      ________      ________      ________
+ D3TNOTE            0
+ E1TNOTE            0             0
+ E2TNOTE            0             0             0
+ E3TNOTE            0             0             0             0
+ F1TNOTE            0             0             0             0             0
+ F2TNOTE            0             0             0             0             0
+ F3TNOTE            0             0             0             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           THETA
+              F2TNOTE       F3TNOTE       EXTRLOSE      INTRLOSE
+              ________      ________      ________      ________
+ F2TNOTE            0
+ F3TNOTE            0             0
+ EXTRLOSE           0             0             0
+ INTRLOSE           0             0             0             0
+
+
+           ALPHA
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+                  0             0             0             0             0
+
+
+           ALPHA
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+                  0             0             0             0             0
+
+
+           ALPHA
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+                  0             0             0             0             0
+
+
+           ALPHA
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+                  0             0             0
+
+
+           BETA
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM                0             0             0             0             0
+ M1NOTEWI           0             0             0             0             0
+ M2NOTEWI           0            15             0             0             0
+ M3NOTEWI           0             0            18             0             0
+ RID                0             0             0             0             0
+ D1NOTEWI           0             0             0             0             0
+ D2NOTEWI           0             0             0             0             0
+ D3NOTEWI           0             0             0             0             0
+ RIE                0             0             0             0             0
+ E1NOTEWI           0             0             0             0             0
+ E2NOTEWI           0             0             0             0             0
+ E3NOTEWI           0             0             0             0             0
+ RIF                0             0             0             0             0
+ F1NOTEWI           0             0             0             0             0
+ F2NOTEWI           0             0             0             0             0
+ F3NOTEWI           0             0             0             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           BETA
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ RIM                0             0             0             0             0
+ M1NOTEWI           0             0             0             0             0
+ M2NOTEWI           0             0             0             0             0
+ M3NOTEWI           0             0             0             0             0
+ RID                0             0             0             0             0
+ D1NOTEWI           0             0             0             0             0
+ D2NOTEWI          23             0             0             0             0
+ D3NOTEWI           0            26             0             0             0
+ RIE                0             0             0             0             0
+ E1NOTEWI           0             0             0             0             0
+ E2NOTEWI           0             0             0             0            31
+ E3NOTEWI           0             0             0             0             0
+ RIF                0             0             0             0             0
+ F1NOTEWI           0             0             0             0             0
+ F2NOTEWI           0             0             0             0             0
+ F3NOTEWI           0             0             0             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           BETA
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ RIM                0             0             0             0             0
+ M1NOTEWI           0             0             0             0             0
+ M2NOTEWI           0             0             0             0             0
+ M3NOTEWI           0             0             0             0             0
+ RID                0             0             0             0             0
+ D1NOTEWI           0             0             0             0             0
+ D2NOTEWI           0             0             0             0             0
+ D3NOTEWI           0             0             0             0             0
+ RIE                0             0             0             0             0
+ E1NOTEWI           0             0             0             0             0
+ E2NOTEWI           0             0             0             0             0
+ E3NOTEWI          34             0             0             0             0
+ RIF                0             0             0             0             0
+ F1NOTEWI           0             0             0             0             0
+ F2NOTEWI           0             0             0            39             0
+ F3NOTEWI           0             0             0             0            42
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           BETA
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ RIM                0             0             0
+ M1NOTEWI           0            13            14
+ M2NOTEWI           0            16            17
+ M3NOTEWI           0            19            20
+ RID                0             0             0
+ D1NOTEWI           0            21            22
+ D2NOTEWI           0            24            25
+ D3NOTEWI           0            27            28
+ RIE                0             0             0
+ E1NOTEWI           0            29            30
+ E2NOTEWI           0            32            33
+ E3NOTEWI           0            35            36
+ RIF                0             0             0
+ F1NOTEWI           0            37            38
+ F2NOTEWI           0            40            41
+ F3NOTEWI           0            43            44
+ EXTRLOSE           0             0             0
+ INTRLOSE           0             0             0
+
+
+           PSI
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM               45
+ M1NOTEWI           0            46
+ M2NOTEWI           0             0            47
+ M3NOTEWI           0             0             0            48
+ RID               49             0             0             0            50
+ D1NOTEWI           0            51             0             0             0
+ D2NOTEWI           0             0            53             0             0
+ D3NOTEWI           0             0             0            55             0
+ RIE               57             0             0             0            58
+ E1NOTEWI           0            60             0             0             0
+ E2NOTEWI           0             0            63             0             0
+ E3NOTEWI           0             0             0            66             0
+ RIF               69             0             0             0            70
+ F1NOTEWI           0            73             0             0             0
+ F2NOTEWI           0             0            77             0             0
+ F3NOTEWI           0             0             0            81             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           PSI
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI          52
+ D2NOTEWI           0            54
+ D3NOTEWI           0             0            56
+ RIE                0             0             0            59
+ E1NOTEWI          61             0             0             0            62
+ E2NOTEWI           0            64             0             0             0
+ E3NOTEWI           0             0            67             0             0
+ RIF                0             0             0            71             0
+ F1NOTEWI          74             0             0             0            75
+ F2NOTEWI           0            78             0             0             0
+ F3NOTEWI           0             0            82             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           PSI
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI          65
+ E3NOTEWI           0            68
+ RIF                0             0            72
+ F1NOTEWI           0             0             0            76
+ F2NOTEWI          79             0             0             0            80
+ F3NOTEWI           0            83             0             0             0
+ EXTRLOSE           0             0             0             0             0
+ INTRLOSE           0             0             0             0             0
+
+
+           PSI
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI          84
+ EXTRLOSE           0             0
+ INTRLOSE           0             0             0
+
+
+     STARTING VALUES
+
+
+           NU
+              M1TNOTE       M2TNOTE       M3TNOTE       D1TNOTE       D2TNOTE
+              ________      ________      ________      ________      ________
+                4.508         4.511         4.413         4.643         4.649
+
+
+           NU
+              D3TNOTE       E1TNOTE       E2TNOTE       E3TNOTE       F1TNOTE
+              ________      ________      ________      ________      ________
+                4.683         4.626         4.628         4.604         4.516
+
+
+           NU
+              F2TNOTE       F3TNOTE       EXTRLOSE      INTRLOSE
+              ________      ________      ________      ________
+                4.449         4.430         0.000         0.000
+
+
+           LAMBDA
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ M1TNOTE        1.000         1.000         0.000         0.000         0.000
+ M2TNOTE        1.000         0.000         1.000         0.000         0.000
+ M3TNOTE        1.000         0.000         0.000         1.000         0.000
+ D1TNOTE        0.000         0.000         0.000         0.000         1.000
+ D2TNOTE        0.000         0.000         0.000         0.000         1.000
+ D3TNOTE        0.000         0.000         0.000         0.000         1.000
+ E1TNOTE        0.000         0.000         0.000         0.000         0.000
+ E2TNOTE        0.000         0.000         0.000         0.000         0.000
+ E3TNOTE        0.000         0.000         0.000         0.000         0.000
+ F1TNOTE        0.000         0.000         0.000         0.000         0.000
+ F2TNOTE        0.000         0.000         0.000         0.000         0.000
+ F3TNOTE        0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ M1TNOTE        0.000         0.000         0.000         0.000         0.000
+ M2TNOTE        0.000         0.000         0.000         0.000         0.000
+ M3TNOTE        0.000         0.000         0.000         0.000         0.000
+ D1TNOTE        1.000         0.000         0.000         0.000         0.000
+ D2TNOTE        0.000         1.000         0.000         0.000         0.000
+ D3TNOTE        0.000         0.000         1.000         0.000         0.000
+ E1TNOTE        0.000         0.000         0.000         1.000         1.000
+ E2TNOTE        0.000         0.000         0.000         1.000         0.000
+ E3TNOTE        0.000         0.000         0.000         1.000         0.000
+ F1TNOTE        0.000         0.000         0.000         0.000         0.000
+ F2TNOTE        0.000         0.000         0.000         0.000         0.000
+ F3TNOTE        0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ M1TNOTE        0.000         0.000         0.000         0.000         0.000
+ M2TNOTE        0.000         0.000         0.000         0.000         0.000
+ M3TNOTE        0.000         0.000         0.000         0.000         0.000
+ D1TNOTE        0.000         0.000         0.000         0.000         0.000
+ D2TNOTE        0.000         0.000         0.000         0.000         0.000
+ D3TNOTE        0.000         0.000         0.000         0.000         0.000
+ E1TNOTE        0.000         0.000         0.000         0.000         0.000
+ E2TNOTE        1.000         0.000         0.000         0.000         0.000
+ E3TNOTE        0.000         1.000         0.000         0.000         0.000
+ F1TNOTE        0.000         0.000         1.000         1.000         0.000
+ F2TNOTE        0.000         0.000         1.000         0.000         1.000
+ F3TNOTE        0.000         0.000         1.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ M1TNOTE        0.000         0.000         0.000
+ M2TNOTE        0.000         0.000         0.000
+ M3TNOTE        0.000         0.000         0.000
+ D1TNOTE        0.000         0.000         0.000
+ D2TNOTE        0.000         0.000         0.000
+ D3TNOTE        0.000         0.000         0.000
+ E1TNOTE        0.000         0.000         0.000
+ E2TNOTE        0.000         0.000         0.000
+ E3TNOTE        0.000         0.000         0.000
+ F1TNOTE        0.000         0.000         0.000
+ F2TNOTE        0.000         0.000         0.000
+ F3TNOTE        1.000         0.000         0.000
+ EXTRLOSE       0.000         1.000         0.000
+ INTRLOSE       0.000         0.000         1.000
+
+
+           THETA
+              M1TNOTE       M2TNOTE       M3TNOTE       D1TNOTE       D2TNOTE
+              ________      ________      ________      ________      ________
+ M1TNOTE        0.000
+ M2TNOTE        0.000         0.000
+ M3TNOTE        0.000         0.000         0.000
+ D1TNOTE        0.000         0.000         0.000         0.000
+ D2TNOTE        0.000         0.000         0.000         0.000         0.000
+ D3TNOTE        0.000         0.000         0.000         0.000         0.000
+ E1TNOTE        0.000         0.000         0.000         0.000         0.000
+ E2TNOTE        0.000         0.000         0.000         0.000         0.000
+ E3TNOTE        0.000         0.000         0.000         0.000         0.000
+ F1TNOTE        0.000         0.000         0.000         0.000         0.000
+ F2TNOTE        0.000         0.000         0.000         0.000         0.000
+ F3TNOTE        0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              D3TNOTE       E1TNOTE       E2TNOTE       E3TNOTE       F1TNOTE
+              ________      ________      ________      ________      ________
+ D3TNOTE        0.000
+ E1TNOTE        0.000         0.000
+ E2TNOTE        0.000         0.000         0.000
+ E3TNOTE        0.000         0.000         0.000         0.000
+ F1TNOTE        0.000         0.000         0.000         0.000         0.000
+ F2TNOTE        0.000         0.000         0.000         0.000         0.000
+ F3TNOTE        0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              F2TNOTE       F3TNOTE       EXTRLOSE      INTRLOSE
+              ________      ________      ________      ________
+ F2TNOTE        0.000
+ F3TNOTE        0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+                0.000         0.295         0.126
+
+
+           BETA
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            0.000         0.000         0.000         0.000         0.000
+ M1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ M2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ M3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RID            0.000         0.000         0.000         0.000         0.000
+ D1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ D2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ D3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIE            0.000         0.000         0.000         0.000         0.000
+ E1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIF            0.000         0.000         0.000         0.000         0.000
+ F1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ RIM            0.000         0.000         0.000         0.000         0.000
+ M1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ M2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ M3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RID            0.000         0.000         0.000         0.000         0.000
+ D1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ D2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ D3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIE            0.000         0.000         0.000         0.000         0.000
+ E1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIF            0.000         0.000         0.000         0.000         0.000
+ F1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ RIM            0.000         0.000         0.000         0.000         0.000
+ M1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ M2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ M3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RID            0.000         0.000         0.000         0.000         0.000
+ D1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ D2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ D3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIE            0.000         0.000         0.000         0.000         0.000
+ E1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIF            0.000         0.000         0.000         0.000         0.000
+ F1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ RIM            0.000         0.000         0.000
+ M1NOTEWI       0.000         0.000         0.000
+ M2NOTEWI       0.000         0.000         0.000
+ M3NOTEWI       0.000         0.000         0.000
+ RID            0.000         0.000         0.000
+ D1NOTEWI       0.000         0.000         0.000
+ D2NOTEWI       0.000         0.000         0.000
+ D3NOTEWI       0.000         0.000         0.000
+ RIE            0.000         0.000         0.000
+ E1NOTEWI       0.000         0.000         0.000
+ E2NOTEWI       0.000         0.000         0.000
+ E3NOTEWI       0.000         0.000         0.000
+ RIF            0.000         0.000         0.000
+ F1NOTEWI       0.000         0.000         0.000
+ F2NOTEWI       0.000         0.000         0.000
+ F3NOTEWI       0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000
+
+
+           PSI
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            0.050
+ M1NOTEWI       0.000         0.050
+ M2NOTEWI       0.000         0.000         0.050
+ M3NOTEWI       0.000         0.000         0.000         0.050
+ RID            0.000         0.000         0.000         0.000         0.050
+ D1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ D2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ D3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIE            0.000         0.000         0.000         0.000         0.000
+ E1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIF            0.000         0.000         0.000         0.000         0.000
+ F1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI       0.050
+ D2NOTEWI       0.000         0.050
+ D3NOTEWI       0.000         0.000         0.050
+ RIE            0.000         0.000         0.000         0.050
+ E1NOTEWI       0.000         0.000         0.000         0.000         0.050
+ E2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ E3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ RIF            0.000         0.000         0.000         0.000         0.000
+ F1NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F2NOTEWI       0.000         0.000         0.000         0.000         0.000
+ F3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI       0.050
+ E3NOTEWI       0.000         0.050
+ RIF            0.000         0.000         0.050
+ F1NOTEWI       0.000         0.000         0.000         0.050
+ F2NOTEWI       0.000         0.000         0.000         0.000         0.050
+ F3NOTEWI       0.000         0.000         0.000         0.000         0.000
+ EXTRLOSE       0.000         0.000         0.000         0.000         0.000
+ INTRLOSE       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI       0.050
+ EXTRLOSE       0.000         0.208
+ INTRLOSE       0.000         0.031         0.110
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+                0.000         0.022        -0.006        -0.034         0.000
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+               -0.065        -0.015        -0.048         0.000        -0.058
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+               -0.040        -0.033         0.000        -0.012        -0.046
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+               -0.073         0.295         0.126
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+                0.000         0.031         0.038         0.041         0.000
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+                0.020         0.023         0.025         0.000         0.034
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+                0.028         0.028         0.000         0.031         0.031
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+                0.032         0.029         0.027
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+                0.000         0.702        -0.161        -0.809         0.000
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+               -3.213        -0.657        -1.891         0.000        -1.728
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+               -1.459        -1.170         0.000        -0.379        -1.484
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+               -2.272        10.142         4.741
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+                1.000         0.483         0.872         0.418         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+                0.001         0.511         0.059         1.000         0.084
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+                0.145         0.242         1.000         0.705         0.138
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+                0.023         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            0.426
+ M1NOTEWI       0.000         0.159
+ M2NOTEWI       0.000        -0.107         0.183
+ M3NOTEWI       0.000        -0.017         0.029         0.301
+ RID            0.073         0.000         0.000         0.000         0.131
+ D1NOTEWI       0.000         0.021        -0.015         0.003         0.000
+ D2NOTEWI       0.000        -0.003         0.028         0.005         0.000
+ D3NOTEWI       0.000        -0.002         0.005         0.031         0.000
+ RIE            0.111         0.000         0.000         0.000         0.107
+ E1NOTEWI       0.000         0.005        -0.004         0.005         0.000
+ E2NOTEWI       0.000        -0.001         0.036         0.007         0.000
+ E3NOTEWI       0.000        -0.001         0.005         0.014         0.000
+ RIF            0.186         0.000         0.000         0.000         0.115
+ F1NOTEWI       0.000         0.041        -0.028        -0.004         0.000
+ F2NOTEWI       0.000        -0.004         0.053         0.008         0.000
+ F3NOTEWI       0.000        -0.004         0.022         0.033         0.000
+ EXTRLOSE       0.000         0.014         0.000        -0.011         0.000
+ INTRLOSE       0.000         0.004        -0.008        -0.024         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI       0.117
+ D2NOTEWI      -0.009         0.148
+ D3NOTEWI       0.006         0.021         0.146
+ RIE            0.000         0.000         0.000         0.279
+ E1NOTEWI       0.019         0.001         0.006         0.000         0.134
+ E2NOTEWI       0.006         0.022         0.006         0.000         0.020
+ E3NOTEWI       0.005         0.003         0.023         0.000         0.006
+ RIF            0.000         0.000         0.000         0.205         0.000
+ F1NOTEWI       0.006         0.000         0.001         0.000         0.017
+ F2NOTEWI       0.005         0.035         0.008         0.000         0.004
+ F3NOTEWI       0.009         0.016         0.042         0.000         0.008
+ EXTRLOSE      -0.036        -0.009        -0.025         0.000        -0.031
+ INTRLOSE      -0.023        -0.004        -0.020         0.000        -0.023
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI       0.126
+ E3NOTEWI       0.013         0.149
+ RIF            0.000         0.000         0.331
+ F1NOTEWI       0.003         0.001         0.000         0.155
+ F2NOTEWI       0.043         0.004         0.000        -0.003         0.239
+ F3NOTEWI       0.021         0.025         0.000         0.000         0.099
+ EXTRLOSE      -0.030        -0.014         0.000        -0.009        -0.038
+ INTRLOSE      -0.002        -0.019         0.000         0.000         0.004
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI       0.219
+ EXTRLOSE      -0.048         0.208
+ INTRLOSE      -0.014         0.031         0.110
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            0.049
+ M1NOTEWI       0.000         0.055
+ M2NOTEWI       0.000         0.034         0.054
+ M3NOTEWI       0.000         0.021         0.039         0.034
+ RID            0.022         0.000         0.000         0.000         0.022
+ D1NOTEWI       0.000         0.016         0.011         0.007         0.000
+ D2NOTEWI       0.000         0.006         0.025         0.009         0.000
+ D3NOTEWI       0.000         0.003         0.005         0.014         0.000
+ RIE            0.026         0.000         0.000         0.000         0.016
+ E1NOTEWI       0.000         0.015         0.012         0.008         0.000
+ E2NOTEWI       0.000         0.004         0.021         0.010         0.000
+ E3NOTEWI       0.000         0.003         0.011         0.021         0.000
+ RIF            0.031         0.000         0.000         0.000         0.022
+ F1NOTEWI       0.000         0.025         0.012         0.006         0.000
+ F2NOTEWI       0.000         0.010         0.031         0.012         0.000
+ F3NOTEWI       0.000         0.005         0.013         0.021         0.000
+ EXTRLOSE       0.000         0.023         0.026         0.029         0.000
+ INTRLOSE       0.000         0.015         0.013         0.016         0.000
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI       0.017
+ D2NOTEWI       0.019         0.036
+ D3NOTEWI       0.005         0.019         0.019
+ RIE            0.000         0.000         0.000         0.038
+ E1NOTEWI       0.018         0.005         0.007         0.000         0.031
+ E2NOTEWI       0.006         0.015         0.005         0.000         0.033
+ E3NOTEWI       0.005         0.006         0.012         0.000         0.011
+ RIF            0.000         0.000         0.000         0.025         0.000
+ F1NOTEWI       0.018         0.002         0.003         0.000         0.017
+ F2NOTEWI       0.005         0.019         0.005         0.000         0.007
+ F3NOTEWI       0.006         0.008         0.017         0.000         0.009
+ EXTRLOSE       0.012         0.014         0.015         0.000         0.016
+ INTRLOSE       0.011         0.010         0.013         0.000         0.020
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI       0.044
+ E3NOTEWI       0.037         0.031
+ RIF            0.000         0.000         0.051
+ F1NOTEWI       0.004         0.003         0.000         0.045
+ F2NOTEWI       0.018         0.012         0.000         0.037         0.054
+ F3NOTEWI       0.008         0.023         0.000         0.015         0.037
+ EXTRLOSE       0.016         0.019         0.000         0.020         0.019
+ INTRLOSE       0.016         0.014         0.000         0.014         0.016
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI       0.038
+ EXTRLOSE       0.018         0.012
+ INTRLOSE       0.018         0.012         0.020
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            8.673
+ M1NOTEWI       0.000         2.866
+ M2NOTEWI       0.000        -3.123         3.401
+ M3NOTEWI       0.000        -0.840         0.744         8.853
+ RID            3.332         0.000         0.000         0.000         6.023
+ D1NOTEWI       0.000         1.300        -1.302         0.510         0.000
+ D2NOTEWI       0.000        -0.568         1.145         0.614         0.000
+ D3NOTEWI       0.000        -0.677         0.975         2.255         0.000
+ RIE            4.200         0.000         0.000         0.000         6.509
+ E1NOTEWI       0.000         0.317        -0.306         0.620         0.000
+ E2NOTEWI       0.000        -0.278         1.715         0.684         0.000
+ E3NOTEWI       0.000        -0.422         0.431         0.686         0.000
+ RIF            5.952         0.000         0.000         0.000         5.354
+ F1NOTEWI       0.000         1.630        -2.272        -0.705         0.000
+ F2NOTEWI       0.000        -0.351         1.719         0.687         0.000
+ F3NOTEWI       0.000        -0.742         1.732         1.610         0.000
+ EXTRLOSE       0.000         0.637         0.002        -0.394         0.000
+ INTRLOSE       0.000         0.274        -0.611        -1.461         0.000
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI       6.873
+ D2NOTEWI      -0.485         4.066
+ D3NOTEWI       1.023         1.142         7.819
+ RIE            0.000         0.000         0.000         7.307
+ E1NOTEWI       1.055         0.163         0.965         0.000         4.334
+ E2NOTEWI       1.000         1.481         1.299         0.000         0.591
+ E3NOTEWI       1.050         0.504         1.967         0.000         0.588
+ RIF            0.000         0.000         0.000         8.037         0.000
+ F1NOTEWI       0.350        -0.081         0.229         0.000         0.989
+ F2NOTEWI       0.994         1.881         1.594         0.000         0.526
+ F3NOTEWI       1.542         1.950         2.519         0.000         0.952
+ EXTRLOSE      -2.980        -0.635        -1.645         0.000        -1.904
+ INTRLOSE      -2.100        -0.430        -1.561         0.000        -1.108
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI       2.841
+ E3NOTEWI       0.351         4.847
+ RIF            0.000         0.000         6.531
+ F1NOTEWI       0.753         0.186         0.000         3.462
+ F2NOTEWI       2.343         0.369         0.000        -0.074         4.435
+ F3NOTEWI       2.770         1.088         0.000         0.016         2.681
+ EXTRLOSE      -1.794        -0.743         0.000        -0.455        -1.987
+ INTRLOSE      -0.150        -1.377         0.000         0.009         0.251
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI       5.785
+ EXTRLOSE      -2.635        17.438
+ INTRLOSE      -0.824         2.713         5.539
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            0.000
+ M1NOTEWI       1.000         0.004
+ M2NOTEWI       1.000         0.002         0.001
+ M3NOTEWI       1.000         0.401         0.457         0.000
+ RID            0.001         1.000         1.000         1.000         0.000
+ D1NOTEWI       1.000         0.194         0.193         0.610         1.000
+ D2NOTEWI       1.000         0.570         0.252         0.539         1.000
+ D3NOTEWI       1.000         0.498         0.330         0.024         1.000
+ RIE            0.000         1.000         1.000         1.000         0.000
+ E1NOTEWI       1.000         0.751         0.760         0.535         1.000
+ E2NOTEWI       1.000         0.781         0.086         0.494         1.000
+ E3NOTEWI       1.000         0.673         0.666         0.493         1.000
+ RIF            0.000         1.000         1.000         1.000         0.000
+ F1NOTEWI       1.000         0.103         0.023         0.481         1.000
+ F2NOTEWI       1.000         0.726         0.086         0.492         1.000
+ F3NOTEWI       1.000         0.458         0.083         0.107         1.000
+ EXTRLOSE       1.000         0.524         0.998         0.694         1.000
+ INTRLOSE       1.000         0.784         0.541         0.144         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI       0.000
+ D2NOTEWI       0.628         0.000
+ D3NOTEWI       0.306         0.253         0.000
+ RIE            1.000         1.000         1.000         0.000
+ E1NOTEWI       0.291         0.871         0.335         1.000         0.000
+ E2NOTEWI       0.317         0.139         0.194         1.000         0.554
+ E3NOTEWI       0.294         0.614         0.049         1.000         0.557
+ RIF            1.000         1.000         1.000         0.000         1.000
+ F1NOTEWI       0.726         0.935         0.819         1.000         0.323
+ F2NOTEWI       0.320         0.060         0.111         1.000         0.599
+ F3NOTEWI       0.123         0.051         0.012         1.000         0.341
+ EXTRLOSE       0.003         0.526         0.100         1.000         0.057
+ INTRLOSE       0.036         0.667         0.118         1.000         0.268
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI       0.005
+ E3NOTEWI       0.726         0.000
+ RIF            1.000         1.000         0.000
+ F1NOTEWI       0.452         0.852         1.000         0.001
+ F2NOTEWI       0.019         0.712         1.000         0.941         0.000
+ F3NOTEWI       0.006         0.277         1.000         0.987         0.007
+ EXTRLOSE       0.073         0.458         1.000         0.649         0.047
+ INTRLOSE       0.881         0.169         1.000         0.993         0.802
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI       0.000
+ EXTRLOSE       0.008         0.000
+ INTRLOSE       0.410         0.007         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            1.000
+ M1NOTEWI       0.000         1.000
+ M2NOTEWI       0.000        -0.627         1.000
+ M3NOTEWI       0.000        -0.079         0.125         1.000
+ RID            0.308         0.000         0.000         0.000         1.000
+ D1NOTEWI       0.000         0.156        -0.102         0.018         0.000
+ D2NOTEWI       0.000        -0.021         0.172         0.026         0.000
+ D3NOTEWI       0.000        -0.015         0.031         0.145         0.000
+ RIE            0.322         0.000         0.000         0.000         0.561
+ E1NOTEWI       0.000         0.033        -0.023         0.024         0.000
+ E2NOTEWI       0.000        -0.008         0.240         0.035         0.000
+ E3NOTEWI       0.000        -0.008         0.028         0.067         0.000
+ RIF            0.494         0.000         0.000         0.000         0.553
+ F1NOTEWI       0.000         0.261        -0.168        -0.019         0.000
+ F2NOTEWI       0.000        -0.019         0.253         0.030         0.000
+ F3NOTEWI       0.000        -0.021         0.108         0.130         0.000
+ EXTRLOSE       0.000         0.079         0.000        -0.046         0.000
+ INTRLOSE       0.000         0.031        -0.056        -0.132         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI       1.000
+ D2NOTEWI      -0.071         1.000
+ D3NOTEWI       0.042         0.145         1.000
+ RIE            0.000         0.000         0.000         1.000
+ E1NOTEWI       0.151         0.005         0.045         0.000         1.000
+ E2NOTEWI       0.050         0.164         0.045         0.000         0.151
+ E3NOTEWI       0.042         0.021         0.153         0.000         0.046
+ RIF            0.000         0.000         0.000         0.674         0.000
+ F1NOTEWI       0.048        -0.001         0.005         0.000         0.118
+ F2NOTEWI       0.028         0.187         0.040         0.000         0.020
+ F3NOTEWI       0.059         0.087         0.234         0.000         0.048
+ EXTRLOSE      -0.230        -0.051        -0.142         0.000        -0.186
+ INTRLOSE      -0.207        -0.035        -0.158         0.000        -0.186
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI       1.000
+ E3NOTEWI       0.094         1.000
+ RIF            0.000         0.000         1.000
+ F1NOTEWI       0.024         0.004         0.000         1.000
+ F2NOTEWI       0.247         0.023         0.000        -0.014         1.000
+ F3NOTEWI       0.129         0.141         0.000         0.001         0.434
+ EXTRLOSE      -0.183        -0.079         0.000        -0.051        -0.169
+ INTRLOSE      -0.020        -0.151         0.000         0.001         0.024
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI       1.000
+ EXTRLOSE      -0.224         1.000
+ INTRLOSE      -0.093         0.206         1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            0.000
+ M1NOTEWI       0.000         0.000
+ M2NOTEWI       0.000         0.242         0.000
+ M3NOTEWI       0.000         0.094         0.150         0.000
+ RID            0.095         0.000         0.000         0.000         0.000
+ D1NOTEWI       0.000         0.112         0.078         0.036         0.000
+ D2NOTEWI       0.000         0.037         0.141         0.042         0.000
+ D3NOTEWI       0.000         0.022         0.029         0.065         0.000
+ RIE            0.071         0.000         0.000         0.000         0.087
+ E1NOTEWI       0.000         0.103         0.075         0.038         0.000
+ E2NOTEWI       0.000         0.028         0.109         0.049         0.000
+ E3NOTEWI       0.000         0.019         0.064         0.094         0.000
+ RIF            0.067         0.000         0.000         0.000         0.096
+ F1NOTEWI       0.000         0.113         0.083         0.026         0.000
+ F2NOTEWI       0.000         0.055         0.133         0.043         0.000
+ F3NOTEWI       0.000         0.029         0.053         0.074         0.000
+ EXTRLOSE       0.000         0.120         0.132         0.116         0.000
+ INTRLOSE       0.000         0.114         0.091         0.088         0.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI       0.000
+ D2NOTEWI       0.153         0.000
+ D3NOTEWI       0.040         0.113         0.000
+ RIE            0.000         0.000         0.000         0.000
+ E1NOTEWI       0.137         0.032         0.044         0.000         0.000
+ E2NOTEWI       0.045         0.090         0.030         0.000         0.222
+ E3NOTEWI       0.038         0.039         0.071         0.000         0.073
+ RIF            0.000         0.000         0.000         0.051         0.000
+ F1NOTEWI       0.134         0.016         0.023         0.000         0.110
+ F2NOTEWI       0.028         0.092         0.026         0.000         0.036
+ F3NOTEWI       0.037         0.042         0.084         0.000         0.048
+ EXTRLOSE       0.073         0.082         0.085         0.000         0.090
+ INTRLOSE       0.089         0.081         0.095         0.000         0.159
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI       0.000
+ E3NOTEWI       0.248         0.000
+ RIF            0.000         0.000         0.000
+ F1NOTEWI       0.029         0.019         0.000         0.000
+ F2NOTEWI       0.093         0.062         0.000         0.193         0.000
+ F3NOTEWI       0.043         0.118         0.000         0.081         0.115
+ EXTRLOSE       0.099         0.105         0.000         0.113         0.085
+ INTRLOSE       0.131         0.105         0.000         0.103         0.096
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI       0.000
+ EXTRLOSE       0.086         0.000
+ INTRLOSE       0.111         0.066         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM          999.000
+ M1NOTEWI       0.000       999.000
+ M2NOTEWI       0.000        -2.592       999.000
+ M3NOTEWI       0.000        -0.846         0.829       999.000
+ RID            3.252         0.000         0.000         0.000       999.000
+ D1NOTEWI       0.000         1.386        -1.298         0.501         0.000
+ D2NOTEWI       0.000        -0.570         1.225         0.610         0.000
+ D3NOTEWI       0.000        -0.712         1.042         2.245         0.000
+ RIE            4.557         0.000         0.000         0.000         6.464
+ E1NOTEWI       0.000         0.319        -0.305         0.625         0.000
+ E2NOTEWI       0.000        -0.278         2.196         0.706         0.000
+ E3NOTEWI       0.000        -0.420         0.443         0.714         0.000
+ RIF            7.388         0.000         0.000         0.000         5.795
+ F1NOTEWI       0.000         2.304        -2.022        -0.723         0.000
+ F2NOTEWI       0.000        -0.340         1.899         0.701         0.000
+ F3NOTEWI       0.000        -0.728         2.062         1.745         0.000
+ EXTRLOSE       0.000         0.660         0.002        -0.395         0.000
+ INTRLOSE       0.000         0.273        -0.620        -1.499         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI     999.000
+ D2NOTEWI      -0.466       999.000
+ D3NOTEWI       1.050         1.286       999.000
+ RIE            0.000         0.000         0.000       999.000
+ E1NOTEWI       1.100         0.163         1.019         0.000       999.000
+ E2NOTEWI       1.099         1.827         1.495         0.000         0.679
+ E3NOTEWI       1.081         0.524         2.156         0.000         0.624
+ RIF            0.000         0.000         0.000        13.324         0.000
+ F1NOTEWI       0.354        -0.081         0.228         0.000         1.070
+ F2NOTEWI       0.990         2.025         1.544         0.000         0.539
+ F3NOTEWI       1.574         2.055         2.784         0.000         0.997
+ EXTRLOSE      -3.126        -0.617        -1.668         0.000        -2.062
+ INTRLOSE      -2.317        -0.429        -1.675         0.000        -1.176
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI     999.000
+ E3NOTEWI       0.378       999.000
+ RIF            0.000         0.000       999.000
+ F1NOTEWI       0.821         0.187         0.000       999.000
+ F2NOTEWI       2.649         0.374         0.000        -0.073       999.000
+ F3NOTEWI       3.000         1.191         0.000         0.016         3.777
+ EXTRLOSE      -1.845        -0.749         0.000        -0.453        -1.988
+ INTRLOSE      -0.152        -1.449         0.000         0.009         0.253
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI     999.000
+ EXTRLOSE      -2.605       999.000
+ INTRLOSE      -0.837         3.108       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              RIM           M1NOTEWI      M2NOTEWI      M3NOTEWI      RID
+              ________      ________      ________      ________      ________
+ RIM            0.000
+ M1NOTEWI       1.000         0.000
+ M2NOTEWI       1.000         0.010         0.000
+ M3NOTEWI       1.000         0.397         0.407         0.000
+ RID            0.001         1.000         1.000         1.000         0.000
+ D1NOTEWI       1.000         0.166         0.194         0.616         1.000
+ D2NOTEWI       1.000         0.569         0.221         0.542         1.000
+ D3NOTEWI       1.000         0.477         0.297         0.025         1.000
+ RIE            0.000         1.000         1.000         1.000         0.000
+ E1NOTEWI       1.000         0.750         0.760         0.532         1.000
+ E2NOTEWI       1.000         0.781         0.028         0.480         1.000
+ E3NOTEWI       1.000         0.674         0.658         0.475         1.000
+ RIF            0.000         1.000         1.000         1.000         0.000
+ F1NOTEWI       1.000         0.021         0.043         0.470         1.000
+ F2NOTEWI       1.000         0.734         0.058         0.483         1.000
+ F3NOTEWI       1.000         0.467         0.039         0.081         1.000
+ EXTRLOSE       1.000         0.509         0.998         0.693         1.000
+ INTRLOSE       1.000         0.785         0.536         0.134         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              D1NOTEWI      D2NOTEWI      D3NOTEWI      RIE           E1NOTEWI
+              ________      ________      ________      ________      ________
+ D1NOTEWI       0.000
+ D2NOTEWI       0.641         0.000
+ D3NOTEWI       0.294         0.198         0.000
+ RIE            1.000         1.000         1.000         0.000
+ E1NOTEWI       0.271         0.870         0.308         1.000         0.000
+ E2NOTEWI       0.272         0.068         0.135         1.000         0.497
+ E3NOTEWI       0.280         0.600         0.031         1.000         0.533
+ RIF            1.000         1.000         1.000         0.000         1.000
+ F1NOTEWI       0.723         0.935         0.819         1.000         0.284
+ F2NOTEWI       0.322         0.043         0.123         1.000         0.590
+ F3NOTEWI       0.115         0.040         0.005         1.000         0.319
+ EXTRLOSE       0.002         0.537         0.095         1.000         0.039
+ INTRLOSE       0.020         0.668         0.094         1.000         0.240
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              E2NOTEWI      E3NOTEWI      RIF           F1NOTEWI      F2NOTEWI
+              ________      ________      ________      ________      ________
+ E2NOTEWI       0.000
+ E3NOTEWI       0.705         0.000
+ RIF            1.000         1.000         0.000
+ F1NOTEWI       0.411         0.852         1.000         0.000
+ F2NOTEWI       0.008         0.708         1.000         0.942         0.000
+ F3NOTEWI       0.003         0.234         1.000         0.987         0.000
+ EXTRLOSE       0.065         0.454         1.000         0.651         0.047
+ INTRLOSE       0.879         0.147         1.000         0.993         0.800
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              F3NOTEWI      EXTRLOSE      INTRLOSE
+              ________      ________      ________
+ F3NOTEWI       0.000
+ EXTRLOSE       0.009         0.000
+ INTRLOSE       0.403         0.002         0.000
+
+
+     Beginning Time:  12:58:54
+        Ending Time:  12:58:55
+       Elapsed Time:  00:00:01
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2021 Muthen & Muthen

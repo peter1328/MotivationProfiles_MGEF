@@ -1,0 +1,723 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+## Load
+
+```{r load}
+
+load("coh_ma_fit.rda")
+load("coh_ma_fit_corr.rda")
+load("coh_ma_nomi_fit.rda")
+load("coh_ma_weak_fit.rda")
+load("coh_de_fit.rda")
+load("coh_de_fit_corr.rda")
+load("coh_de_nomi_fit.rda")
+load("coh_de_weak_fit.rda")
+load("coh_en_fit.rda")
+load("coh_en_fit_corr.rda")
+load("coh_en_nomi_fit.rda")
+load("coh_en_weak_fit.rda")
+load("coh_fr_fit.rda")
+load("coh_fr_fit_corr.rda")
+load("coh_fr_nomi_fit.rda")
+load("coh_fr_weak_fit.rda")
+load("coh_ma_fit_corr_TVC.rda")
+load("coh_total_fit.rda")
+load("coh_total_none_corrmfs_fit.rda")
+load("coh_total_extr_fit.rda")
+load("coh_total_intr_fit.rda")
+load("coh_total_weak_fit.rda")
+load("coh_total_none_fit.rda")
+
+load("coh_ma_bootfit_fiml_corr.rda")
+load("coh_de_bootfit_fiml_corr.rda")
+load("coh_en_bootfit_fiml_corr.rda")
+load("coh_fr_bootfit_fiml_corr.rda")
+
+```
+
+### Zustäzliche Daten von latenten Transitionsanalysen
+
+```{r}
+#setwd("C:/local user data/OPFE/2019-11/") #<- adapt!!!
+
+load("plotdata_extr.R")
+load("probs_extr.R")
+load("probs_intr.R")
+load("t_intr.R")
+load("t_extr.R")
+load("probs_intrextr.R")
+load("l2.R")
+
+```
+
+```{r load, include = FALSE}
+#setwd("C:/local user data/OPFE/OPFE_R/")
+#wd <- "C:/local user data/OPFE/2019-11"
+#setwd("C:/local user data/OPFE/2019-11")
+#mot <- read.spss("C:/local user data/OPFE/2019-03/Schuler Welle 1-3 Peter_items_neu2.sav", to.data.frame = TRUE)
+
+mot <- read.spss("Schuler Welle 1-3 Peter_items_neu2.sav", to.data.frame = TRUE)
+
+##Ausschluss Schaffhausen
+#table(mot$OhneSchaff)
+mot <- subset(mot, OhneSchaff == 1)
+
+##Change input mistakes into NAs and drop according factor levels
+mot[,25:453][mot[,25:453] == 1.5] <- NA
+mot[,25:453][mot[,25:453] == 2.5] <- NA
+mot[,25:453][mot[,25:453] == 3.5] <- NA
+mot[,25:453][mot[,25:453] == 4.5] <- NA
+mot[,25:453] <- droplevels(mot[,25:453])
+#describe(mot[, 25:453])
+
+##Change factors into numerics for SEMs
+for (i in 25:453){
+  mot[i] <- as.numeric(mot[,i])
+}
+
+# datafile.scores
+
+motg <- read.spss("Schüler Welle 1-3 Peter-korr_fullgender.sav", to.data.frame = TRUE)
+#Ausschluss von Schaffhausen
+motg <- subset(motg, School != "Schaffhausen")
+
+```
+
+### Zusätzliche Variablen
+
+#### Dummys für Schwerpunktfächer
+
+```{r Schwerpunktdummys, include = FALSE}
+
+# Dummy variabels Schwerpunktfach
+
+mot$spgrouped <- factor(NA, levels = c("Languages", "STEM", "Other"))
+mot$spgrouped <- ifelse(mot$sp == "Latein" | mot$sp == "Italienisch" | mot$sp == "Spanisch", "Languages", mot$spgrouped)
+mot$spgrouped <- ifelse(mot$sp == "Physik und Anwendungen der Mathematik" | mot$sp == "Biologie und Chemie", "STEM", mot$spgrouped)
+mot$spgrouped <- ifelse(mot$sp == "Wirtschaft und Recht" | mot$sp == "Musik" | mot$sp == "Bildnerisches Gestalten" | mot$sp == "Anderes" , "Other", mot$spgrouped)
+table(mot$spgrouped)
+
+mot$sp_Languages <- NA
+mot$sp_Languages <- ifelse(mot$spgrouped == "Languages", 1, mot$sp_Languages)
+mot$sp_Languages <- ifelse(mot$spgrouped == "STEM", 0, mot$sp_Languages)
+mot$sp_Languages <- ifelse(mot$spgrouped == "Other", 0, mot$sp_Languages)
+mot$sp_STEM <- NA
+mot$sp_STEM <- ifelse(mot$spgrouped == "STEM", 1, mot$sp_STEM)
+mot$sp_STEM <- ifelse(mot$spgrouped == "Languages", 0, mot$sp_STEM)
+mot$sp_STEM <- ifelse(mot$spgrouped == "Other", 0, mot$sp_STEM)
+
+mot$sp_Other <- NA
+mot$sp_Other <- ifelse(mot$spgrouped == "Other", 1, mot$sp_Other)
+mot$sp_Other <- ifelse(mot$spgrouped == "STEM", 0, mot$sp_Other)
+mot$sp_Other <- ifelse(mot$spgrouped == "Languages", 0, mot$sp_Other)
+
+mot$male <- as.numeric(mot$Gender) - 1
+
+motg$spgrouped <- factor(NA, levels = c("Languages", "STEM", "Other"))
+motg$spgrouped <- ifelse(motg$sp == "Latein" | motg$sp == "Italienisch" | motg$sp == "Spanisch", "Languages", motg$spgrouped)
+motg$spgrouped <- ifelse(motg$sp == "Physik und Anwendungen der Mathematik" | motg$sp == "Biologie und Chemie", "STEM", motg$spgrouped)
+motg$spgrouped <- ifelse(motg$sp == "Wirtschaft und Recht" | motg$sp == "Musik" | motg$sp == "Bildnerisches Gestalten" | motg$sp == "Anderes" , "Other", motg$spgrouped)
+table(motg$spgrouped)
+
+motg$sp_Languages <- NA
+motg$sp_Languages <- ifelse(motg$spgrouped == "Languages", 1, motg$sp_Languages)
+motg$sp_Languages <- ifelse(motg$spgrouped == "STEM", 0, motg$sp_Languages)
+motg$sp_Languages <- ifelse(motg$spgrouped == "Other", 0, motg$sp_Languages)
+motg$sp_STEM <- NA
+motg$sp_STEM <- ifelse(motg$spgrouped == "STEM", 1, motg$sp_STEM)
+motg$sp_STEM <- ifelse(motg$spgrouped == "Languages", 0, motg$sp_STEM)
+motg$sp_STEM <- ifelse(motg$spgrouped == "Other", 0, motg$sp_STEM)
+
+motg$sp_Other <- NA
+motg$sp_Other <- ifelse(motg$spgrouped == "Other", 1, motg$sp_Other)
+motg$sp_Other <- ifelse(motg$spgrouped == "STEM", 0, motg$sp_Other)
+motg$sp_Other <- ifelse(motg$spgrouped == "Languages", 0, motg$sp_Other)
+
+```
+
+### Motivation mean variables
+
+```{r motmeans}
+
+mot$m1inva <- rowMeans(mot[, c("m1inva1", "m1inva2", "m1inva3")])
+mot$m2inva <- rowMeans(mot[, c("m2inva1", "m2inva2", "m2inva3")])
+mot$m3inva <- rowMeans(mot[, c("m3inva1", "m3inva2", "m3inva3")])
+mot$m1lva <- rowMeans(mot[, c("m1lva1", "m1lva2", "m1lva3")])
+mot$m2lva <- rowMeans(mot[, c("m2lva1", "m2lva2", "m2lva3")])
+mot$m3lva <- rowMeans(mot[, c("m3lva1", "m3lva2", "m3lva3")])
+
+mot$d1inva <- rowMeans(mot[, c("d1inva1", "d1inva2", "d1inva3")])
+mot$d2inva <- rowMeans(mot[, c("d2inva1", "d2inva2", "d2inva3")])
+mot$d3inva <- rowMeans(mot[, c("d3inva1", "d3inva2", "d3inva3")])
+mot$d1lva <- rowMeans(mot[, c("d1lva1", "d1lva2", "d1lva3")])
+mot$d2lva <- rowMeans(mot[, c("d2lva1", "d2lva2", "d2lva3")])
+mot$d3lva <- rowMeans(mot[, c("d3lva1", "d3lva2", "d3lva3")])
+
+mot$e1inva <- rowMeans(mot[, c("e1inva1", "e1inva2", "e1inva3")])
+mot$e2inva <- rowMeans(mot[, c("e2inva1", "e2inva2", "e2inva3")])
+mot$e3inva <- rowMeans(mot[, c("e3inva1", "e3inva2", "e3inva3")])
+mot$e1lva <- rowMeans(mot[, c("e1lva1", "e1lva2", "e1lva3")])
+mot$e2lva <- rowMeans(mot[, c("e2lva1", "e2lva2", "e2lva3")])
+mot$e3lva <- rowMeans(mot[, c("e3lva1", "e3lva2", "e3lva3")])
+
+mot$f1inva <- rowMeans(mot[, c("f1inva1", "f1inva2", "f1inva3")])
+mot$f2inva <- rowMeans(mot[, c("f2inva1", "f2inva2", "f2inva3")])
+mot$f3inva <- rowMeans(mot[, c("f3inva1", "f3inva2", "f3inva3")])
+mot$f1lva <- rowMeans(mot[, c("f1lva1", "f1lva2", "f1lva3")])
+mot$f2lva <- rowMeans(mot[, c("f2lva1", "f2lva2", "f2lva3")])
+mot$f3lva <- rowMeans(mot[, c("f3lva1", "f3lva2", "f3lva3")])
+
+
+```
+
+### Need satisfaction variables
+
+```{r nsf.vars}
+
+mot$m1aut <- rowMeans(mot[, c("m1aut1", "m1aut2", "m1aut3", "m1aut4", "m1aut5", "m1aut6")])
+mot$m1kom <- rowMeans(mot[, c("m1com1", "m1com2", "m1com3", "m1tem1u", "m1tem2u", "m1tem3u")])
+mot$m1soz <- rowMeans(mot[, c("m1lob1", "m1lob2", "m1lob3")])
+
+mot$m2aut <- rowMeans(mot[, c("m2aut1", "m2aut2", "m2aut3", "m2aut4", "m2aut5", "m2aut6")])
+mot$m2kom <- rowMeans(mot[, c("m2com1", "m2com2", "m2com3", "m2tem2u", "m2tem2u", "m2tem3u")])
+mot$m2soz <- rowMeans(mot[, c("m2lob1", "m2lob2", "m2lob3")])
+
+mot$m3aut <- rowMeans(mot[, c("m3aut1", "m3aut2", "m3aut3", "m3aut4", "m3aut5", "m3aut6")])
+mot$m3kom <- rowMeans(mot[, c("m3com1", "m3com2", "m3com3", "m3tem3u", "m3tem3u", "m3tem3u")])
+mot$m3soz <- rowMeans(mot[, c("m3lob1", "m3lob2", "m3lob3")])
+
+mot$d1aut <- rowMeans(mot[, c("d1aut1", "d1aut2", "d1aut3", "d1aut4", "d1aut5", "d1aut6")])
+mot$d1kom <- rowMeans(mot[, c("d1com1", "d1com2", "d1com3", "d1tem1u", "d1tem2u", "d1tem3u")])
+mot$d1soz <- rowMeans(mot[, c("d1lob1", "d1lob2", "d1lob3")])
+
+mot$d2aut <- rowMeans(mot[, c("d2aut1", "d2aut2", "d2aut3", "d2aut4", "d2aut5", "d2aut6")])
+mot$d2kom <- rowMeans(mot[, c("d2com1", "d2com2", "d2com3", "d2tem1u", "d2tem2u", "d2tem3u")])
+mot$d2soz <- rowMeans(mot[, c("d2lob1", "d2lob2", "d2lob3")])
+
+mot$d3aut <- rowMeans(mot[, c("d3aut1", "d3aut2", "d3aut3", "d3aut4", "d3aut5", "d3aut6")])
+mot$d3kom <- rowMeans(mot[, c("d3com1", "d3com2", "d3com3", "d3tem1u", "d3tem2u", "d3tem3u")])
+mot$d3soz <- rowMeans(mot[, c("d3lob1", "d3lob2", "d3lob3")])
+
+mot$e1aut <- rowMeans(mot[, c("e1aut1", "e1aut2", "e1aut3", "e1aut4", "e1aut5", "e1aut6")])
+mot$e1kom <- rowMeans(mot[, c("e1com1", "e1com2", "e1com3", "e1tem1u", "e1tem2u", "e1tem3u")])
+mot$e1soz <- rowMeans(mot[, c("e1lob1", "e1lob2", "e1lob3")])
+
+mot$e2aut <- rowMeans(mot[, c("e2aut1", "e2aut2", "e2aut3", "e2aut4", "e2aut5", "e2aut6")])
+mot$e2kom <- rowMeans(mot[, c("e2com1", "e2com2", "e2com3", "e2tem1u", "e2tem2u", "e2tem3u")])
+mot$e2soz <- rowMeans(mot[, c("e2lob1", "e2lob2", "e2lob3")])
+
+mot$e3aut <- rowMeans(mot[, c("e3aut1", "e3aut2", "e3aut3", "e3aut4", "e3aut5", "e3aut6")])
+mot$e3kom <- rowMeans(mot[, c("e3com1", "e3com2", "e3com3", "e3tem1u", "e3tem2u", "e3tem3u")])
+mot$e3soz <- rowMeans(mot[, c("e3lob1", "e3lob2", "e3lob3")])
+
+mot$f1aut <- rowMeans(mot[, c("f1aut1", "f1aut2", "f1aut3", "f1aut4", "f1aut5", "f1aut6")])
+mot$f1kom <- rowMeans(mot[, c("f1com1", "f1com2", "f1com3", "f1tem1u", "f1tem2u", "f1tem3u")])
+mot$f1soz <- rowMeans(mot[, c("f1lob1", "f1lob2", "f1lob3")])
+
+mot$f2aut <- rowMeans(mot[, c("f2aut1", "f2aut2", "f2aut3", "f2aut4", "f2aut5", "f2aut6")])
+mot$f2kom <- rowMeans(mot[, c("f2com1", "f2com2", "f2com3", "f2tem1u", "f2tem2u", "f2tem3u")])
+mot$f2soz <- rowMeans(mot[, c("f2lob1", "f2lob2", "f2lob3")])
+
+mot$f3aut <- rowMeans(mot[, c("f3aut1", "f3aut2", "f3aut3", "f3aut4", "f3aut5", "f3aut6")])
+mot$f3kom <- rowMeans(mot[, c("f3com1", "f3com2", "f3com3", "f3tem1u", "f3tem2u", "f3tem3u")])
+mot$f3soz <- rowMeans(mot[, c("f3lob1", "f3lob2", "f3lob3")])
+
+mot$NSF_M1_z <- scale(rowMeans(mot[, c("m1aut", "m1kom", "m1soz")]))[,1]
+mot$NSF_D1_z <- scale(rowMeans(mot[, c("d1aut", "d1kom", "d1soz")]))[,1]
+mot$NSF_E1_z <- scale(rowMeans(mot[, c("e1aut", "e1kom", "e1soz")]))[,1]
+mot$NSF_F1_z <- scale(rowMeans(mot[, c("f1aut", "f1kom", "f1soz")]))[,1]
+
+mot$NSF_M2_z <- scale(rowMeans(mot[, c("m2aut", "m2kom", "m2soz")]))[,1]
+mot$NSF_D2_z <- scale(rowMeans(mot[, c("d2aut", "d2kom", "d2soz")]))[,1]
+mot$NSF_E2_z <- scale(rowMeans(mot[, c("e2aut", "e2kom", "e2soz")]))[,1]
+mot$NSF_F2_z <- scale(rowMeans(mot[, c("f2aut", "f2kom", "f2soz")]))[,1]
+
+mot$NSF_M3_z <- scale(rowMeans(mot[, c("m3aut", "m3kom", "m3soz")]))[,1]
+mot$NSF_D3_z <- scale(rowMeans(mot[, c("d3aut", "d3kom", "d3soz")]))[,1]
+mot$NSF_E3_z <- scale(rowMeans(mot[, c("e3aut", "e3kom", "e3soz")]))[,1]
+mot$NSF_F3_z <- scale(rowMeans(mot[, c("f3aut", "f3kom", "f3soz")]))[,1]
+
+mot <- mot %>%
+  group_by(Class) %>%
+  mutate(NSF_M1_z_class = mean(na.omit(NSF_M1_z)),
+         NSF_D1_z_class = mean(na.omit(NSF_D1_z)),
+         NSF_E1_z_class = mean(na.omit(NSF_E1_z)),
+         NSF_F1_z_class = mean(na.omit(NSF_F1_z)),
+         NSF_M2_z_class = mean(na.omit(NSF_M2_z)),
+         NSF_D2_z_class = mean(na.omit(NSF_D2_z)),
+         NSF_E2_z_class = mean(na.omit(NSF_E2_z)),
+         NSF_F2_z_class = mean(na.omit(NSF_F2_z)),
+         NSF_M3_z_class = mean(na.omit(NSF_M3_z)),
+         NSF_D3_z_class = mean(na.omit(NSF_D3_z)),
+         NSF_E3_z_class = mean(na.omit(NSF_E3_z)),
+         NSF_F3_z_class = mean(na.omit(NSF_F3_z))) %>%
+  ungroup
+
+```
+
+```{r, eval = FALSE}
+mot_rev <- mot
+mot_rev$spgrouped_num <- as.numeric(as.character(as.factor(mot_rev$spgrouped)))
+#setwd("C:/local user data/OPFE/2019-11/")
+write.table(mot_rev[, c("m1inva1", "m1inva2", "m1inva3",
+"m1lva1", "m1lva2", "m1lva3",
+"m2inva1", "m2inva2", "m2inva3",
+"m2lva1", "m2lva2", "m2lva3",
+"m3inva1", "m3inva2", "m3inva3",
+"m3lva1", "m3lva2", "m3lva3",
+"sp_Languages", "sp_STEM", "sp_Other", "male",
+"d1inva1", "d1inva2", "d1inva3",
+"d1lva1", "d1lva2", "d1lva3",
+"d2inva1", "d2inva2", "d2inva3",
+"d2lva1", "d2lva2", "d2lva3",
+"d3inva1", "d3inva2", "d3inva3",
+"d3lva1", "d3lva2", "d3lva3",
+"e1inva1", "e1inva2", "e1inva3",
+"e1lva1", "e1lva2", "e1lva3",
+"e2inva1", "e2inva2", "e2inva3",
+"e2lva1", "e2lva2", "e2lva3",
+"e3inva1", "e3inva2", "e3inva3",
+"e3lva1", "e3lva2", "e3lva3",
+"f1inva1", "f1inva2", "f1inva3",
+"f1lva1", "f1lva2", "f1lva3",
+"f2inva1", "f2inva2", "f2inva3",
+"f2lva1", "f2lva2", "f2lva3",
+"f3inva1", "f3inva2", "f3inva3",
+"f3lva1", "f3lva2", "f3lva3",
+)], file = "OPFE_mplus_min_mdef_tvcs.dat", col.names = FALSE, row.names = FALSE, na = "9999", sep = "\t")
+
+print(paste(names(mot[, c(1, 25:458)]), collapse = " "))
+getwd()
+```
+
+```{r transitiondummyvariables}
+
+motg$ID_int <- as.integer(motg$ID)
+probs_intrextr$ID_int <- probs_intrextr$ID
+transiprobs <- merge(probs_intrextr, motg[, c(2:99)], id.vars = c("ID_int"))
+
+transiprobs$male <- transiprobs$gender_intr-1
+
+#Intr:
+#Profile 1: Language (Moderat-sprachmotivert: 28%)
+#Profile 2: Math (Niedrigmotiviert, 6%)
+#Profile 3: High (Mittelmotiviert, 25%)
+#Profile 4: High math (Mathemotiviert, 27%)
+#Profile 5: High language  (Hoch-sprachmotiviert, 14%)
+
+transistable_intrc1 <- tabyl(transiprobs$c_t1_intr, sort = TRUE)
+transistable_intrc1[order(transistable_intrc1$percent), ]
+
+#Extr:
+#Low: Substantial increase from 25 to 39%
+#Moderate: Decrease from 46% to 35%
+#High: Decrease from 17% to 9%
+#Language: Moderate increase from 11% to 16%
+
+transistable_extrc1 <- tabyl(transiprobs$c_t1_extr, sort = TRUE)
+transistable_extrc1[order(transistable_extrc1$percent), ]
+
+transiprobs$gesamttransi_intr <- interaction(transiprobs$c_t1_intr, transiprobs$c_t2_intr, transiprobs$c_t3_intr, sep = "_")
+
+transiprobs$gesamttransi_extr <- interaction(transiprobs$c_t1_extr, transiprobs$c_t2_extr, transiprobs$c_t3_extr, sep = "_")
+
+transiprobs$extrmodlow <- NA
+transiprobs$extrmodlow <- ifelse(transiprobs$gesamttransi_extr == "2_2_2", 0, transiprobs$extrmodlow)
+transiprobs$extrmodlow <- ifelse((transiprobs$gesamttransi_extr == "2_2_1" | transiprobs$gesamttransi_extr == "2_1_1"), 1, transiprobs$extrmodlow)
+
+transiprobs$extrhighlang <- NA
+transiprobs$extrhighlang <- ifelse(transiprobs$gesamttransi_extr == "3_3_3", 0, transiprobs$extrhighlang)
+transiprobs$extrhighlang <- ifelse((transiprobs$gesamttransi_extr == "3_3_4" | transiprobs$gesamttransi_extr == "3_4_4"), 1, transiprobs$extrhighlang)
+
+transiprobs$extrhighmod <- NA
+transiprobs$extrhighmod <- ifelse(transiprobs$gesamttransi_extr == "3_3_3", 0, transiprobs$extrhighmod)
+transiprobs$extrhighmod <- ifelse((transiprobs$gesamttransi_extr == "3_2_2" | transiprobs$gesamttransi_extr == "3_3_2"), 1, transiprobs$extrhighmod)
+
+transiprobs$intrhighmathmath <- NA
+transiprobs$intrhighmathmath <- ifelse(transiprobs$gesamttransi_intr == "4_4_4", 0, transiprobs$intrhighmathmath)
+transiprobs$intrhighmathmath <- ifelse((transiprobs$gesamttransi_intr == "4_2_2" | transiprobs$gesamttransi_intr == "4_4_2"), 1, transiprobs$intrhighmathmath)
+
+transiprobs$intrhighhighmath <- NA
+transiprobs$intrhighhighmath <- ifelse(transiprobs$gesamttransi_intr == "3_3_3", 0, transiprobs$intrhighhighmath)
+transiprobs$intrhighhighmath <- ifelse((transiprobs$gesamttransi_intr == "3_3_4" | transiprobs$gesamttransi_intr == "3_4_4"), 1, transiprobs$intrhighhighmath)
+
+transiprobs$stayer_extr <- ifelse(transiprobs$gesamttransi_extr == "1_1_1" | transiprobs$gesamttransi_extr == "2_2_2" | transiprobs$gesamttransi_extr == "3_3_3" | transiprobs$gesamttransi_extr == "4_4_4", 1, 0)
+mean(transiprobs$stayer_extr)
+
+
+transiprobs$stayer_intr <- ifelse(transiprobs$gesamttransi_intr == "1_1_1" | transiprobs$gesamttransi_intr == "2_2_2" | transiprobs$gesamttransi_intr == "3_3_3" | transiprobs$gesamttransi_intr == "4_4_4" | transiprobs$gesamttransi_intr == "5_5_5", 1, 0)
+mean(transiprobs$stayer_intr)
+
+# Dummy varilables indicating loss of motivation vs. no loss of motivation
+
+transiprobs$intrlosers <- NA
+transiprobs$intrlosers <- ifelse(transiprobs$intrhighhighmath == 1 | transiprobs$intrhighmathmath == 1, 1, transiprobs$intrlosers)
+transiprobs$intrlosers <- ifelse(is.na(transiprobs$intrlosers) & (transiprobs$intrhighhighmath == 0 | transiprobs$intrhighmathmath == 0), 0, transiprobs$intrlosers)
+table(transiprobs$intrlosers)
+
+transiprobs$femaleintrlosers <- NA
+transiprobs$femaleintrlosers <- ifelse(transiprobs$male == 0 & (transiprobs$intrhighhighmath == 1 | transiprobs$intrhighmathmath == 1), 1, transiprobs$femaleintrlosers)
+transiprobs$femaleintrlosers <- ifelse(transiprobs$male == 0 & (is.na(transiprobs$femaleintrlosers) & (transiprobs$intrhighhighmath == 0 | transiprobs$intrhighmathmath == 0)), 0, transiprobs$femaleintrlosers)
+table(transiprobs$femaleintrlosers)
+
+transiprobs$maleintrlosers <- NA
+transiprobs$maleintrlosers <- ifelse(transiprobs$male == 1 & (transiprobs$intrhighhighmath == 1 | transiprobs$intrhighmathmath == 1), 1, transiprobs$maleintrlosers)
+transiprobs$maleintrlosers <- ifelse(transiprobs$male == 1 & (is.na(transiprobs$maleintrlosers) & (transiprobs$intrhighhighmath == 0 | transiprobs$intrhighmathmath == 0)), 0, transiprobs$maleintrlosers)
+
+#modlow highlang highmod
+
+#If they show a declining pattern: 1; if they don't show the declining pattern (is.na) and the transition-variables for the individual profiles show that they started in a relevant one, 0
+transiprobs$extrlosers <- NA
+transiprobs$extrlosers <- ifelse(transiprobs$extrmodlow == 1 | transiprobs$extrhighlang == 1 | transiprobs$extrhighmod == 1, 1, transiprobs$extrlosers)
+transiprobs$extrlosers <- ifelse(is.na(transiprobs$extrlosers) & (transiprobs$extrmodlow == 0 | transiprobs$extrhighlang == 0 | transiprobs$extrhighmod == 0), 0, transiprobs$extrlosers)
+table(transiprobs$extrlosers)
+
+transiprobs$femaleextrlosers <- NA
+transiprobs$femaleextrlosers <- ifelse(transiprobs$male == 0 & (transiprobs$extrhighlang == 1 | transiprobs$extrmodlow == 1), 1, transiprobs$femaleextrlosers)
+transiprobs$femaleextrlosers <- ifelse(transiprobs$male == 0 & (is.na(transiprobs$femaleextrlosers) & (transiprobs$extrhighlang == 0 | transiprobs$extrmodlow == 0)), 0, transiprobs$femaleextrlosers)
+table(transiprobs$femaleextrlosers)
+
+transiprobs$maleextrlosers <- NA
+transiprobs$maleextrlosers <- ifelse(transiprobs$male == 1 & (transiprobs$extrhighmod == 1 | transiprobs$extrmodlow == 1), 1, transiprobs$maleextrlosers)
+transiprobs$maleextrlosers <- ifelse(transiprobs$male == 1 & (is.na(transiprobs$maleextrlosers) & (transiprobs$extrhighmod == 0 | transiprobs$extrmodlow == 0)), 0, transiprobs$maleextrlosers)
+table(transiprobs$maleextrlosers)
+
+transiprobs$exstayto <- NA
+transiprobs$exstayto <- ifelse(transiprobs$gesamttransi_extr == "1_1_1" | transiprobs$gesamttransi_extr == "2_2_2" | transiprobs$gesamttransi_extr == "3_3_3" | transiprobs$exstayto == "4_4_4", 1, transiprobs$exstayto)
+transiprobs$exstayto <- ifelse(is.na(transiprobs$exstayto) & (transiprobs$extrmodlow == 1 | transiprobs$extrhighlang == 1 | transiprobs$extrhighmod == 1), 0, transiprobs$exstayto)
+table(transiprobs$exstayto)
+
+transiprobs$instayto <- NA
+transiprobs$instayto <- ifelse(transiprobs$gesamttransi_intr == "1_1_1" | transiprobs$gesamttransi_intr == "2_2_2" | transiprobs$gesamttransi_intr == "3_3_3" | transiprobs$gesamttransi_intr == "4_4_4" | transiprobs$gesamttransi_intr == "5_5_5", 1, transiprobs$instayto)
+transiprobs$instayto <- ifelse(is.na(transiprobs$instayto) & (transiprobs$intrhighhighmath == 1 | transiprobs$intrhighmathmath == 1), 0, transiprobs$instayto)
+table(transiprobs$instayto)
+
+```
+
+```{r NSF.datapreps}
+
+transiprobs <- transiprobs %>%
+  mutate(AutoMA1_z = scale(AutoMA1),
+         AutoDE1_z = scale(AutoDE1),
+         AutoEN1_z = scale(AutoEN1),
+         AutoFR1_z = scale(AutoFR1),
+         AutoMA2_z = scale(AutoMA2),
+         AutoDE2_z = scale(AutoDE2),
+         AutoEN2_z = scale(AutoEN2),
+         AutoFR2_z = scale(AutoFR2),
+         AutoMA3_z = scale(AutoMA3),
+         AutoDE3_z = scale(AutoDE3),
+         AutoEN3_z = scale(AutoEN3),
+         AutoFR3_z = scale(AutoFR3),
+         KomM1_z = scale(KomM1),
+         KomD1_z = scale(KomD1),
+         KomE1_z = scale(KomE1),
+         KomF1_z = scale(KomF1),
+         KomM2_z = scale(KomM2),
+         KomD2_z = scale(KomD2),
+         KomE2_z = scale(KomE2),
+         KomF2_z = scale(KomF2),
+         KomM3_z = scale(KomM3),
+         KomD3_z = scale(KomD3),
+         KomE3_z = scale(KomE3),
+         KomF3_z = scale(KomF3),
+         SozM1_z = scale(SozM1),
+         SozD1_z = scale(SozD1),
+         SozE1_z = scale(SozE1),
+         SozF1_z = scale(SozF1),
+         SozM2_z = scale(SozM2),
+         SozD2_z = scale(SozD2),
+         SozE2_z = scale(SozE2),
+         SozF2_z = scale(SozF2),
+         SozM3_z = scale(SozM3),
+         SozD3_z = scale(SozD3),
+         SozE3_z = scale(SozE3),
+         SozF3_z = scale(SozF3)
+         )
+
+transiprobs$Auto1_z <- scale(rowMeans(transiprobs[, c("AutoMA1_z", "AutoDE1_z", "AutoEN1_z", "AutoFR1_z")]))
+transiprobs$Auto2_z <- scale(rowMeans(transiprobs[, c("AutoMA2_z", "AutoDE2_z", "AutoEN2_z", "AutoFR2_z")]))
+transiprobs$Auto3_z <- scale(rowMeans(transiprobs[, c("AutoMA3_z", "AutoDE3_z", "AutoEN3_z", "AutoFR3_z")]))
+
+transiprobs$Kom1_z <- scale(rowMeans(transiprobs[, c("KomM1_z", "KomD1_z", "KomE1_z", "KomF1_z")]))
+transiprobs$Kom2_z <- scale(rowMeans(transiprobs[, c("KomM2_z", "KomD2_z", "KomE2_z", "KomF2_z")]))
+transiprobs$Kom3_z <- scale(rowMeans(transiprobs[, c("KomM3_z", "KomD3_z", "KomE3_z", "KomF3_z")]))
+
+transiprobs$Soz1_z <- scale(rowMeans(transiprobs[, c("SozM1_z", "SozD1_z", "SozE1_z", "SozF1_z")]))
+transiprobs$Soz2_z <- scale(rowMeans(transiprobs[, c("SozM2_z", "SozD2_z", "SozE2_z", "SozF2_z")]))
+transiprobs$Soz3_z <- scale(rowMeans(transiprobs[, c("SozM3_z", "SozD3_z", "SozE3_z", "SozF3_z")]))
+
+transiprobs$NSF_M1 <- rowMeans(transiprobs[, c("AutoMA1", "KomM1", "SozM1")])
+transiprobs$NSF_D1 <- rowMeans(transiprobs[, c("AutoDE1", "KomD1", "SozD1")])
+transiprobs$NSF_E1 <- rowMeans(transiprobs[, c("AutoEN1", "KomE1", "SozE1")])
+transiprobs$NSF_F1 <- rowMeans(transiprobs[, c("AutoFR1", "KomF1", "SozF1")])
+
+transiprobs$NSF_M2 <- rowMeans(transiprobs[, c("AutoMA2", "KomM2", "SozM2")])
+transiprobs$NSF_D2 <- rowMeans(transiprobs[, c("AutoDE2", "KomD2", "SozD2")])
+transiprobs$NSF_E2 <- rowMeans(transiprobs[, c("AutoEN2", "KomE2", "SozE2")])
+transiprobs$NSF_F2 <- rowMeans(transiprobs[, c("AutoFR2", "KomF2", "SozF2")])
+
+transiprobs$NSF_M3 <- rowMeans(transiprobs[, c("AutoMA3", "KomM3", "SozM3")])
+transiprobs$NSF_D3 <- rowMeans(transiprobs[, c("AutoDE3", "KomD3", "SozD3")])
+transiprobs$NSF_E3 <- rowMeans(transiprobs[, c("AutoEN3", "KomE3", "SozE3")])
+transiprobs$NSF_F3 <- rowMeans(transiprobs[, c("AutoFR3", "KomF3", "SozF3")])
+
+transiprobs$NSF_M1_z <- scale(rowMeans(transiprobs[, c("AutoMA1_z", "KomM1_z", "SozM1_z")]))
+transiprobs$NSF_D1_z <- scale(rowMeans(transiprobs[, c("AutoDE1_z", "KomD1_z", "SozD1_z")]))
+transiprobs$NSF_E1_z <- scale(rowMeans(transiprobs[, c("AutoEN1_z", "KomE1_z", "SozE1_z")]))
+transiprobs$NSF_F1_z <- scale(rowMeans(transiprobs[, c("AutoFR1_z", "KomF1_z", "SozF1_z")]))
+
+
+transiprobs$NSF_M2_z <- scale(rowMeans(transiprobs[, c("AutoMA2_z", "KomM2_z", "SozM2_z")]))
+transiprobs$NSF_D2_z <- scale(rowMeans(transiprobs[, c("AutoDE2_z", "KomD2_z", "SozD2_z")]))
+transiprobs$NSF_E2_z <- scale(rowMeans(transiprobs[, c("AutoEN2_z", "KomE2_z", "SozE2_z")]))
+transiprobs$NSF_F2_z <- scale(rowMeans(transiprobs[, c("AutoFR2_z", "KomF2_z", "SozF2_z")]))
+
+transiprobs$NSF_M3_z <- scale(rowMeans(transiprobs[, c("AutoMA3_z", "KomM3_z", "SozM3_z")]))
+transiprobs$NSF_D3_z <- scale(rowMeans(transiprobs[, c("AutoDE3_z", "KomD3_z", "SozD3_z")]))
+transiprobs$NSF_E3_z <- scale(rowMeans(transiprobs[, c("AutoEN3_z", "KomE3_z", "SozE3_z")]))
+transiprobs$NSF_F3_z <- scale(rowMeans(transiprobs[, c("AutoFR3_z", "KomF3_z", "SozF3_z")]))
+
+
+transiprobs <- transiprobs %>%
+  group_by(Class) %>%
+  mutate(NSF_M1_z_class = mean(na.omit(NSF_M1_z)),
+         NSF_D1_z_class = mean(na.omit(NSF_D1_z)),
+         NSF_E1_z_class = mean(na.omit(NSF_E1_z)),
+         NSF_F1_z_class = mean(na.omit(NSF_F1_z)),
+         NSF_M2_z_class = mean(na.omit(NSF_M2_z)),
+         NSF_D2_z_class = mean(na.omit(NSF_D2_z)),
+         NSF_E2_z_class = mean(na.omit(NSF_E2_z)),
+         NSF_F2_z_class = mean(na.omit(NSF_F2_z)),
+         NSF_M3_z_class = mean(na.omit(NSF_M3_z)),
+         NSF_D3_z_class = mean(na.omit(NSF_D3_z)),
+         NSF_E3_z_class = mean(na.omit(NSF_E3_z)),
+         NSF_F3_z_class = mean(na.omit(NSF_F3_z))) %>%
+  ungroup
+
+transiprobs$NSF_mean1 <- rowMeans(transiprobs[, c("NSF_M1",
+                                                          "NSF_D1",
+                                                          "NSF_E1",
+                                                          "NSF_F1")])
+
+transiprobs$NSF_mean2 <- rowMeans(transiprobs[, c("NSF_M2",
+                                                          "NSF_D2",
+                                                          "NSF_E2",
+                                                          "NSF_F2")])
+
+transiprobs$NSF_mean3 <- rowMeans(transiprobs[, c("NSF_M3",
+                                                          "NSF_D3",
+                                                          "NSF_E3",
+                                                          "NSF_F3")])
+
+transiprobs$NSF_mean1_z <- scale(rowMeans(transiprobs[, c("NSF_M1_z",
+                                                          "NSF_D1_z",
+                                                          "NSF_E1_z",
+                                                          "NSF_F1_z")]))[,1]
+
+transiprobs$NSF_mean2_z <- scale(rowMeans(transiprobs[, c("NSF_M2_z",
+                                                          "NSF_D2_z",
+                                                          "NSF_E2_z",
+                                                          "NSF_F2_z")]))
+
+transiprobs$NSF_mean3_z <- scale(rowMeans(transiprobs[, c("NSF_M3_z",
+                                                          "NSF_D3_z",
+                                                          "NSF_E3_z",
+                                                          "NSF_F3_z")]))
+
+transiprobs$NSF_ch12 <- transiprobs$NSF_mean2 - transiprobs$NSF_mean1
+transiprobs$NSF_ch23 <- transiprobs$NSF_mean3 - transiprobs$NSF_mean2
+transiprobs$NSF_ch13 <- transiprobs$NSF_mean3 - transiprobs$NSF_mean1
+
+transiprobs$NSF_ch12_z <- scale(transiprobs$NSF_ch12)[,1]
+transiprobs$NSF_ch23_z <- scale(transiprobs$NSF_ch23)[,1]
+transiprobs$NSF_ch13_z <- scale(transiprobs$NSF_ch13)[,1]
+
+
+transiprobs$NSF_chz12 <- transiprobs$NSF_mean2_z - transiprobs$NSF_mean1_z
+transiprobs$NSF_chz23 <- transiprobs$NSF_mean3_z - transiprobs$NSF_mean2_z
+transiprobs$NSF_chz13 <- transiprobs$NSF_mean3_z - transiprobs$NSF_mean1_z
+
+transiprobs$NSF_chz12_z <- scale(transiprobs$NSF_chz12)[,1]
+transiprobs$NSF_chz23_z <- scale(transiprobs$NSF_chz23)[,1]
+transiprobs$NSF_chz13_z <- scale(transiprobs$NSF_chz13)[,1]
+
+describeBy(transiprobs[4, 110:177], "extrmodlow")
+describeBy(transiprobs[4, 110:177], "extrhighlang")
+describeBy(transiprobs[4, 110:177], "stayer_extr")
+describeBy(transiprobs[4, 110:177], "stayer_intr")
+
+describeBy(subset(transiprobs[, c(4, 110:177)], gender_intr == 1), "extrmodlow")
+describeBy(subset(transiprobs[, c(4, 110:177)], gender_intr == 2), "extrmodlow")
+describeBy(transiprobs[4, 110:177], "extrhighlang")
+describeBy(transiprobs[4, 110:177], "stayer_extr")
+describeBy(transiprobs[4, 110:177], "stayer_intr")
+
+transiprobs$Consc3_z <- scale(transiprobs$Consc3)
+transiprobs$Neurot3_z <- scale(transiprobs$Neurot3)
+transiprobs$Offen3_z <- scale(transiprobs$Offen3)
+transiprobs$Extrav3_z <- scale(transiprobs$Extrav3)
+transiprobs$Toler3_z <- scale(transiprobs$Toler3)
+
+```
+
+```{r expooort}
+
+names(transiprobs)
+export <- c("Class",
+            "male",
+            "spgrouped",
+            "sp_Languages",
+            "sp_STEM",
+            "sp_Other",
+            "NSF_M1", "NSF_M2", "NSF_M3",
+            "NSF_D1", "NSF_D2", "NSF_D3",
+            "NSF_E1", "NSF_E2", "NSF_E3",
+            "NSF_F1", "NSF_F2", "NSF_F3",
+            "Consc3_z", "Neurot3_z", "Offen3_z", "Extrav3_z", "Toler3_z",
+            "c_t1_extr",
+            "c_t1_intr",
+            "extrmodlow", "extrhighlang", "extrhighmod",
+            "intrhighmathmath", "intrhighhighmath",
+            "extrlosers", "maleextrlosers", "femaleextrlosers",
+            "intrlosers", "maleintrlosers", "femaleintrlosers")
+write.table(transiprobs[, export], "transiprobs_mplus.dat", row.names = FALSE, col.names = FALSE, na = "9999")
+
+#Print variable names for copying into Mplus
+print(paste(substring(export, 1, 8), collapse = " "))
+
+table(subset(transiprobs, male == 0)$extrmodlow)
+
+```
+
+```{r expooort2}
+
+names(transiprobs)
+export2 <- c("Class",
+            "male",
+            "spgrouped",
+            "sp_Languages",
+            "sp_STEM",
+            "sp_Other",
+            "NSF_M1", "NSF_M2", "NSF_M3",
+            "NSF_D1", "NSF_D2", "NSF_D3",
+            "NSF_E1", "NSF_E2", "NSF_E3",
+            "NSF_F1", "NSF_F2", "NSF_F3",
+            "Consc3_z", "Neurot3_z", "Offen3_z", "Extrav3_z", "Toler3_z",
+            "c_t1_extr",
+            "c_t1_intr",
+            "extrmodlow", "extrhighlang", "extrhighmod",
+            "intrhighmathmath", "intrhighhighmath",
+            "extrlosers", "maleextrlosers", "femaleextrlosers",
+            "intrlosers", "maleintrlosers", "femaleintrlosers",
+            "stayer_extr", "stayer_intr",
+            "exstayto", "instayto")
+write.table(transiprobs[, export2], "transiprobs_mplus2.dat", row.names = FALSE, col.names = FALSE, na = "9999")
+
+#Print variable names for copying into Mplus
+print(paste(substring(export2, 1, 8), collapse = " "))
+
+table(subset(transiprobs, male == 0)$extrmodlow)
+
+```
+
+
+```{r 2021.05.submissionII}
+
+pnorm(-.74)
+
+exp <- transiprobs[, export]
+
+str(exp)
+
+table(exp$extrlosers, exp$male)
+table(exp$intrlosers, exp$male)
+
+exp(0.78)
+2.18/(1+2.18)
+#female prob mot loss ext; male:
+exp(1.56)
+4.76/5.76
+
+exp(1.48)
+4.39/5.39
+pnorm(-0.78) #21.8% of females are losers? check:
+61/270 #22.6 - maybe not bad?
+#and males?
+pnorm(-.78+.42) #36%? check:
+96/(131+96) #42.3% - well... maybe b/c it's correlated with STEM? so that's for non-STEM? check:
+table(exp$extrlosers, exp$male, exp$sp_STEM)
+44/(44+79) #YES, it's 36%! :)
+
+1/0.36
+2.78 / 3.78
+
+0.36/0.64
+
+##Model 1: Extrinsic
+
+pnorm(-.74)
+
+
+.23/(1-.23)
+extr_bs <- c(.35, -.01, .28, -.12, -.06, .06, -.05, -.07, -.15, -.10, -.37, .10, -.08, -.19, .43, .13, .04, -.01, -.31, -.24)
+
+.30
+
+extr_ORs <- NA
+
+for(i in 1:length(extr_bs)){
+  extr_ORs[i] <- (pnorm(-.74 + extr_bs[i])/(1-pnorm(-.74 + extr_bs[i])))/0.30
+}
+print(paste(round(extr_ORs, 2), collapse = " "))
+
+intr_bs <- c(.66, .25, .27, -.06, -.12, -.13, -.07, .27, -.33, .07, -.20, -.05, -.15, -.12, -.24, -.30, -.11, -.59, -.62, -.48)
+
+intr_ORs <- NA
+
+pnorm(-1.58)/(1-pnorm(-1.58))
+
+.06
+
+for(i in 1:length(intr_bs)){
+  intr_ORs[i] <- (pnorm(-1.58 + intr_bs[i])/(1-pnorm(-1.58 + intr_bs[i])))/.06
+}
+print(paste(round(intr_ORs, 2), collapse = " "))
+
+## Model 2
+
+pnorm(-.78)
+.22/(1-.22)
+.28
+
+extr2_bs <- c(-.41, -.33, -.23, .42, .28, -.13)
+
+extr2_ORs <- NA
+
+for(i in 1:length(extr2_bs)){
+  extr2_ORs[i] <- (pnorm(-.78 + extr2_bs[i])/(1-pnorm(-.78 + extr2_bs[i])))/0.28
+}
+print(paste(round(extr2_ORs, 2), collapse = " "))
+
+intr2_bs <- c(-.64, -.37, -.54, -.48,
+              .78)
+
+intr2_ORs <- NA
+
+pnorm(-1.48)/(1-pnorm(-1.48))
+
+.075
+
+for(i in 1:length(intr2_bs)){
+  intr2_ORs[i] <- (pnorm(-1.48 + intr2_bs[i])/(1-pnorm(-1.48 + intr2_bs[i])))/.075
+}
+print(paste(round(intr2_ORs, 2), collapse = " "))
+
+
+```
+

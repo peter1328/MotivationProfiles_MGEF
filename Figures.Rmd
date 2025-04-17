@@ -1,0 +1,820 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+## Descriptives: Sexy Figure
+
+```{r confidence.intervals.aroundcohens.ds, eval = TRUE, include = FALSE}
+
+#coh_ma_bootfit_fiml_corr <- sem(coh_ma_corr, data = mot, missing = "FIML", se = "bootstrap")
+summary(coh_ma_bootfit_fiml_corr)
+formatC(round(subset(parameterEstimates(coh_ma_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.lower, digits = 2), format = "f", digits = 2)
+formatC(round(subset(parameterEstimates(coh_ma_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.upper, digits = 2), format = "f", digits = 2)
+subset(parameterEstimates(coh_ma_bootfit_fiml_corr), lhs == "cohensd_in_d12")
+
+#coh_de_bootfit_fiml_corr <- sem(coh_de_corr, data = mot, missing = "FIML", se = "bootstrap")
+summary(coh_de_bootfit_fiml_corr)
+formatC(round(subset(parameterEstimates(coh_de_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.lower, digits = 2), format = "f", digits = 2)
+formatC(round(subset(parameterEstimates(coh_de_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.upper, digits = 2), format = "f", digits = 2)
+subset(parameterEstimates(coh_de_bootfit_fiml_corr), lhs == "cohensd_in_d12")
+
+#coh_en_bootfit_fiml_corr <- sem(coh_en_corr, data = mot, missing = "FIML", se = "bootstrap")
+summary(coh_en_bootfit_fiml_corr)
+formatC(round(subset(parameterEstimates(coh_en_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.lower, digits = 2), format = "f", digits = 2)
+formatC(round(subset(parameterEstimates(coh_en_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.upper, digits = 2), format = "f", digits = 2)
+subset(parameterEstimates(coh_en_bootfit_fiml_corr), lhs == "cohensd_in_d12")
+
+#coh_fr_bootfit_fiml_corr <- sem(coh_fr_corr, data = mot, missing = "FIML", se = "bootstrap")
+summary(coh_fr_bootfit_fiml_corr)
+formatC(round(subset(parameterEstimates(coh_fr_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.lower, digits = 2), format = "f", digits = 2)
+formatC(round(subset(parameterEstimates(coh_fr_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.upper, digits = 2), format = "f", digits = 2)
+subset(parameterEstimates(coh_fr_bootfit_fiml_corr), lhs == "cohensd_in_d12")
+
+##Save model objects
+
+#save(coh_ma_bootfit_fiml_corr, file = "coh_ma_bootfit_fiml_corr.rda", 
+#     compress = "xz")
+#save(coh_de_bootfit_fiml_corr, file = "coh_de_bootfit_fiml_corr.rda", 
+#     compress = "xz")
+#save(coh_en_bootfit_fiml_corr, file = "coh_en_bootfit_fiml_corr.rda", 
+#     compress = "xz")
+#save(coh_fr_bootfit_fiml_corr, file = "coh_fr_bootfit_fiml_corr.rda", 
+#     compress = "xz")
+
+```
+
+```{r geom_split_violin_datapreps, echo = FALSE}
+
+theme_pety <- function(base_size = 10, base_family = "") {
+  theme(text = element_text(size = 20), #Larger text font size
+        axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(colour="black"), #x-Axis text colour
+        axis.text.y = element_text(colour="black")) #y-Axis text colour
+}
+
+l <- reshape2::melt(motg[, c(70:94)], id = "Gender")
+l$Facet <- rep(c(rep("Extrinsic", dim(mot)[1]), rep("Intrinsic", dim(mot)[1])), 12)
+l$Time <- c(rep(1, dim(mot)[1]*8), rep(2, dim(mot)[1]*8), rep(3, dim(mot)[1]*8))
+l$Subject <- rep(c(rep("Math", dim(mot)[1]*2), rep("English", dim(mot)[1]*2), rep("French", dim(mot)[1]*2), rep("German", dim(mot)[1]*2)), 3)
+
+#Identify outliers to plot jittered with boxplots
+l2 <-
+  l %>%
+  group_by(Time, Subject, Facet) %>%
+  mutate(outlier.high = value > quantile(value, .75, na.rm = TRUE) + 1.5*IQR(value, na.rm = TRUE),
+         outlier.low = value < quantile(value, .25, na.rm = TRUE) - 1.5*IQR(value, na.rm = TRUE)) %>%
+  ungroup
+l2$outlier.color <- NA
+l2$outlier.color[l2$outlier.high] <- "red"
+l2$outlier.color[l2$outlier.low] <- "steelblue"
+
+#Reorder Subjects for nice plotting order
+l2$Subject_key <- NA
+l2$Subject_key <- ifelse(l2$Subject == "Math", 1, l2$Subject_key)
+l2$Subject_key <- ifelse(l2$Subject == "German", 2, l2$Subject_key)
+l2$Subject_key <- ifelse(l2$Subject == "English", 3, l2$Subject_key)
+l2$Subject_key <- ifelse(l2$Subject == "French", 4, l2$Subject_key)
+l2 <- l2 %>%
+  mutate(Subject_reorder = fct_reorder(Subject, Subject_key))
+
+```
+
+```{r geom_split_violin, echo = FALSE}
+
+#From https://stackoverflow.com/questions/35717353/split-violin-plot-with-ggplot2
+
+GeomSplitViolin <- ggproto("GeomSplitViolin", GeomViolin, 
+                           draw_group = function(self, data, ..., draw_quantiles = NULL) {
+  data <- transform(data, xminv = x - violinwidth * (x - xmin), xmaxv = x + violinwidth * (xmax - x))
+  grp <- data[1, "group"]
+  newdata <- plyr::arrange(transform(data, x = if (grp %% 2 == 1) xminv else xmaxv), if (grp %% 2 == 1) y else -y)
+  newdata <- rbind(newdata[1, ], newdata, newdata[nrow(newdata), ], newdata[1, ])
+  newdata[c(1, nrow(newdata) - 1, nrow(newdata)), "x"] <- round(newdata[1, "x"])
+
+  if (length(draw_quantiles) > 0 & !scales::zero_range(range(data$y))) {
+    stopifnot(all(draw_quantiles >= 0), all(draw_quantiles <=
+      1))
+    quantiles <- ggplot2:::create_quantile_segment_frame(data, draw_quantiles)
+    aesthetics <- data[rep(1, nrow(quantiles)), setdiff(names(data), c("x", "y")), drop = FALSE]
+    aesthetics$alpha <- rep(1, nrow(quantiles))
+    both <- cbind(quantiles, aesthetics)
+    quantile_grob <- GeomPath$draw_panel(both, ...)
+    ggplot2:::ggname("geom_split_violin", grid::grobTree(GeomPolygon$draw_panel(newdata, ...), quantile_grob))
+  }
+  else {
+    ggplot2:::ggname("geom_split_violin", GeomPolygon$draw_panel(newdata, ...))
+  }
+})
+
+geom_split_violin <- function(mapping = NULL, data = NULL, stat = "ydensity", position = "identity", ..., 
+                              draw_quantiles = NULL, trim = TRUE, scale = "area", na.rm = FALSE, 
+                              show.legend = NA, inherit.aes = TRUE) {
+  layer(data = data, mapping = mapping, stat = stat, geom = GeomSplitViolin, 
+        position = position, show.legend = show.legend, inherit.aes = inherit.aes, 
+        params = list(trim = trim, scale = scale, draw_quantiles = draw_quantiles, na.rm = na.rm, ...))
+}
+
+labels.subject <- c("Mathematics",
+                           "German",
+                           "English",
+                           "French")
+
+names(labels.subject) <- c("Math", "German", "English", "French")
+
+labels.genders <- c("weiblich",
+                           "männlich")
+
+names(labels.genders) <- c("female", "male")
+
+labels.facets <- c("Extrinsic",
+                           "Intrinsic")
+
+names(labels.facets) <- c("Extrinsic", "Intrinsic")
+
+
+violinplot_gendersplit <- ggplot(l2) +
+  aes(x = factor(Time), y = value) +
+  facet_grid(Facet ~ Subject_reorder,
+             labeller = labeller(Facet = labels.facets,
+                                 Subject_reorder = labels.subject)) +
+  geom_split_violin(aes(group = interaction(Gender, factor(Time)),
+                        fill = interaction(Gender, factor(Time)),
+                        alpha = Gender,
+                    size = Gender,
+                    linetype = Gender),
+                    trim = FALSE,
+                    adjust = 1.2) +
+  scale_alpha_manual(values = c(1, 1)) +
+  scale_size_manual(values = c(0.55, 0.55)) +
+  scale_linetype_manual(values = c(1, 1)) +
+  geom_boxplot(aes(group = factor(Time)), width = 0.15, outlier.shape = NA) +
+  geom_point(data = function(x) dplyr::filter_(x, ~ outlier.high | outlier.low), position = position_jitter(w = 0.1, h = 0.05), color = "darkblue", alpha = 0.5) + # Outliers 
+  stat_summary(mapping = aes(group = factor(Time), fill = factor(Time)), fun.y = mean, geom = "point", shape = 23, size = 2.5) +
+  stat_summary(mapping = aes(group = 1), fun.y = mean, geom = "path", size = 1.3) +
+ scale_fill_manual(values = c("#DEEBF7", "#9ECAE1", "#3182BD",
+                               "#DEEBF7", "#9ECAE1", "#3182BD",
+                               "#DEEBF7", "#9ECAE1", "#3182BD")) +
+scale_x_discrete(name = "School grade",
+                   breaks = c(1, 2, 3),
+                   labels = c("9", "10", "11")) +
+  scale_y_continuous(name = "Mean (min. = 1, max. = 5)",
+                     limits = c(0, 6),
+                     breaks = c(1, 2, 3, 4, 5),
+                     sec.axis = dup_axis(name = "")) +
+  theme_pety() +
+  theme(legend.position = "none")# + #rest: add sep lines and points for genders
+#   stat_summary(mapping = aes(group = Gender), fun.y = mean, geom = #"path", size = 1.3,
+#               position = position_dodge(width = 0.25)) +
+#  stat_summary(mapping = aes(group = factor(interaction(Time, Gender)), fill = factor(Gender)), fun.y = mean, geom = "point", shape = 23, size = 2.5,
+#               position = position_dodge(width = 0.25))# +
+#  scale_fill_brewer(palette = "Dark2") #Alternatives: "Dark2", "RdBu", "Blues
+
+```
+
+```{r violin.gender.cohensd.datapreps, echo = FALSE}
+
+latcohds <- data.frame(
+Subject = c(rep(c("Math"), 6), rep("German", 6), rep("English", 6), rep("French", 6)),
+Facet = rep(c("Intrinsic", "Extrinsic")),
+Time = rep(c("1_2", "1_2", "1_3", "1_3", "2_3", "2_3")),
+d = c(parTable(coh_ma_fit_corr)[grepl("cohen", parTable(coh_ma_fit_corr)$label), ]$est,
+      parTable(coh_de_fit_corr)[grepl("cohen", parTable(coh_de_fit_corr)$label), ]$est,
+      parTable(coh_en_fit_corr)[grepl("cohen", parTable(coh_en_fit_corr)$label), ]$est,
+      parTable(coh_fr_fit_corr)[grepl("cohen", parTable(coh_fr_fit_corr)$label), ]$est),
+se = c(parTable(coh_ma_fit_corr)[grepl("cohen", parTable(coh_ma_fit_corr)$label), ]$se,
+       parTable(coh_de_fit_corr)[grepl("cohen", parTable(coh_de_fit_corr)$label), ]$se,
+       parTable(coh_en_fit_corr)[grepl("cohen", parTable(coh_en_fit_corr)$label), ]$se,
+       parTable(coh_fr_fit_corr)[grepl("cohen", parTable(coh_fr_fit_corr)$label), ]$se),
+cilower = c(parameterEstimates(coh_ma_bootfit_fiml_corr, ci = TRUE, level= 0.90)[grepl("cohen", parameterEstimates(coh_ma_bootfit_fiml_corr, ci = TRUE, level= 0.90)$lhs), ]$ci.lower,
+       parameterEstimates(coh_de_bootfit_fiml_corr, ci = TRUE, level= 0.90)[grepl("cohen", parameterEstimates(coh_de_bootfit_fiml_corr, ci = TRUE, level= 0.90)$lhs), ]$ci.lower,
+       parameterEstimates(coh_en_bootfit_fiml_corr, ci = TRUE, level= 0.90)[grepl("cohen", parameterEstimates(coh_en_bootfit_fiml_corr, ci = TRUE, level= 0.90)$lhs), ]$ci.lower,
+       parameterEstimates(coh_fr_bootfit_fiml_corr, ci = TRUE, level= 0.90)[grepl("cohen", parameterEstimates(coh_fr_bootfit_fiml_corr, ci = TRUE, level= 0.90)$lhs), ]$ci.lower),
+ciupper = c(parameterEstimates(coh_ma_bootfit_fiml_corr, ci = TRUE, level= 0.90)[grepl("cohen", parameterEstimates(coh_ma_bootfit_fiml_corr, ci = TRUE, level= 0.90)$lhs), ]$ci.upper,
+       parameterEstimates(coh_de_bootfit_fiml_corr, ci = TRUE, level= 0.90)[grepl("cohen", parameterEstimates(coh_de_bootfit_fiml_corr, ci = TRUE, level= 0.90)$lhs), ]$ci.upper,
+       parameterEstimates(coh_en_bootfit_fiml_corr, ci = TRUE, level= 0.90)[grepl("cohen", parameterEstimates(coh_en_bootfit_fiml_corr, ci = TRUE, level= 0.90)$lhs), ]$ci.upper,
+       parameterEstimates(coh_fr_bootfit_fiml_corr, ci = TRUE, level= 0.90)[grepl("cohen", parameterEstimates(coh_fr_bootfit_fiml_corr, ci = TRUE, level= 0.90)$lhs), ]$ci.upper)
+)
+
+```
+
+```{r violin.gender.cohensd.plot, echo = FALSE}
+
+vpc_gender <- violinplot_gendersplit_cohen <- violinplot_gendersplit + 
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.9865, xend = 2, y = 5.80, yend = 5.80,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 1.9875, xend = 1.9875, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"), x = 1.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Extrinsic" & Time == "1_2")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 2.0125, xend = 2.0125, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 2.00, xend = 3.01625, y = 5.80, yend = 5.80,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"), x = 2.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Extrinsic" & Time == "2_3")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 0.50, yend = 0.2275,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.98375, xend = 3.01625, y = 0.20, yend = 0.20,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 0.50, yend = 0.2275,
+                                 Facet = "Extrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"), x = 2, y = 0.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Extrinsic" & Time == "1_3")$d, digits = 2), format = "f",digits = 2), ", CI90[", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Extrinsic" & Time == "1_3")$cilower, digits = 2), format = "f", digits = 2), "; ", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Extrinsic" & Time == "1_3")$ciupper, digits = 2), format = "f", digits = 2), "]")) +
+#Math Intrinsic
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.9865, xend = 2, y = 5.80, yend = 5.80,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 1.9875, xend = 1.9875, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"), x = 1.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Intrinsic" & Time == "1_2")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 2.0125, xend = 2.0125, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 2.00, xend = 3.01625, y = 5.80, yend = 5.80,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"), x = 2.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Intrinsic" & Time == "2_3")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 0.50, yend = 0.2275,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.98375, xend = 3.01625, y = 0.20, yend = 0.20,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 0.50, yend = 0.2275,
+                                 Facet = "Intrinsic", Subject_reorder = "Math"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"), x = 2, y = 0.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Intrinsic" & Time == "1_3")$d, digits = 2), format = "f", digits = 2), ", CI90[", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Intrinsic" & Time == "1_3")$cilower, digits = 2), format = "f", digits = 2), "; ", formatC(round(subset(latcohds, Subject == "Math" & Facet == "Intrinsic" & Time == "1_3")$ciupper, digits = 2), format = "f", digits = 2), "]")) +
+#German
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.9865, xend = 2, y = 5.80, yend = 5.80,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 1.9875, xend = 1.9875, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"), x = 1.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "German" & Facet == "Extrinsic" & Time == "1_2")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 2.0125, xend = 2.0125, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 2.00, xend = 3.01625, y = 5.80, yend = 5.80,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"), x = 2.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "German" & Facet == "Extrinsic" & Time == "2_3")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 0.50, yend = 0.2275,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.98375, xend = 3.01625, y = 0.20, yend = 0.20,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 0.50, yend = 0.2275,
+                                 Facet = "Extrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"), x = 2, y = 0.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "German" & Facet == "Extrinsic" & Time == "1_3")$d, digits = 2), format = "f", digits = 2), ", CI90[", formatC(round(subset(latcohds, Subject == "German" & Facet == "Extrinsic" & Time == "1_3")$cilower, digits = 2), format = "f", digits = 2), "; ", formatC(round(subset(latcohds, Subject == "German" & Facet == "Extrinsic" & Time == "1_3")$ciupper, digits = 2), format = "f", digits = 2), "]")) +
+#German Intrinsic
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.9865, xend = 2, y = 5.80, yend = 5.80,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 1.9875, xend = 1.9875, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"), x = 1.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "German" & Facet == "Intrinsic" & Time == "1_2")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 2.0125, xend = 2.0125, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 2.00, xend = 3.01625, y = 5.80, yend = 5.80,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"), x = 2.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "German" & Facet == "Intrinsic" & Time == "2_3")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 0.50, yend = 0.2275,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.98375, xend = 3.01625, y = 0.20, yend = 0.20,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 0.50, yend = 0.2275,
+                                 Facet = "Intrinsic", Subject_reorder = "German"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"), x = 2, y = 0.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "German" & Facet == "Intrinsic" & Time == "1_3")$d, digits = 2), format = "f", digits = 2), ", CI90[", formatC(round(subset(latcohds, Subject == "German" & Facet == "Intrinsic" & Time == "1_3")$cilower, digits = 2), format = "f", digits = 2), "; ", formatC(round(subset(latcohds, Subject == "German" & Facet == "Intrinsic" & Time == "1_3")$ciupper, digits = 2), format = "f", digits = 2), "]")) +
+#English
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.9865, xend = 2, y = 5.80, yend = 5.80,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 1.9875, xend = 1.9875, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"), x = 1.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "English" & Facet == "Extrinsic" & Time == "1_2")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 2.0125, xend = 2.0125, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 2.00, xend = 3.01625, y = 5.80, yend = 5.80,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"), x = 2.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "English" & Facet == "Extrinsic" & Time == "2_3")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 0.50, yend = 0.2275,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.98375, xend = 3.01625, y = 0.20, yend = 0.20,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 0.50, yend = 0.2275,
+                                 Facet = "Extrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"), x = 2, y = 0.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "English" & Facet == "Extrinsic" & Time == "1_3")$d, digits = 2), format = "f", digits = 2), ", CI90[", formatC(round(subset(latcohds, Subject == "English" & Facet == "Extrinsic" & Time == "1_3")$cilower, digits = 2), format = "f", digits = 2), "; ", formatC(round(subset(latcohds, Subject == "English" & Facet == "Extrinsic" & Time == "1_3")$ciupper, digits = 2), format = "f", digits = 2), "]")) +
+#English Intrinsic
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.9865, xend = 2, y = 5.80, yend = 5.80,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 1.9875, xend = 1.9875, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"), x = 1.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "English" & Facet == "Intrinsic" & Time == "1_2")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 2.0125, xend = 2.0125, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 2.00, xend = 3.01625, y = 5.80, yend = 5.80,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"), x = 2.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "English" & Facet == "Intrinsic" & Time == "2_3")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 0.50, yend = 0.2275,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.98375, xend = 3.01625, y = 0.20, yend = 0.20,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 0.50, yend = 0.2275,
+                                 Facet = "Intrinsic", Subject_reorder = "English"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"), x = 2, y = 0.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "English" & Facet == "Intrinsic" & Time == "1_3")$d, digits = 2), format = "f", digits = 2), ", CI90[", formatC(round(subset(latcohds, Subject == "English" & Facet == "Intrinsic" & Time == "1_3")$cilower, digits = 2), format = "f", digits = 2), "; ", formatC(round(subset(latcohds, Subject == "English" & Facet == "Intrinsic" & Time == "1_3")$ciupper, digits = 2), format = "f", digits = 2), "]")) +
+#French
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.9865, xend = 2, y = 5.80, yend = 5.80,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 1.9875, xend = 1.9875, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"), x = 1.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "French" & Facet == "Extrinsic" & Time == "1_2")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 2.0125, xend = 2.0125, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 2.00, xend = 3.01625, y = 5.80, yend = 5.80,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 5.50, yend = 5.7725,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"), x = 2.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "French" & Facet == "Extrinsic" & Time == "2_3")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 0.50, yend = 0.2275,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.98375, xend = 3.01625, y = 0.20, yend = 0.20,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 0.50, yend = 0.2275,
+                                 Facet = "Extrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"), x = 2, y = 0.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "French" & Facet == "Extrinsic" & Time == "1_3")$d, digits = 2), format = "f", digits = 2), ", CI90[", formatC(round(subset(latcohds, Subject == "French" & Facet == "Extrinsic" & Time == "1_3")$cilower, digits = 2), format = "f", digits = 2), "; ", formatC(round(subset(latcohds, Subject == "French" & Facet == "Extrinsic" & Time == "1_3")$ciupper, digits = 2), format = "f", digits = 2), "]")) +
+#French Intrinsic
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.9865, xend = 2, y = 5.80, yend = 5.80,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 1.9875, xend = 1.9875, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue2",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"), x = 1.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "French" & Facet == "Intrinsic" & Time == "1_2")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 2.0125, xend = 2.0125, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 2.00, xend = 3.01625, y = 5.80, yend = 5.80,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 5.50, yend = 5.7725,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "royalblue4",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"), x = 2.5, y = 6.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "French" & Facet == "Intrinsic" & Time == "2_3")$d, digits = 2), format = "f", digits = 2))) +
+  geom_segment(data = data.frame(x = 1, xend = 1, y = 0.50, yend = 0.2275,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 0.8,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 0.98375, xend = 3.01625, y = 0.20, yend = 0.20,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1.1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_segment(data = data.frame(x = 3, xend = 3, y = 0.50, yend = 0.2275,
+                                 Facet = "Intrinsic", Subject_reorder = "French"),
+               aes(x = x, xend = xend, y = y, yend = yend),
+               size = 1,
+               color = "navyblue",
+               alpha = 0.8) +
+  geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"), x = 2, y = 0.00, label = paste0("d = ", formatC(round(subset(latcohds, Subject == "French" & Facet == "Intrinsic" & Time == "1_3")$d, digits = 2), format = "f", digits = 2), ", CI90[", formatC(round(subset(latcohds, Subject == "French" & Facet == "Intrinsic" & Time == "1_3")$cilower, digits = 2), format = "f", digits = 2), "; ", formatC(round(subset(latcohds, Subject == "French" & Facet == "Intrinsic" & Time == "1_3")$ciupper, digits = 2), format = "f", digits = 2), "]")) +
+  #Gender-labels: t1
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"),
+            x = 0.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"),
+            x = 1.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"),
+            x = 0.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"),
+            x = 1.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"),
+            x = 0.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"),
+            x = 1.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"),
+            x = 0.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"),
+            x = 1.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"),
+            x = 0.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"),
+            x = 1.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"),
+            x = 0.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"),
+            x = 1.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"),
+            x = 0.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"),
+            x = 1.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"),
+            x = 0.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"),
+            x = 1.15, y = 5.50,
+            label = "M") +
+  #Gender-labels: t2
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"),
+            x = 1.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"),
+            x = 2.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"),
+            x = 1.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"),
+            x = 2.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"),
+            x = 1.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"),
+            x = 2.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"),
+            x = 1.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"),
+            x = 2.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"),
+            x = 1.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"),
+            x = 2.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"),
+            x = 1.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"),
+            x = 2.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"),
+            x = 1.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"),
+            x = 2.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"),
+            x = 1.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"),
+            x = 2.15, y = 5.50,
+            label = "M") +
+  #Gender-labels: t1
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"),
+            x = 2.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "Math"),
+            x = 3.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"),
+            x = 2.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "Math"),
+            x = 3.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"),
+            x = 2.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "German"),
+            x = 3.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"),
+            x = 2.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "German"),
+            x = 3.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"),
+            x = 2.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "English"),
+            x = 3.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"),
+            x = 2.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "English"),
+            x = 3.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"),
+            x = 2.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Extrinsic", Subject_reorder = "French"),
+            x = 3.15, y = 5.50,
+            label = "M") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"),
+            x = 2.85, y = 5.50,
+            label = "F") +
+    geom_text(data = data.frame(Facet = "Intrinsic", Subject_reorder = "French"),
+            x = 3.15, y = 5.50,
+            label = "M")
+
+ggsave("violinplot_gendersplit_cohen_korr2_ci.png", violinplot_gendersplit_cohen, dpi = 600, width = 14, height = 8)
+
+vpc_gender
+
+```

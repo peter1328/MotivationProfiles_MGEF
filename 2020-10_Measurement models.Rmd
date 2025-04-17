@@ -1,0 +1,1731 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+## Measurement models
+
+### Math
+
+```{r cohens.d.latent.math, echo = FALSE}
+
+coh_ma_corr <- '
+
+in_m1 =~ NA*m1inva1 + a*m1inva1 + b*m1inva2 + c*m1inva3
+
+ex_m1 =~ NA*m1lva1 + d*m1lva1 + e*m1lva2 + f*m1lva3
+
+in_m2 =~ NA*m2inva1 + a*m2inva1 + b*m2inva2 + c*m2inva3
+
+ex_m2 =~ NA*m2lva1 + d*m2lva1 + e*m2lva2 + f*m2lva3
+
+in_m3 =~ NA*m3inva1 + a*m3inva1 + b*m3inva2 + c*m3inva3
+
+ex_m3 =~ NA*m3lva1 + d*m3lva1 + e*m3lva2 + f*m3lva3
+
+a + b + c == 3
+
+d + e + f == 3
+
+in_m1 ~ m*1
+ex_m1 ~ n*1
+in_m2 ~ o*1
+ex_m2 ~ p*1
+in_m3 ~ q*1
+ex_m3 ~ r*1
+
+in_m1 ~~ vm*in_m1
+ex_m1 ~~ vn*ex_m1
+in_m2 ~~ vo*in_m2
+ex_m2 ~~ vp*ex_m2
+in_m3 ~~ vq*in_m3
+ex_m3 ~~ vr*ex_m3
+
+#Measurement invariance: Intercepts
+
+m1inva1 ~ NA*1 + i1*1
+m2inva1 ~ NA*1 + i1*1
+m3inva1 ~ NA*1 + i1*1
+
+m1inva2 ~ i2*1
+m2inva2 ~ i2*1
+m3inva2 ~ i2*1
+
+m1inva3 ~ i3*1
+m2inva3 ~ i3*1
+m3inva3 ~ i3*1
+
+m1lva1 ~ NA*1 + e1*1
+m2lva1 ~ NA*1 + e1*1
+m3lva1 ~ NA*1 + e1*1
+
+m1lva2 ~ e2*1
+m2lva2 ~ e2*1
+m3lva2 ~ e2*1
+
+m1lva3 ~ e3*1
+m2lva3 ~ e3*1
+m3lva3 ~ e3*1
+
+i1 + i2 + i3 == 0
+e1 + e2 + e3 == 0
+
+#Longitudinal structure: Error covariances
+
+m1inva1 ~~ m2inva1; m2inva1 ~~ m3inva1; m1inva1 ~~ m3inva1
+m1inva2 ~~ m2inva2; m2inva2 ~~ m3inva2; m1inva2 ~~ m3inva2
+m1inva3 ~~ m2inva3; m2inva3 ~~ m3inva3; m1inva3 ~~ m3inva3
+m1lva1 ~~ m2lva1; m2lva1 ~~ m3lva1; m1lva1 ~~ m3lva1
+m1lva2 ~~ m2lva2; m2lva2 ~~ m3lva2; m1lva2 ~~ m3lva2
+m1lva3 ~~ m2lva3; m2lva3 ~~ m3lva3; m1lva3 ~~ m3lva3
+
+#Latent Cohens ds:
+  
+cohensd_in_m12 := (o-m)/(sqrt((vo+vm)/2))
+cohensd_ex_m12 := (p-n)/(sqrt((vp+vn)/2))
+cohensd_in_m13 := (q-m)/(sqrt((vq+vm)/2))
+cohensd_ex_m13 := (r-n)/(sqrt((vr+vn)/2))
+cohensd_in_m23 := (q-o)/(sqrt((vq+vo)/2))
+cohensd_ex_m23 := (r-p)/(sqrt((vr+vp)/2))
+
+'
+
+coh_ma_fit_corr <- cfa(coh_ma_corr, data = mot, missing = "FIML")
+summary(coh_ma_fit_corr, std = TRUE, fit = TRUE)
+
+```
+
+### German
+
+```{r cohens.d.latent.german, echo = FALSE}
+
+
+coh_de_corr <- '
+
+in_d1 =~ NA*d1inva1 + a*d1inva1 + b*d1inva2 + c*d1inva3
+
+ex_d1 =~ NA*d1lva1 + d*d1lva1 + e*d1lva2 + f*d1lva3
+
+in_d2 =~ NA*d2inva1 + a*d2inva1 + b*d2inva2 + c*d2inva3
+
+ex_d2 =~ NA*d2lva1 + d*d2lva1 + e*d2lva2 + f*d2lva3
+
+in_d3 =~ NA*d3inva1 + a*d3inva1 + b*d3inva2 + c*d3inva3
+
+ex_d3 =~ NA*d3lva1 + d*d3lva1 + e*d3lva2 + f*d3lva3
+
+a + b + c == 3
+
+d + e + f == 3
+
+in_d1 ~ m*1
+ex_d1 ~ n*1
+in_d2 ~ o*1
+ex_d2 ~ p*1
+in_d3 ~ q*1
+ex_d3 ~ r*1
+
+in_d1 ~~ vm*in_d1
+ex_d1 ~~ vn*ex_d1
+in_d2 ~~ vo*in_d2
+ex_d2 ~~ vp*ex_d2
+in_d3 ~~ vq*in_d3
+ex_d3 ~~ vr*ex_d3
+
+#Measurement invariance: Intercepts
+
+d1inva1 ~ NA*1 + i1*1
+d2inva1 ~ NA*1 + i1*1
+d3inva1 ~ NA*1 + i1*1
+
+d1inva2 ~ i2*1
+d2inva2 ~ i2*1
+d3inva2 ~ i2*1
+
+d1inva3 ~ i3*1
+d2inva3 ~ i3*1
+d3inva3 ~ i3*1
+
+d1lva1 ~ NA*1 + e1*1
+d2lva1 ~ NA*1 + e1*1
+d3lva1 ~ NA*1 + e1*1
+
+d1lva2 ~ e2*1
+d2lva2 ~ e2*1
+d3lva2 ~ e2*1
+
+d1lva3 ~ e3*1
+d2lva3 ~ e3*1
+d3lva3 ~ e3*1
+
+i1 + i2 + i3 == 0
+e1 + e2 + e3 == 0
+
+#Longitudinal structure: Error covariances
+
+d1inva1 ~~ d2inva1; d2inva1 ~~ d3inva1; d1inva1 ~~ d3inva1
+d1inva2 ~~ d2inva2; d2inva2 ~~ d3inva2; d1inva2 ~~ d3inva2
+d1inva3 ~~ d2inva3; d2inva3 ~~ d3inva3; d1inva3 ~~ d3inva3
+d1lva1 ~~ d2lva1; d2lva1 ~~ d3lva1; d1lva1 ~~ d3lva1
+d1lva2 ~~ d2lva2; d2lva2 ~~ d3lva2; d1lva2 ~~ d3lva2
+d1lva3 ~~ d2lva3; d2lva3 ~~ d3lva3; d1lva3 ~~ d3lva3
+
+#Latent Cohens ds:
+  
+cohensd_in_d12 := (o-m)/(sqrt((vo+vm)/2))
+cohensd_ex_d12 := (p-n)/(sqrt((vp+vn)/2))
+cohensd_in_d13 := (q-m)/(sqrt((vq+vm)/2))
+cohensd_ex_d13 := (r-n)/(sqrt((vr+vn)/2))
+cohensd_in_d23 := (q-o)/(sqrt((vq+vo)/2))
+cohensd_ex_d23 := (r-p)/(sqrt((vr+vp)/2))
+
+'
+
+coh_de_fit_corr <- cfa(coh_de_corr, data = mot, missing = "FIML")
+
+summary(coh_de_fit_corr, std = TRUE, fit = TRUE)
+
+```
+
+### English
+
+```{r cohens.d.latent.english, echo = FALSE}
+
+coh_en_corr <- '
+
+in_e1 =~ NA*e1inva1 + a*e1inva1 + b*e1inva2 + c*e1inva3
+
+ex_e1 =~ NA*e1lva1 + d*e1lva1 + e*e1lva2 + f*e1lva3
+
+in_e2 =~ NA*e2inva1 + a*e2inva1 + b*e2inva2 + c*e2inva3
+
+ex_e2 =~ NA*e2lva1 + d*e2lva1 + e*e2lva2 + f*e2lva3
+
+in_e3 =~ NA*e3inva1 + a*e3inva1 + b*e3inva2 + c*e3inva3
+
+ex_e3 =~ NA*e3lva1 + d*e3lva1 + e*e3lva2 + f*e3lva3
+
+a + b + c == 3
+
+d + e + f == 3
+
+in_e1 ~ m*1
+ex_e1 ~ n*1
+in_e2 ~ o*1
+ex_e2 ~ p*1
+in_e3 ~ q*1
+ex_e3 ~ r*1
+
+in_e1 ~~ vm*in_e1
+ex_e1 ~~ vn*ex_e1
+in_e2 ~~ vo*in_e2
+ex_e2 ~~ vp*ex_e2
+in_e3 ~~ vq*in_e3
+ex_e3 ~~ vr*ex_e3
+
+#Measurement invariance: Intercepts
+
+e1inva1 ~ NA*1 + i1*1
+e2inva1 ~ NA*1 + i1*1
+e3inva1 ~ NA*1 + i1*1
+
+e1inva2 ~ i2*1
+e2inva2 ~ i2*1
+e3inva2 ~ i2*1
+
+e1inva3 ~ i3*1
+e2inva3 ~ i3*1
+e3inva3 ~ i3*1
+
+e1lva1 ~ NA*1 + e1*1
+e2lva1 ~ NA*1 + e1*1
+e3lva1 ~ NA*1 + e1*1
+
+e1lva2 ~ e2*1
+e2lva2 ~ e2*1
+e3lva2 ~ e2*1
+
+e1lva3 ~ e3*1
+e2lva3 ~ e3*1
+e3lva3 ~ e3*1
+
+i1 + i2 + i3 == 0
+e1 + e2 + e3 == 0
+
+#Longitudinal structure: Error covariances
+
+e1inva1 ~~ e2inva1; e2inva1 ~~ e3inva1; e1inva1 ~~ e3inva1
+e1inva2 ~~ e2inva2; e2inva2 ~~ e3inva2; e1inva2 ~~ e3inva2
+e1inva3 ~~ e2inva3; e2inva3 ~~ e3inva3; e1inva3 ~~ e3inva3
+e1lva1 ~~ e2lva1; e2lva1 ~~ e3lva1; e1lva1 ~~ e3lva1
+e1lva2 ~~ e2lva2; e2lva2 ~~ e3lva2; e1lva2 ~~ e3lva2
+e1lva3 ~~ e2lva3; e2lva3 ~~ e3lva3; e1lva3 ~~ e3lva3
+
+#Latent Cohens ds:
+  
+cohensd_in_e12 := (o-m)/(sqrt((vo+vm)/2))
+cohensd_ex_e12 := (p-n)/(sqrt((vp+vn)/2))
+cohensd_in_e13 := (q-m)/(sqrt((vq+vm)/2))
+cohensd_ex_e13 := (r-n)/(sqrt((vr+vn)/2))
+cohensd_in_e23 := (q-o)/(sqrt((vq+vo)/2))
+cohensd_ex_e23 := (r-p)/(sqrt((vr+vp)/2))
+
+'
+
+coh_en_fit_corr <- cfa(coh_en_corr, data = mot, missing = "FIML")
+
+summary(coh_en_fit_corr, std = TRUE, fit = TRUE)
+
+```
+
+### French
+
+```{r cohens.d.latent.french, echo = FALSE}
+
+coh_fr_corr <- '
+
+in_f1 =~ NA*f1inva1 + a*f1inva1 + b*f1inva2 + c*f1inva3
+
+ex_f1 =~ NA*f1lva1 + d*f1lva1 + e*f1lva2 + f*f1lva3
+
+in_f2 =~ NA*f2inva1 + a*f2inva1 + b*f2inva2 + c*f2inva3
+
+ex_f2 =~ NA*f2lva1 + d*f2lva1 + e*f2lva2 + f*f2lva3
+
+in_f3 =~ NA*f3inva1 + a*f3inva1 + b*f3inva2 + c*f3inva3
+
+ex_f3 =~ NA*f3lva1 + d*f3lva1 + e*f3lva2 + f*f3lva3
+
+a + b + c == 3
+
+d + e + f == 3
+
+in_f1 ~ m*1
+ex_f1 ~ n*1
+in_f2 ~ o*1
+ex_f2 ~ p*1
+in_f3 ~ q*1
+ex_f3 ~ r*1
+
+in_f1 ~~ vm*in_f1
+ex_f1 ~~ vn*ex_f1
+in_f2 ~~ vo*in_f2
+ex_f2 ~~ vp*ex_f2
+in_f3 ~~ vq*in_f3
+ex_f3 ~~ vr*ex_f3
+
+#Measurement invariance: Intercepts
+
+f1inva1 ~ NA*1 + i1*1
+f2inva1 ~ NA*1 + i1*1
+f3inva1 ~ NA*1 + i1*1
+
+f1inva2 ~ i2*1
+f2inva2 ~ i2*1
+f3inva2 ~ i2*1
+
+f1inva3 ~ i3*1
+f2inva3 ~ i3*1
+f3inva3 ~ i3*1
+
+f1lva1 ~ NA*1 + e1*1
+f2lva1 ~ NA*1 + e1*1
+f3lva1 ~ NA*1 + e1*1
+
+f1lva2 ~ e2*1
+f2lva2 ~ e2*1
+f3lva2 ~ e2*1
+
+f1lva3 ~ e3*1
+f2lva3 ~ e3*1
+f3lva3 ~ e3*1
+
+i1 + i2 + i3 == 0
+e1 + e2 + e3 == 0
+
+#Longitudinal structure: Error covariances
+
+f1inva1 ~~ f2inva1; f2inva1 ~~ f3inva1; f1inva1 ~~ f3inva1
+f1inva2 ~~ f2inva2; f2inva2 ~~ f3inva2; f1inva2 ~~ f3inva2
+f1inva3 ~~ f2inva3; f2inva3 ~~ f3inva3; f1inva3 ~~ f3inva3
+f1lva1 ~~ f2lva1; f2lva1 ~~ f3lva1; f1lva1 ~~ f3lva1
+f1lva2 ~~ f2lva2; f2lva2 ~~ f3lva2; f1lva2 ~~ f3lva2
+f1lva3 ~~ f2lva3; f2lva3 ~~ f3lva3; f1lva3 ~~ f3lva3
+
+#Latent Cohens ds:
+  
+cohensd_in_f12 := (o-m)/(sqrt((vo+vm)/2))
+cohensd_ex_f12 := (p-n)/(sqrt((vp+vn)/2))
+cohensd_in_f13 := (q-m)/(sqrt((vq+vm)/2))
+cohensd_ex_f13 := (r-n)/(sqrt((vr+vn)/2))
+cohensd_in_f23 := (q-o)/(sqrt((vq+vo)/2))
+cohensd_ex_f23 := (r-p)/(sqrt((vr+vp)/2))
+
+'
+
+coh_fr_fit_corr <- cfa(coh_fr_corr, data = mot, missing = "FIML")
+
+summary(coh_fr_fit_corr, std = TRUE, fit = TRUE)
+
+```
+
+## Messinvarianz
+
+## Measurement model: total extrinsic
+
+```{r}
+
+coh_total_extr <- '
+
+#Math
+
+##Measurement invariance: Loadings
+
+ex_m1 =~ NA*m1lva1 + d*m1lva1 + e*m1lva2 + f*m1lva3
+
+ex_m2 =~ NA*m2lva1 + d*m2lva1 + e*m2lva2 + f*m2lva3
+
+ex_m3 =~ NA*m3lva1 + d*m3lva1 + e*m3lva2 + f*m3lva3
+
+
+
+##Labels for factor means and variances
+
+ex_m1 ~ nw*1
+ex_m2 ~ pw*1
+ex_m3 ~ rw*1
+
+ex_m1 ~~ vnw*ex_m1
+ex_m2 ~~ vpw*ex_m2
+ex_m3 ~~ vrw*ex_m3
+
+##Measurement invariance: Intercepts
+
+m1lva1 ~ NA*1 + e1*1
+m2lva1 ~ NA*1 + e1*1
+m3lva1 ~ NA*1 + e1*1
+
+m1lva2 ~ e2*1
+m2lva2 ~ e2*1
+m3lva2 ~ e2*1
+
+m1lva3 ~ e3*1
+m2lva3 ~ e3*1
+m3lva3 ~ e3*1
+
+
+#German
+
+##Measurement invariance: Loadings
+
+ex_d1 =~ NA*d1lva1 + d*d1lva1 + e*d1lva2 + f*d1lva3
+
+ex_d2 =~ NA*d2lva1 + d*d2lva1 + e*d2lva2 + f*d2lva3
+
+ex_d3 =~ NA*d3lva1 + d*d3lva1 + e*d3lva2 + f*d3lva3
+
+ex_d1 ~ nx*1
+ex_d2 ~ px*1
+ex_d3 ~ rx*1
+
+ex_d1 ~~ vnx*ex_d1
+ex_d2 ~~ vpx*ex_d2
+ex_d3 ~~ vrx*ex_d3
+
+##Measurement invariance: Intercepts
+
+d1lva1 ~ NA*1 + e1*1
+d2lva1 ~ NA*1 + e1*1
+d3lva1 ~ NA*1 + e1*1
+
+d1lva2 ~ e2*1
+d2lva2 ~ e2*1
+d3lva2 ~ e2*1
+
+d1lva3 ~ e3*1
+d2lva3 ~ e3*1
+d3lva3 ~ e3*1
+
+#English
+
+##Measurement invariance: Loadings
+
+ex_e1 =~ NA*e1lva1 + d*e1lva1 + e*e1lva2 + f*e1lva3
+
+ex_e2 =~ NA*e2lva1 + d*e2lva1 + e*e2lva2 + f*e2lva3
+
+ex_e3 =~ NA*e3lva1 + d*e3lva1 + e*e3lva2 + f*e3lva3
+
+ex_e1 ~ ny*1
+ex_e2 ~ py*1
+ex_e3 ~ ry*1
+
+ex_e1 ~~ vny*ex_e1
+ex_e2 ~~ vpy*ex_e2
+ex_e3 ~~ vry*ex_e3
+
+##Measurement invariance: Intercepts
+
+e1lva1 ~ NA*1 + e1*1
+e2lva1 ~ NA*1 + e1*1
+e3lva1 ~ NA*1 + e1*1
+
+e1lva2 ~ e2*1
+e2lva2 ~ e2*1
+e3lva2 ~ e2*1
+
+e1lva3 ~ e3*1
+e2lva3 ~ e3*1
+e3lva3 ~ e3*1
+
+#French
+
+##Measurement invariance: Loadings
+
+ex_f1 =~ NA*f1lva1 + d*f1lva1 + e*f1lva2 + f*f1lva3
+
+ex_f2 =~ NA*f2lva1 + d*f2lva1 + e*f2lva2 + f*f2lva3
+
+ex_f3 =~ NA*f3lva1 + d*f3lva1 + e*f3lva2 + f*f3lva3
+
+ex_f1 ~ nz*1
+ex_f2 ~ pz*1
+ex_f3 ~ rz*1
+
+ex_f1 ~~ vnz*ex_f1
+ex_f2 ~~ vpz*ex_f2
+ex_f3 ~~ vrz*ex_f3
+
+##Measurement invariance: Intercepts
+
+f1lva1 ~ NA*1 + e1*1
+f2lva1 ~ NA*1 + e1*1
+f3lva1 ~ NA*1 + e1*1
+
+f1lva2 ~ e2*1
+f2lva2 ~ e2*1
+f3lva2 ~ e2*1
+
+f1lva3 ~ e3*1
+f2lva3 ~ e3*1
+f3lva3 ~ e3*1
+
+
+#Effect coding: Loadings
+
+d + e + f == 3
+
+#Effect coding: Intercepts
+
+e1 + e2 + e3 == 0
+
+#Longitudinal structure: Error covariances
+
+lva1_method =~ NA*m1lva1 + m2lva1 + m3lva1 + d1lva1 + d2lva1 + d3lva1 + e1lva1 + e2lva1 + e3lva1 + f1lva1 + f2lva1 + f3lva1
+
+lva2_method =~ NA*m1lva2 + m2lva2 + m3lva2 + d1lva2 + d2lva2 + d3lva2 + e1lva2 + e2lva2 + e3lva2 + f1lva2 + f2lva2 + f3lva2
+
+lva3_method =~ NA*m1lva3 + m2lva3 + m3lva3 + d1lva3 + d2lva3 + d3lva3 + e1lva3 + e2lva3 + e3lva3 + f1lva3 + f2lva3 + f3lva3
+
+lva1_method ~ 0*lva1_method
+lva2_method ~ 0*lva2_method
+lva3_method ~ 0*lva3_method
+
+lva1_method ~~ 1*lva1_method
+lva2_method ~~ 1*lva2_method
+lva3_method ~~ 1*lva3_method
+
+lva1_method ~~ NA*lva2_method + NA*lva3_method + 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+lva2_method ~~ NA*lva3_method + 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+lva3_method ~~ 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+'
+
+coh_total_extr_fit <- cfa(coh_total_extr, data = mot, estimator = "MLR", missing = "FIML")
+summary(coh_total_extr_fit, std = TRUE, fit = TRUE)
+```
+
+```{r mi.extr.weak}
+
+coh_total_extr_weak <- '
+
+#Math
+
+##Measurement invariance: Loadings
+
+ex_m1 =~ NA*m1lva1 + d*m1lva1 + e*m1lva2 + f*m1lva3
+
+ex_m2 =~ NA*m2lva1 + d*m2lva1 + e*m2lva2 + f*m2lva3
+
+ex_m3 =~ NA*m3lva1 + d*m3lva1 + e*m3lva2 + f*m3lva3
+
+
+
+##Labels for factor means and variances
+
+ex_m1 ~ nw*1
+ex_m2 ~ pw*1
+ex_m3 ~ rw*1
+
+ex_m1 ~~ vnw*ex_m1
+ex_m2 ~~ vpw*ex_m2
+ex_m3 ~~ vrw*ex_m3
+
+##Measurement invariance: Intercepts
+
+m1lva1 ~ NA*1 + m11*1
+m2lva1 ~ NA*1 + m12*1
+m3lva1 ~ NA*1 + m13*1
+
+m1lva2 ~ m21*1
+m2lva2 ~ m22*1
+m3lva2 ~ m23*1
+
+m1lva3 ~ m31*1
+m2lva3 ~ m32*1
+m3lva3 ~ m33*1
+
+
+#German
+
+##Measurement invariance: Loadings
+
+ex_d1 =~ NA*d1lva1 + d*d1lva1 + e*d1lva2 + f*d1lva3
+
+ex_d2 =~ NA*d2lva1 + d*d2lva1 + e*d2lva2 + f*d2lva3
+
+ex_d3 =~ NA*d3lva1 + d*d3lva1 + e*d3lva2 + f*d3lva3
+
+ex_d1 ~ nx*1
+ex_d2 ~ px*1
+ex_d3 ~ rx*1
+
+ex_d1 ~~ vnx*ex_d1
+ex_d2 ~~ vpx*ex_d2
+ex_d3 ~~ vrx*ex_d3
+
+##Measurement invariance: Intercepts
+
+d1lva1 ~ NA*1 + d11*1
+d2lva1 ~ NA*1 + d12*1
+d3lva1 ~ NA*1 + d13*1
+
+d1lva2 ~ d21*1
+d2lva2 ~ d22*1
+d3lva2 ~ d23*1
+
+d1lva3 ~ d31*1
+d2lva3 ~ d32*1
+d3lva3 ~ d33*1
+
+#English
+
+##Measurement invariance: Loadings
+
+ex_e1 =~ NA*e1lva1 + d*e1lva1 + e*e1lva2 + f*e1lva3
+
+ex_e2 =~ NA*e2lva1 + d*e2lva1 + e*e2lva2 + f*e2lva3
+
+ex_e3 =~ NA*e3lva1 + d*e3lva1 + e*e3lva2 + f*e3lva3
+
+ex_e1 ~ ny*1
+ex_e2 ~ py*1
+ex_e3 ~ ry*1
+
+ex_e1 ~~ vny*ex_e1
+ex_e2 ~~ vpy*ex_e2
+ex_e3 ~~ vry*ex_e3
+
+##Measurement invariance: Intercepts
+
+e1lva1 ~ NA*1 + e11*1
+e2lva1 ~ NA*1 + e12*1
+e3lva1 ~ NA*1 + e13*1
+
+e1lva2 ~ e21*1
+e2lva2 ~ e22*1
+e3lva2 ~ e23*1
+
+e1lva3 ~ e31*1
+e2lva3 ~ e32*1
+e3lva3 ~ e33*1
+
+#French
+
+##Measurement invariance: Loadings
+
+ex_f1 =~ NA*f1lva1 + d*f1lva1 + e*f1lva2 + f*f1lva3
+
+ex_f2 =~ NA*f2lva1 + d*f2lva1 + e*f2lva2 + f*f2lva3
+
+ex_f3 =~ NA*f3lva1 + d*f3lva1 + e*f3lva2 + f*f3lva3
+
+ex_f1 ~ nz*1
+ex_f2 ~ pz*1
+ex_f3 ~ rz*1
+
+ex_f1 ~~ vnz*ex_f1
+ex_f2 ~~ vpz*ex_f2
+ex_f3 ~~ vrz*ex_f3
+
+##Measurement invariance: Intercepts
+
+f1lva1 ~ NA*1 + f11*1
+f2lva1 ~ NA*1 + f12*1
+f3lva1 ~ NA*1 + f13*1
+
+f1lva2 ~ f21*1
+f2lva2 ~ f22*1
+f3lva2 ~ f23*1
+
+f1lva3 ~ f31*1
+f2lva3 ~ f32*1
+f3lva3 ~ f33*1
+
+
+#Effect coding: Loadings
+
+d + e + f == 3
+
+#Effect coding: Intercepts
+
+m11 + m21 + m31 == 0
+m12 + m22 + m32 == 0
+m13 + m23 + m33 == 0
+
+d11 + d21 + d31 == 0
+d12 + d22 + d32 == 0
+d13 + d23 + d33 == 0
+
+e11 + e21 + e31 == 0
+e12 + e22 + e32 == 0
+e13 + e23 + e33 == 0
+
+f11 + f21 + f31 == 0
+f12 + f22 + f32 == 0
+f13 + f23 + f33 == 0
+
+#Longitudinal structure: Error covariances
+
+lva1_method =~ NA*m1lva1 + m2lva1 + m3lva1 + d1lva1 + d2lva1 + d3lva1 + e1lva1 + e2lva1 + e3lva1 + f1lva1 + f2lva1 + f3lva1
+
+lva2_method =~ NA*m1lva2 + m2lva2 + m3lva2 + d1lva2 + d2lva2 + d3lva2 + e1lva2 + e2lva2 + e3lva2 + f1lva2 + f2lva2 + f3lva2
+
+lva3_method =~ NA*m1lva3 + m2lva3 + m3lva3 + d1lva3 + d2lva3 + d3lva3 + e1lva3 + e2lva3 + e3lva3 + f1lva3 + f2lva3 + f3lva3
+
+lva1_method ~ 0*lva1_method
+lva2_method ~ 0*lva2_method
+lva3_method ~ 0*lva3_method
+
+lva1_method ~~ 1*lva1_method
+lva2_method ~~ 1*lva2_method
+lva3_method ~~ 1*lva3_method
+
+lva1_method ~~ NA*lva2_method + NA*lva3_method + 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+lva2_method ~~ NA*lva3_method + 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+lva3_method ~~ 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+'
+
+coh_total_extr_weak_fit <- cfa(coh_total_extr_weak, data = mot, estimator = "MLR", missing = "FIML")
+summary(coh_total_extr_weak_fit, std = TRUE, fit = TRUE)
+```
+
+```{r mi.extr.none}
+
+coh_total_extr_none <- '
+
+#Math
+
+##Measurement invariance: Loadings
+
+ex_m1 =~ NA*m1lva1 + dm11*m1lva1 + em21*m1lva2 + fm31*m1lva3
+
+ex_m2 =~ NA*m2lva1 + dm12*m2lva1 + em22*m2lva2 + fm32*m2lva3
+
+ex_m3 =~ NA*m3lva1 + dm13*m3lva1 + em23*m3lva2 + fm33*m3lva3
+
+##Labels for factor means and variances
+
+ex_m1 ~ nw*1
+ex_m2 ~ pw*1
+ex_m3 ~ rw*1
+
+ex_m1 ~~ vnw*ex_m1
+ex_m2 ~~ vpw*ex_m2
+ex_m3 ~~ vrw*ex_m3
+
+##Measurement invariance: Intercepts
+
+m1lva1 ~ NA*1 + m11*1
+m2lva1 ~ NA*1 + m12*1
+m3lva1 ~ NA*1 + m13*1
+
+m1lva2 ~ m21*1
+m2lva2 ~ m22*1
+m3lva2 ~ m23*1
+
+m1lva3 ~ m31*1
+m2lva3 ~ m32*1
+m3lva3 ~ m33*1
+
+#German
+
+##Measurement invariance: Loadings
+
+ex_d1 =~ NA*d1lva1 + dd11*d1lva1 + ed21*d1lva2 + fd31*d1lva3
+
+ex_d2 =~ NA*d2lva1 + dd12*d2lva1 + ed22*d2lva2 + fd32*d2lva3
+
+ex_d3 =~ NA*d3lva1 + dd13*d3lva1 + ed23*d3lva2 + fd33*d3lva3
+
+ex_d1 ~ nx*1
+ex_d2 ~ px*1
+ex_d3 ~ rx*1
+
+ex_d1 ~~ vnx*ex_d1
+ex_d2 ~~ vpx*ex_d2
+ex_d3 ~~ vrx*ex_d3
+
+##Measurement invariance: Intercepts
+
+d1lva1 ~ NA*1 + d11*1
+d2lva1 ~ NA*1 + d12*1
+d3lva1 ~ NA*1 + d13*1
+
+d1lva2 ~ d21*1
+d2lva2 ~ d22*1
+d3lva2 ~ d23*1
+
+d1lva3 ~ d31*1
+d2lva3 ~ d32*1
+d3lva3 ~ d33*1
+
+#English
+
+##Measurement invariance: Loadings
+
+ex_e1 =~ NA*e1lva1 + de11*e1lva1 + ee21*e1lva2 + fe31*e1lva3
+
+ex_e2 =~ NA*e2lva1 + de12*e2lva1 + ee22*e2lva2 + fe32*e2lva3
+
+ex_e3 =~ NA*e3lva1 + de13*e3lva1 + ee23*e3lva2 + fe33*e3lva3
+
+ex_e1 ~ ny*1
+ex_e2 ~ py*1
+ex_e3 ~ ry*1
+
+ex_e1 ~~ vny*ex_e1
+ex_e2 ~~ vpy*ex_e2
+ex_e3 ~~ vry*ex_e3
+
+##Measurement invariance: Intercepts
+
+e1lva1 ~ NA*1 + e11*1
+e2lva1 ~ NA*1 + e12*1
+e3lva1 ~ NA*1 + e13*1
+
+e1lva2 ~ e21*1
+e2lva2 ~ e22*1
+e3lva2 ~ e23*1
+
+e1lva3 ~ e31*1
+e2lva3 ~ e32*1
+e3lva3 ~ e33*1
+
+#French
+
+##Measurement invariance: Loadings
+
+ex_f1 =~ NA*f1lva1 + df11*f1lva1 + ef21*f1lva2 + ff31*f1lva3
+
+ex_f2 =~ NA*f2lva1 + df12*f2lva1 + ef22*f2lva2 + ff32*f2lva3
+
+ex_f3 =~ NA*f3lva1 + df13*f3lva1 + ef23*f3lva2 + ff33*f3lva3
+
+ex_f1 ~ nz*1
+ex_f2 ~ pz*1
+ex_f3 ~ rz*1
+
+ex_f1 ~~ vnz*ex_f1
+ex_f2 ~~ vpz*ex_f2
+ex_f3 ~~ vrz*ex_f3
+
+##Measurement invariance: Intercepts
+
+f1lva1 ~ NA*1 + f11*1
+f2lva1 ~ NA*1 + f12*1
+f3lva1 ~ NA*1 + f13*1
+
+f1lva2 ~ f21*1
+f2lva2 ~ f22*1
+f3lva2 ~ f23*1
+
+f1lva3 ~ f31*1
+f2lva3 ~ f32*1
+f3lva3 ~ f33*1
+
+
+#Effect coding: Loadings
+
+dm11 + em21 + fm31 == 3
+dm12 + em22 + fm32 == 3
+dm13 + em23 + fm33 == 3
+
+dd11 + ed21 + fd31 == 3
+dd12 + ed22 + fd32 == 3
+dd13 + ed23 + fd33 == 3
+
+de11 + ee21 + fe31 == 3
+de12 + ee22 + fe32 == 3
+de13 + ee23 + fe33 == 3
+
+df11 + ef21 + ff31 == 3
+df12 + ef22 + ff32 == 3
+df13 + ef23 + ff33 == 3
+
+#Effect coding: Intercepts
+
+m11 + m21 + m31 == 0
+m12 + m22 + m32 == 0
+m13 + m23 + m33 == 0
+
+d11 + d21 + d31 == 0
+d12 + d22 + d32 == 0
+d13 + d23 + d33 == 0
+
+e11 + e21 + e31 == 0
+e12 + e22 + e32 == 0
+e13 + e23 + e33 == 0
+
+f11 + f21 + f31 == 0
+f12 + f22 + f32 == 0
+f13 + f23 + f33 == 0
+
+#Longitudinal structure: Error covariances
+
+lva1_method =~ NA*m1lva1 + m2lva1 + m3lva1 + d1lva1 + d2lva1 + d3lva1 + e1lva1 + e2lva1 + e3lva1 + f1lva1 + f2lva1 + f3lva1
+
+lva2_method =~ NA*m1lva2 + m2lva2 + m3lva2 + d1lva2 + d2lva2 + d3lva2 + e1lva2 + e2lva2 + e3lva2 + f1lva2 + f2lva2 + f3lva2
+
+lva3_method =~ NA*m1lva3 + m2lva3 + m3lva3 + d1lva3 + d2lva3 + d3lva3 + e1lva3 + e2lva3 + e3lva3 + f1lva3 + f2lva3 + f3lva3
+
+lva1_method ~ 0*lva1_method
+lva2_method ~ 0*lva2_method
+lva3_method ~ 0*lva3_method
+
+lva1_method ~~ 1*lva1_method
+lva2_method ~~ 1*lva2_method
+lva3_method ~~ 1*lva3_method
+
+lva1_method ~~ NA*lva2_method + NA*lva3_method + 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+lva2_method ~~ NA*lva3_method + 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+lva3_method ~~ 0*ex_m1 + 0*ex_m2 + 0*ex_m3 + 0*ex_d1 + 0*ex_d2 + 0*ex_d3 + 0*ex_e1 + 0*ex_e2 + 0*ex_e3 + 0*ex_f1 + 0*ex_f2 + 0*ex_f3
+
+'
+
+coh_total_extr_none_fit <- cfa(coh_total_extr_none, data = mot, estimator = "MLR", missing = "FIML")
+summary(coh_total_extr_none_fit, std = TRUE, fit = TRUE)
+```
+
+
+## Measurement model: total intrinsic
+
+```{r}
+
+coh_total_intr <- '
+
+in_m1 =~ NA*m1inva1 + a*m1inva1 + b*m1inva2 + c*m1inva3
+
+in_m2 =~ NA*m2inva1 + a*m2inva1 + b*m2inva2 + c*m2inva3
+
+in_m3 =~ NA*m3inva1 + a*m3inva1 + b*m3inva2 + c*m3inva3
+
+a + b + c == 3
+
+in_m1 ~ mw*1
+in_m2 ~ ow*1
+in_m3 ~ qw*1
+
+in_m1 ~~ vmw*in_m1
+in_m2 ~~ vow*in_m2
+in_m3 ~~ vqw*in_m3
+
+#Measurement invariance: Intercepts
+
+m1inva1 ~ NA*1 + i1*1
+m2inva1 ~ NA*1 + i1*1
+m3inva1 ~ NA*1 + i1*1
+
+m1inva2 ~ i2*1
+m2inva2 ~ i2*1
+m3inva2 ~ i2*1
+
+m1inva3 ~ i3*1
+m2inva3 ~ i3*1
+m3inva3 ~ i3*1
+
+i1 + i2 + i3 == 0
+
+in_d1 =~ NA*d1inva1 + a*d1inva1 + b*d1inva2 + c*d1inva3
+
+in_d2 =~ NA*d2inva1 + a*d2inva1 + b*d2inva2 + c*d2inva3
+
+in_d3 =~ NA*d3inva1 + a*d3inva1 + b*d3inva2 + c*d3inva3
+
+a + b + c == 3
+
+in_d1 ~ mx*1
+in_d2 ~ ox*1
+in_d3 ~ qx*1
+
+in_d1 ~~ vmx*in_d1
+in_d2 ~~ vox*in_d2
+in_d3 ~~ vqx*in_d3
+
+#Measurement invariance: Intercepts
+
+d1inva1 ~ NA*1 + i1*1
+d2inva1 ~ NA*1 + i1*1
+d3inva1 ~ NA*1 + i1*1
+
+d1inva2 ~ i2*1
+d2inva2 ~ i2*1
+d3inva2 ~ i2*1
+
+d1inva3 ~ i3*1
+d2inva3 ~ i3*1
+d3inva3 ~ i3*1
+
+i1 + i2 + i3 == 0
+
+in_e1 =~ NA*e1inva1 + a*e1inva1 + b*e1inva2 + c*e1inva3
+
+in_e2 =~ NA*e2inva1 + a*e2inva1 + b*e2inva2 + c*e2inva3
+
+in_e3 =~ NA*e3inva1 + a*e3inva1 + b*e3inva2 + c*e3inva3
+
+a + b + c == 3
+
+in_e1 ~ my*1
+in_e2 ~ oy*1
+in_e3 ~ qy*1
+
+in_e1 ~~ vmy*in_e1
+in_e2 ~~ voy*in_e2
+in_e3 ~~ vqy*in_e3
+
+#Measurement invariance: Intercepts
+
+e1inva1 ~ NA*1 + i1*1
+e2inva1 ~ NA*1 + i1*1
+e3inva1 ~ NA*1 + i1*1
+
+e1inva2 ~ i2*1
+e2inva2 ~ i2*1
+e3inva2 ~ i2*1
+
+e1inva3 ~ i3*1
+e2inva3 ~ i3*1
+e3inva3 ~ i3*1
+
+i1 + i2 + i3 == 0
+
+in_f1 =~ NA*f1inva1 + a*f1inva1 + b*f1inva2 + c*f1inva3
+
+in_f2 =~ NA*f2inva1 + a*f2inva1 + b*f2inva2 + c*f2inva3
+
+in_f3 =~ NA*f3inva1 + a*f3inva1 + b*f3inva2 + c*f3inva3
+
+a + b + c == 3
+
+in_f1 ~ mz*1
+in_f2 ~ oz*1
+in_f3 ~ qz*1
+
+in_f1 ~~ vmz*in_f1
+in_f2 ~~ voz*in_f2
+in_f3 ~~ vqz*in_f3
+
+#Measurement invariance: Intercepts
+
+f1inva1 ~ NA*1 + i1*1
+f2inva1 ~ NA*1 + i1*1
+f3inva1 ~ NA*1 + i1*1
+
+f1inva2 ~ i2*1
+f2inva2 ~ i2*1
+f3inva2 ~ i2*1
+
+f1inva3 ~ i3*1
+f2inva3 ~ i3*1
+f3inva3 ~ i3*1
+
+i1 + i2 + i3 == 0
+
+#Longitudinal structure: Error covariances
+
+inva1_method =~ NA*m1inva1 + m2inva1 + m3inva1 + d1inva1 + d2inva1 + d3inva1 + e1inva1 + e2inva1 + e3inva1 + f1inva1 + f2inva1 + f3inva1
+
+inva2_method =~ NA*m1inva2 + m2inva2 + m3inva2 + d1inva2 + d2inva2 + d3inva2 + e1inva2 + e2inva2 + e3inva2 + f1inva2 + f2inva2 + f3inva2
+
+inva3_method =~ NA*m1inva3 + m2inva3 + m3inva3 + d1inva3 + d2inva3 + d3inva3 + e1inva3 + e2inva3 + e3inva3 + f1inva3 + f2inva3 + f3inva3
+
+inva1_method ~ 0*1
+inva2_method ~ 0*1
+inva3_method ~ 0*1
+
+inva1_method ~~ 1*inva1_method
+inva2_method ~~ 1*inva2_method
+inva3_method ~~ 1*inva3_method
+
+
+inva1_method ~~ NA*inva2_method + NA*inva3_method + 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+inva2_method ~~ NA*inva3_method + 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+inva3_method ~~ 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+'
+
+coh_total_intr_fit <- cfa(coh_total_intr, data = mot, missing = "FIML", estimator = "MLR")
+summary(coh_total_intr_fit, std = TRUE, fit = TRUE)
+```
+
+
+```{r saveCFAs}
+
+```
+
+```{r confidence.intervals.aroundcohens.ds, eval = TRUE, include = FALSE}
+
+#coh_ma_bootfit_fiml_corr <- sem(coh_ma_corr, data = mot, missing = "FIML", se = "bootstrap")
+summary(coh_ma_bootfit_fiml_corr)
+formatC(round(subset(parameterEstimates(coh_ma_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.lower, digits = 2), format = "f", digits = 2)
+formatC(round(subset(parameterEstimates(coh_ma_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.upper, digits = 2), format = "f", digits = 2)
+subset(parameterEstimates(coh_ma_bootfit_fiml_corr), lhs == "cohensd_in_d12")
+
+#coh_de_bootfit_fiml_corr <- sem(coh_de_corr, data = mot, missing = "FIML", se = "bootstrap")
+summary(coh_de_bootfit_fiml_corr)
+formatC(round(subset(parameterEstimates(coh_de_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.lower, digits = 2), format = "f", digits = 2)
+formatC(round(subset(parameterEstimates(coh_de_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.upper, digits = 2), format = "f", digits = 2)
+subset(parameterEstimates(coh_de_bootfit_fiml_corr), lhs == "cohensd_in_d12")
+
+#coh_en_bootfit_fiml_corr <- sem(coh_en_corr, data = mot, missing = "FIML", se = "bootstrap")
+summary(coh_en_bootfit_fiml_corr)
+formatC(round(subset(parameterEstimates(coh_en_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.lower, digits = 2), format = "f", digits = 2)
+formatC(round(subset(parameterEstimates(coh_en_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.upper, digits = 2), format = "f", digits = 2)
+subset(parameterEstimates(coh_en_bootfit_fiml_corr), lhs == "cohensd_in_d12")
+
+#coh_fr_bootfit_fiml_corr <- sem(coh_fr_corr, data = mot, missing = "FIML", se = "bootstrap")
+summary(coh_fr_bootfit_fiml_corr)
+formatC(round(subset(parameterEstimates(coh_fr_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.lower, digits = 2), format = "f", digits = 2)
+formatC(round(subset(parameterEstimates(coh_fr_bootfit_fiml_corr, ci = TRUE, level= 0.9), lhs == "cohensd_in_d12")$ci.upper, digits = 2), format = "f", digits = 2)
+subset(parameterEstimates(coh_fr_bootfit_fiml_corr), lhs == "cohensd_in_d12")
+
+##Save model objects
+
+#save(coh_ma_bootfit_fiml_corr, file = "coh_ma_bootfit_fiml_corr.rda", 
+#     compress = "xz")
+#save(coh_de_bootfit_fiml_corr, file = "coh_de_bootfit_fiml_corr.rda", 
+#     compress = "xz")
+#save(coh_en_bootfit_fiml_corr, file = "coh_en_bootfit_fiml_corr.rda", 
+#     compress = "xz")
+#save(coh_fr_bootfit_fiml_corr, file = "coh_fr_bootfit_fiml_corr.rda", 
+#     compress = "xz")
+
+```
+
+```{r mi.fit}
+
+fitMeasures(coh_total_none_fit)["rmsea"]
+fitMeasures(coh_total_none_fit)["cfi"]
+fitMeasures(coh_total_none_fit)["srmr"]
+fitMeasures(coh_total_weak_fit)["rmsea"]
+fitMeasures(coh_total_weak_fit)["cfi"]
+fitMeasures(coh_total_weak_fit)["srmr"]
+fitMeasures(coh_total_fit)["rmsea"]
+fitMeasures(coh_total_fit)["cfi"]
+fitMeasures(coh_total_fit)["srmr"]
+
+```
+
+
+
+## Measurement model: total intrinsic
+
+```{r}
+
+coh_total_intr <- '
+
+#Math
+
+##Measurement invariance: Loadings
+
+in_m1 =~ NA*m1inva1 + d*m1inva1 + e*m1inva2 + f*m1inva3
+
+in_m2 =~ NA*m2inva1 + d*m2inva1 + e*m2inva2 + f*m2inva3
+
+in_m3 =~ NA*m3inva1 + d*m3inva1 + e*m3inva2 + f*m3inva3
+
+
+
+##Labels for factor means and variances
+
+in_m1 ~ nw*1
+in_m2 ~ pw*1
+in_m3 ~ rw*1
+
+in_m1 ~~ vnw*in_m1
+in_m2 ~~ vpw*in_m2
+in_m3 ~~ vrw*in_m3
+
+##Measurement invariance: Intercepts
+
+m1inva1 ~ NA*1 + e1*1
+m2inva1 ~ NA*1 + e1*1
+m3inva1 ~ NA*1 + e1*1
+
+m1inva2 ~ e2*1
+m2inva2 ~ e2*1
+m3inva2 ~ e2*1
+
+m1inva3 ~ e3*1
+m2inva3 ~ e3*1
+m3inva3 ~ e3*1
+
+
+#German
+
+##Measurement invariance: Loadings
+
+in_d1 =~ NA*d1inva1 + d*d1inva1 + e*d1inva2 + f*d1inva3
+
+in_d2 =~ NA*d2inva1 + d*d2inva1 + e*d2inva2 + f*d2inva3
+
+in_d3 =~ NA*d3inva1 + d*d3inva1 + e*d3inva2 + f*d3inva3
+
+in_d1 ~ nx*1
+in_d2 ~ px*1
+in_d3 ~ rx*1
+
+in_d1 ~~ vnx*in_d1
+in_d2 ~~ vpx*in_d2
+in_d3 ~~ vrx*in_d3
+
+##Measurement invariance: Intercepts
+
+d1inva1 ~ NA*1 + e1*1
+d2inva1 ~ NA*1 + e1*1
+d3inva1 ~ NA*1 + e1*1
+
+d1inva2 ~ e2*1
+d2inva2 ~ e2*1
+d3inva2 ~ e2*1
+
+d1inva3 ~ e3*1
+d2inva3 ~ e3*1
+d3inva3 ~ e3*1
+
+#English
+
+##Measurement invariance: Loadings
+
+in_e1 =~ NA*e1inva1 + d*e1inva1 + e*e1inva2 + f*e1inva3
+
+in_e2 =~ NA*e2inva1 + d*e2inva1 + e*e2inva2 + f*e2inva3
+
+in_e3 =~ NA*e3inva1 + d*e3inva1 + e*e3inva2 + f*e3inva3
+
+in_e1 ~ ny*1
+in_e2 ~ py*1
+in_e3 ~ ry*1
+
+in_e1 ~~ vny*in_e1
+in_e2 ~~ vpy*in_e2
+in_e3 ~~ vry*in_e3
+
+##Measurement invariance: Intercepts
+
+e1inva1 ~ NA*1 + e1*1
+e2inva1 ~ NA*1 + e1*1
+e3inva1 ~ NA*1 + e4*1
+
+e1inva2 ~ e2*1
+e2inva2 ~ e2*1
+e3inva2 ~ e4*1
+
+e1inva3 ~ e3*1
+e2inva3 ~ e3*1
+e3inva3 ~ e4*1
+
+#French
+
+##Measurement invariance: Loadings
+
+in_f1 =~ NA*f1inva1 + d*f1inva1 + e*f1inva2 + f*f1inva3
+
+in_f2 =~ NA*f2inva1 + d*f2inva1 + e*f2inva2 + f*f2inva3
+
+in_f3 =~ NA*f3inva1 + d*f3inva1 + e*f3inva2 + f*f3inva3
+
+in_f1 ~ nz*1
+in_f2 ~ pz*1
+in_f3 ~ rz*1
+
+in_f1 ~~ vnz*in_f1
+in_f2 ~~ vpz*in_f2
+in_f3 ~~ vrz*in_f3
+
+##Measurement invariance: Intercepts
+
+f1inva1 ~ NA*1 + e1*1
+f2inva1 ~ NA*1 + e1*1
+f3inva1 ~ NA*1 + e1*1
+
+f1inva2 ~ e2*1
+f2inva2 ~ e2*1
+f3inva2 ~ e2*1
+
+f1inva3 ~ e3*1
+f2inva3 ~ e3*1
+f3inva3 ~ e3*1
+
+
+#Effect coding: Loadings
+
+d + e + f == 3
+
+#Effect coding: Intercepts
+
+e1 + e2 + e3 == 0
+#e1 + e2 + e4 == 0
+#Longitudinal structure: Error covariances
+
+inva1_method =~ NA*m1inva1 + m2inva1 + m3inva1 + d1inva1 + d2inva1 + d3inva1 + e1inva1 + e2inva1 + e3inva1 + f1inva1 + f2inva1 + f3inva1
+
+inva2_method =~ NA*m1inva2 + m2inva2 + m3inva2 + d1inva2 + d2inva2 + d3inva2 + e1inva2 + e2inva2 + e3inva2 + f1inva2 + f2inva2 + f3inva2
+
+inva3_method =~ NA*m1inva3 + m2inva3 + m3inva3 + d1inva3 + d2inva3 + d3inva3 + e1inva3 + e2inva3 + e3inva3 + f1inva3 + f2inva3 + f3inva3
+
+inva1_method ~ 0*inva1_method
+inva2_method ~ 0*inva2_method
+inva3_method ~ 0*inva3_method
+
+inva1_method ~~ 1*inva1_method
+inva2_method ~~ 1*inva2_method
+inva3_method ~~ 1*inva3_method
+
+inva1_method ~~ NA*inva2_method + NA*inva3_method + 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+inva2_method ~~ NA*inva3_method + 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+inva3_method ~~ 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+'
+
+coh_total_intr_fit <- cfa(coh_total_intr, data = mot, estimator = "MLR", missing = "FIML")
+summary(coh_total_intr_fit, std = TRUE, fit = TRUE)
+```
+
+```{r mi.intr.weak}
+
+coh_total_intr_weak <- '
+
+#Math
+
+##Measurement invariance: Loadings
+
+in_m1 =~ NA*m1inva1 + d*m1inva1 + e*m1inva2 + f*m1inva3
+
+in_m2 =~ NA*m2inva1 + d*m2inva1 + e*m2inva2 + f*m2inva3
+
+in_m3 =~ NA*m3inva1 + d*m3inva1 + e*m3inva2 + f*m3inva3
+
+
+
+##Labels for factor means and variances
+
+in_m1 ~ nw*1
+in_m2 ~ pw*1
+in_m3 ~ rw*1
+
+in_m1 ~~ vnw*in_m1
+in_m2 ~~ vpw*in_m2
+in_m3 ~~ vrw*in_m3
+
+##Measurement invariance: Intercepts
+
+m1inva1 ~ NA*1 + m11*1
+m2inva1 ~ NA*1 + m12*1
+m3inva1 ~ NA*1 + m13*1
+
+m1inva2 ~ m21*1
+m2inva2 ~ m22*1
+m3inva2 ~ m23*1
+
+m1inva3 ~ m31*1
+m2inva3 ~ m32*1
+m3inva3 ~ m33*1
+
+
+#German
+
+##Measurement invariance: Loadings
+
+in_d1 =~ NA*d1inva1 + d*d1inva1 + e*d1inva2 + f*d1inva3
+
+in_d2 =~ NA*d2inva1 + d*d2inva1 + e*d2inva2 + f*d2inva3
+
+in_d3 =~ NA*d3inva1 + d*d3inva1 + e*d3inva2 + f*d3inva3
+
+in_d1 ~ nx*1
+in_d2 ~ px*1
+in_d3 ~ rx*1
+
+in_d1 ~~ vnx*in_d1
+in_d2 ~~ vpx*in_d2
+in_d3 ~~ vrx*in_d3
+
+##Measurement invariance: Intercepts
+
+d1inva1 ~ NA*1 + d11*1
+d2inva1 ~ NA*1 + d12*1
+d3inva1 ~ NA*1 + d13*1
+
+d1inva2 ~ d21*1
+d2inva2 ~ d22*1
+d3inva2 ~ d23*1
+
+d1inva3 ~ d31*1
+d2inva3 ~ d32*1
+d3inva3 ~ d33*1
+
+#English
+
+##Measurement invariance: Loadings
+
+in_e1 =~ NA*e1inva1 + d*e1inva1 + e*e1inva2 + f*e1inva3
+
+in_e2 =~ NA*e2inva1 + d*e2inva1 + e*e2inva2 + f*e2inva3
+
+in_e3 =~ NA*e3inva1 + d*e3inva1 + e*e3inva2 + f*e3inva3
+
+in_e1 ~ ny*1
+in_e2 ~ py*1
+in_e3 ~ ry*1
+
+in_e1 ~~ vny*in_e1
+in_e2 ~~ vpy*in_e2
+in_e3 ~~ vry*in_e3
+
+##Measurement invariance: Intercepts
+
+e1inva1 ~ NA*1 + e11*1
+e2inva1 ~ NA*1 + e12*1
+e3inva1 ~ NA*1 + e13*1
+
+e1inva2 ~ e21*1
+e2inva2 ~ e22*1
+e3inva2 ~ e23*1
+
+e1inva3 ~ e31*1
+e2inva3 ~ e32*1
+e3inva3 ~ e33*1
+
+#French
+
+##Measurement invariance: Loadings
+
+in_f1 =~ NA*f1inva1 + d*f1inva1 + e*f1inva2 + f*f1inva3
+
+in_f2 =~ NA*f2inva1 + d*f2inva1 + e*f2inva2 + f*f2inva3
+
+in_f3 =~ NA*f3inva1 + d*f3inva1 + e*f3inva2 + f*f3inva3
+
+in_f1 ~ nz*1
+in_f2 ~ pz*1
+in_f3 ~ rz*1
+
+in_f1 ~~ vnz*in_f1
+in_f2 ~~ vpz*in_f2
+in_f3 ~~ vrz*in_f3
+
+##Measurement invariance: Intercepts
+
+f1inva1 ~ NA*1 + f11*1
+f2inva1 ~ NA*1 + f12*1
+f3inva1 ~ NA*1 + f13*1
+
+f1inva2 ~ f21*1
+f2inva2 ~ f22*1
+f3inva2 ~ f23*1
+
+f1inva3 ~ f31*1
+f2inva3 ~ f32*1
+f3inva3 ~ f33*1
+
+
+#Effect coding: Loadings
+
+d + e + f == 3
+
+#Effect coding: Intercepts
+
+m11 + m21 + m31 == 0
+m12 + m22 + m32 == 0
+m13 + m23 + m33 == 0
+
+d11 + d21 + d31 == 0
+d12 + d22 + d32 == 0
+d13 + d23 + d33 == 0
+
+e11 + e21 + e31 == 0
+e12 + e22 + e32 == 0
+e13 + e23 + e33 == 0
+
+f11 + f21 + f31 == 0
+f12 + f22 + f32 == 0
+f13 + f23 + f33 == 0
+
+#Longitudinal structure: Error covariances
+
+inva1_method =~ NA*m1inva1 + m2inva1 + m3inva1 + d1inva1 + d2inva1 + d3inva1 + e1inva1 + e2inva1 + e3inva1 + f1inva1 + f2inva1 + f3inva1
+
+inva2_method =~ NA*m1inva2 + m2inva2 + m3inva2 + d1inva2 + d2inva2 + d3inva2 + e1inva2 + e2inva2 + e3inva2 + f1inva2 + f2inva2 + f3inva2
+
+inva3_method =~ NA*m1inva3 + m2inva3 + m3inva3 + d1inva3 + d2inva3 + d3inva3 + e1inva3 + e2inva3 + e3inva3 + f1inva3 + f2inva3 + f3inva3
+
+inva1_method ~ 0*inva1_method
+inva2_method ~ 0*inva2_method
+inva3_method ~ 0*inva3_method
+
+inva1_method ~~ 1*inva1_method
+inva2_method ~~ 1*inva2_method
+inva3_method ~~ 1*inva3_method
+
+inva1_method ~~ NA*inva2_method + NA*inva3_method + 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+inva2_method ~~ NA*inva3_method + 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+inva3_method ~~ 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+'
+
+coh_total_intr_weak_fit <- cfa(coh_total_intr_weak, data = mot, estimator = "MLR", missing = "FIML")
+summary(coh_total_intr_weak_fit, std = TRUE, fit = TRUE)
+```
+
+```{r mi.intr.none}
+
+coh_total_intr_none <- '
+
+#Math
+
+##Measurement invariance: Loadings
+
+in_m1 =~ NA*m1inva1 + dm11*m1inva1 + em21*m1inva2 + fm31*m1inva3
+
+in_m2 =~ NA*m2inva1 + dm12*m2inva1 + em22*m2inva2 + fm32*m2inva3
+
+in_m3 =~ NA*m3inva1 + dm13*m3inva1 + em23*m3inva2 + fm33*m3inva3
+
+##Labels for factor means and variances
+
+in_m1 ~ nw*1
+in_m2 ~ pw*1
+in_m3 ~ rw*1
+
+in_m1 ~~ vnw*in_m1
+in_m2 ~~ vpw*in_m2
+in_m3 ~~ vrw*in_m3
+
+##Measurement invariance: Intercepts
+
+m1inva1 ~ NA*1 + m11*1
+m2inva1 ~ NA*1 + m12*1
+m3inva1 ~ NA*1 + m13*1
+
+m1inva2 ~ m21*1
+m2inva2 ~ m22*1
+m3inva2 ~ m23*1
+
+m1inva3 ~ m31*1
+m2inva3 ~ m32*1
+m3inva3 ~ m33*1
+
+#German
+
+##Measurement invariance: Loadings
+
+in_d1 =~ NA*d1inva1 + dd11*d1inva1 + ed21*d1inva2 + fd31*d1inva3
+
+in_d2 =~ NA*d2inva1 + dd12*d2inva1 + ed22*d2inva2 + fd32*d2inva3
+
+in_d3 =~ NA*d3inva1 + dd13*d3inva1 + ed23*d3inva2 + fd33*d3inva3
+
+in_d1 ~ nx*1
+in_d2 ~ px*1
+in_d3 ~ rx*1
+
+in_d1 ~~ vnx*in_d1
+in_d2 ~~ vpx*in_d2
+in_d3 ~~ vrx*in_d3
+
+##Measurement invariance: Intercepts
+
+d1inva1 ~ NA*1 + d11*1
+d2inva1 ~ NA*1 + d12*1
+d3inva1 ~ NA*1 + d13*1
+
+d1inva2 ~ d21*1
+d2inva2 ~ d22*1
+d3inva2 ~ d23*1
+
+d1inva3 ~ d31*1
+d2inva3 ~ d32*1
+d3inva3 ~ d33*1
+
+#English
+
+##Measurement invariance: Loadings
+
+in_e1 =~ NA*e1inva1 + de11*e1inva1 + ee21*e1inva2 + fe31*e1inva3
+
+in_e2 =~ NA*e2inva1 + de12*e2inva1 + ee22*e2inva2 + fe32*e2inva3
+
+in_e3 =~ NA*e3inva1 + de13*e3inva1 + ee23*e3inva2 + fe33*e3inva3
+
+in_e1 ~ ny*1
+in_e2 ~ py*1
+in_e3 ~ ry*1
+
+in_e1 ~~ vny*in_e1
+in_e2 ~~ vpy*in_e2
+in_e3 ~~ vry*in_e3
+
+##Measurement invariance: Intercepts
+
+e1inva1 ~ NA*1 + e11*1
+e2inva1 ~ NA*1 + e12*1
+e3inva1 ~ NA*1 + e13*1
+
+e1inva2 ~ e21*1
+e2inva2 ~ e22*1
+e3inva2 ~ e23*1
+
+e1inva3 ~ e31*1
+e2inva3 ~ e32*1
+e3inva3 ~ e33*1
+
+#French
+
+##Measurement invariance: Loadings
+
+in_f1 =~ NA*f1inva1 + df11*f1inva1 + ef21*f1inva2 + ff31*f1inva3
+
+in_f2 =~ NA*f2inva1 + df12*f2inva1 + ef22*f2inva2 + ff32*f2inva3
+
+in_f3 =~ NA*f3inva1 + df13*f3inva1 + ef23*f3inva2 + ff33*f3inva3
+
+in_f1 ~ nz*1
+in_f2 ~ pz*1
+in_f3 ~ rz*1
+
+in_f1 ~~ vnz*in_f1
+in_f2 ~~ vpz*in_f2
+in_f3 ~~ vrz*in_f3
+
+##Measurement invariance: Intercepts
+
+f1inva1 ~ NA*1 + f11*1
+f2inva1 ~ NA*1 + f12*1
+f3inva1 ~ NA*1 + f13*1
+
+f1inva2 ~ f21*1
+f2inva2 ~ f22*1
+f3inva2 ~ f23*1
+
+f1inva3 ~ f31*1
+f2inva3 ~ f32*1
+f3inva3 ~ f33*1
+
+
+#Effect coding: Loadings
+
+dm11 + em21 + fm31 == 3
+dm12 + em22 + fm32 == 3
+dm13 + em23 + fm33 == 3
+
+dd11 + ed21 + fd31 == 3
+dd12 + ed22 + fd32 == 3
+dd13 + ed23 + fd33 == 3
+
+de11 + ee21 + fe31 == 3
+de12 + ee22 + fe32 == 3
+de13 + ee23 + fe33 == 3
+
+df11 + ef21 + ff31 == 3
+df12 + ef22 + ff32 == 3
+df13 + ef23 + ff33 == 3
+
+#Effect coding: Intercepts
+
+m11 + m21 + m31 == 0
+m12 + m22 + m32 == 0
+m13 + m23 + m33 == 0
+
+d11 + d21 + d31 == 0
+d12 + d22 + d32 == 0
+d13 + d23 + d33 == 0
+
+e11 + e21 + e31 == 0
+e12 + e22 + e32 == 0
+e13 + e23 + e33 == 0
+
+f11 + f21 + f31 == 0
+f12 + f22 + f32 == 0
+f13 + f23 + f33 == 0
+
+#Longitudinal structure: Error covariances
+
+inva1_method =~ NA*m1inva1 + m2inva1 + m3inva1 + d1inva1 + d2inva1 + d3inva1 + e1inva1 + e2inva1 + e3inva1 + f1inva1 + f2inva1 + f3inva1
+
+inva2_method =~ NA*m1inva2 + m2inva2 + m3inva2 + d1inva2 + d2inva2 + d3inva2 + e1inva2 + e2inva2 + e3inva2 + f1inva2 + f2inva2 + f3inva2
+
+inva3_method =~ NA*m1inva3 + m2inva3 + m3inva3 + d1inva3 + d2inva3 + d3inva3 + e1inva3 + e2inva3 + e3inva3 + f1inva3 + f2inva3 + f3inva3
+
+inva1_method ~ 0*inva1_method
+inva2_method ~ 0*inva2_method
+inva3_method ~ 0*inva3_method
+
+inva1_method ~~ 1*inva1_method
+inva2_method ~~ 1*inva2_method
+inva3_method ~~ 1*inva3_method
+
+inva1_method ~~ NA*inva2_method + NA*inva3_method + 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+inva2_method ~~ NA*inva3_method + 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+inva3_method ~~ 0*in_m1 + 0*in_m2 + 0*in_m3 + 0*in_d1 + 0*in_d2 + 0*in_d3 + 0*in_e1 + 0*in_e2 + 0*in_e3 + 0*in_f1 + 0*in_f2 + 0*in_f3
+
+'
+
+coh_total_intr_none_fit <- cfa(coh_total_intr_none, data = mot, estimator = "MLR", missing = "FIML")
+summary(coh_total_intr_none_fit, std = TRUE, fit = TRUE)
+```
+
+```{r}
+summary(coh_total_intr_none_fit, std = TRUE, fit = TRUE)
+summary(coh_total_intr_weak_fit, std = TRUE, fit = TRUE)
+summary(coh_total_intr_fit, std = TRUE, fit = TRUE)
+```
+
+
