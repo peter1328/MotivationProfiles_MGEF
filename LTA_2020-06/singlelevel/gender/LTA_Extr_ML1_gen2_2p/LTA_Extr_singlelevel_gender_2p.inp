@@ -1,0 +1,188 @@
+
+TITLE:
+LTA_Extr_singlelevel_gender_2p
+
+DATA:
+FILE IS
+"C:/local user data/OPFE/OPFE_R/mot_mplus_fullgender_sp_noschaffhausen.txt";
+
+VARIABLE:
+
+NAMES ARE
+ID Class Male1 Age1
+AutoMA1 AutoMA2 AutoMA3 AutoDE1 AutoDE2 AutoDE3
+AutoEN1 AutoEN2 AutoEN3 AutoFR1 AutoFR2 AutoFR3
+KomMA1 KomMA2 KomMA3 KomEN1 KomEN2 KomEN3
+KomFR1 KomFR2 KomFR3 KomDE1 KomDE2 KomDE3
+SozMA1 SozMA2 SozMA3 SozEN1 SozEN2 SozEN3
+SozFR1 SozFR2 SozFR3 SozDE1 SozDE2 SozDE3
+Neurot1 Extrav1 Offen1 Toler1 Consc1
+Consc3 Offen3 Neurot3 Extrav3 Toler3
+ExtrMA1 IntrMA1 ExtrEN1 IntrEN1 ExtrFR1 IntrFR1 ExtrDE1 IntrDE1
+ExtrMA2 IntrMA2 ExtrEN2 IntrEN2 ExtrFR2 IntrFR2 ExtrDE2 IntrDE2
+ExtrMA3 IntrMA3 ExtrEN3 IntrEN3 ExtrFR3 IntrFR3 ExtrDE3 IntrDE3
+male1ful sp
+;
+
+MISSING ARE ALL(9999);
+
+USEVARIABLES ARE ExtrMA1
+                 ExtrDE1
+                 ExtrEN1
+                 ExtrFR1
+                 ExtrMA2
+                 ExtrDE2
+                 ExtrEN2
+                 ExtrFR2
+                 ExtrMA3
+                 ExtrDE3
+                 ExtrEN3
+                 ExtrFR3
+;
+
+CLASSES = 
+           gender (2)          
+          Extr_t1 (2)
+          Extr_t2 (2)
+          Extr_t3 (2)
+;
+
+ KNOWNCLASS = gender (male1ful = 0 male1ful = 1); 
+
+
+
+ANALYSIS:
+ TYPE IS MIXTURE; 
+STARTS = 1000 400;
+PROCESS = 8;
+STSEED = 666;
+
+MODEL:
+
+%OVERALL%
+
+
+Extr_t1 ON gender;
+
+
+
+MODEL gender:
+
+
+%gender#1%
+Extr_t3 ON Extr_t2;
+Extr_t2 ON Extr_t1;
+%gender#2%
+Extr_t3 ON Extr_t2;
+Extr_t2 ON Extr_t1;
+
+Model Extr_t1:
+
+
+%Extr_t1#1%
+
+[ExtrMA1](a);
+[ExtrDE1](b);
+[ExtrEN1](c);
+[ExtrFR1](d);
+
+
+ExtrMA1(1);
+ExtrDE1(2);
+ExtrEN1(3);
+ExtrFR1(4);
+
+
+%Extr_t1#2%
+
+[ExtrMA1](e);
+[ExtrDE1](f);
+[ExtrEN1](g);
+[ExtrFR1](h);
+
+
+ExtrMA1(5);
+ExtrDE1(6);
+ExtrEN1(7);
+ExtrFR1(8);
+
+
+
+
+
+Model Extr_t2:
+
+
+%Extr_t2#1%
+
+[ExtrMA2](a);
+[ExtrDE2](b);
+[ExtrEN2](c);
+[ExtrFR2](d);
+
+
+ExtrMA2(1);
+ExtrDE2(2);
+ExtrEN2(3);
+ExtrFR2(4);
+
+
+%Extr_t2#2%
+
+[ExtrMA2](e);
+[ExtrDE2](f);
+[ExtrEN2](g);
+[ExtrFR2](h);
+
+
+ExtrMA2(5);
+ExtrDE2(6);
+ExtrEN2(7);
+ExtrFR2(8);
+
+
+
+
+
+Model Extr_t3:
+
+
+%Extr_t3#1%
+
+[ExtrMA3](a);
+[ExtrDE3](b);
+[ExtrEN3](c);
+[ExtrFR3](d);
+
+
+ExtrMA3(1);
+ExtrDE3(2);
+ExtrEN3(3);
+ExtrFR3(4);
+
+
+%Extr_t3#2%
+
+[ExtrMA3](e);
+[ExtrDE3](f);
+[ExtrEN3](g);
+[ExtrFR3](h);
+
+
+ExtrMA3(5);
+ExtrDE3(6);
+ExtrEN3(7);
+ExtrFR3(8);
+
+
+
+
+
+OUTPUT:
+sampstat residual tech1 tech4 tech15;
+
+PLOT:
+type is plot1 plot2 plot3;
+SERIES IS ExtrMA1 (1) ExtrDE1 (2) ExtrEN1 (3) ExtrFR1 (4);
+
+

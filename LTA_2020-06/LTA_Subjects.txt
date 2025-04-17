@@ -1,0 +1,583 @@
+
+
+[[init]]
+iterators = var p g m;
+var = 1 2;
+p = 2:6;
+g = 1:2;
+m = 1:4;
+VarNames#var = Intr Extr;
+GNames#g = nocov gender;
+MNames#m = singlelevel multilevel_2c multilevel_3c multilevel_gaussian;
+filename = "LTA_[[VarNames#var]]_[[MNames#m]]_[[GNames#g]]_[[p]]p.inp";
+outputDirectory = "C:/local user data/OPFE/OPFE_R/LTA_2020-06/[[MNames#m]]/[[GNames#g]]/LTA_[[VarNames#var]]_ML[[m]]_gen[[g]]_[[p]]p/";
+
+[[/init]]
+
+TITLE:
+LTA_[[VarNames#var]]_[[MNames#m]]_[[GNames#g]]_[[p]]p
+
+DATA:
+FILE IS
+"C:/local user data/OPFE/OPFE_R/mot_mplus_fullgender_sp_noschaffhausen.txt";
+
+VARIABLE:
+
+NAMES ARE
+ID Class Male1 Age1
+AutoMA1 AutoMA2 AutoMA3 AutoDE1 AutoDE2 AutoDE3
+AutoEN1 AutoEN2 AutoEN3 AutoFR1 AutoFR2 AutoFR3
+KomMA1 KomMA2 KomMA3 KomEN1 KomEN2 KomEN3
+KomFR1 KomFR2 KomFR3 KomDE1 KomDE2 KomDE3
+SozMA1 SozMA2 SozMA3 SozEN1 SozEN2 SozEN3
+SozFR1 SozFR2 SozFR3 SozDE1 SozDE2 SozDE3
+Neurot1 Extrav1 Offen1 Toler1 Consc1
+Consc3 Offen3 Neurot3 Extrav3 Toler3
+ExtrMA1 IntrMA1 ExtrEN1 IntrEN1 ExtrFR1 IntrFR1 ExtrDE1 IntrDE1
+ExtrMA2 IntrMA2 ExtrEN2 IntrEN2 ExtrFR2 IntrFR2 ExtrDE2 IntrDE2
+ExtrMA3 IntrMA3 ExtrEN3 IntrEN3 ExtrFR3 IntrFR3 ExtrDE3 IntrDE3
+male1ful sp
+;
+
+MISSING ARE ALL(9999);
+
+USEVARIABLES ARE [[VarNames#var]]MA1
+                 [[VarNames#var]]DE1
+                 [[VarNames#var]]EN1
+                 [[VarNames#var]]FR1
+                 [[VarNames#var]]MA2
+                 [[VarNames#var]]DE2
+                 [[VarNames#var]]EN2
+                 [[VarNames#var]]FR2
+                 [[VarNames#var]]MA3
+                 [[VarNames#var]]DE3
+                 [[VarNames#var]]EN3
+                 [[VarNames#var]]FR3
+;
+
+CLASSES = 
+          [[m > 1]] [[m != 4]] c ([[m]]) [[/m != 4]] [[/m > 1]]
+          [[g > 1]] gender (2)[[/g > 1]]          
+          [[VarNames#var]]_t1 ([[p]])
+          [[VarNames#var]]_t2 ([[p]])
+          [[VarNames#var]]_t3 ([[p]])
+;
+
+[[g > 1]] KNOWNCLASS = gender (male1ful = 0 male1ful = 1); [[/g > 1]]
+
+
+[[m > 1]] [[m != 4]]
+BETWEEN = c;
+
+WITHIN = 
+          [[VarNames#var]]MA1
+          [[VarNames#var]]DE1
+          [[VarNames#var]]EN1
+          [[VarNames#var]]FR1
+          [[VarNames#var]]MA2
+          [[VarNames#var]]DE2
+          [[VarNames#var]]EN2
+          [[VarNames#var]]FR2
+          [[VarNames#var]]MA3
+          [[VarNames#var]]DE3
+          [[VarNames#var]]EN3
+          [[VarNames#var]]FR3
+;
+[[/m != 4]]
+CLUSTER = Class;
+[[/m > 1]]
+
+ANALYSIS:
+[[m = 1]] TYPE IS MIXTURE; [[/m = 1]]
+[[m > 1]] TYPE IS TWOLEVEL MIXTURE; [[/m > 1]]
+STARTS = 1000 400;
+PROCESS = 8;
+STSEED = 666;
+
+MODEL:
+
+[[m > 1]] %WITHIN% [[/m > 1]]
+%OVERALL%
+
+[[g = 1]]
+[[VarNames#var]]_t3 ON [[VarNames#var]]_t2;
+[[VarNames#var]]_t2 ON [[VarNames#var]]_t1;
+[[/g = 1]]
+
+[[g > 1]]
+[[VarNames#var]]_t1 ON gender;
+
+[[m > 1]] [[m != 4]]
+%BETWEEN%
+%OVERALL%
+[[VarNames#var]]_t1#1 ON c;
+[[p > 2]] [[VarNames#var]]_t1#2 ON c; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t1#3 ON c; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t1#4 ON c; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t1#4 ON c; [[/p > 5]]
+[[VarNames#var]]_t2#1 ON c;
+[[p > 2]] [[VarNames#var]]_t2#2 ON c; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t2#3 ON c; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t2#4 ON c; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t2#4 ON c; [[/p > 5]]
+[[VarNames#var]]_t3#1 ON c;
+[[p > 2]] [[VarNames#var]]_t3#2 ON c; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t3#3 ON c; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t3#4 ON c; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t3#4 ON c; [[/p > 5]]
+
+MODEL c:
+%WITHIN%
+%c#1%
+[[VarNames#var]]_t3 ON [[VarNames#var]]_t2;
+[[VarNames#var]]_t2 ON [[VarNames#var]]_t1;
+[[/m != 4]] [[/m > 1]]
+[[m > 2]] [[m != 4]]
+%c#2%
+[[VarNames#var]]_t3 ON [[VarNames#var]]_t2;
+[[VarNames#var]]_t2 ON [[VarNames#var]]_t1;
+[[/m != 4]] [[/m > 2]]
+
+[[m = 4]]
+%BETWEEN%
+%OVERALL%
+[[VarNames#var]]_t3#1 ON [[VarNames#var]]_t2#1;
+[[p > 2]] [[VarNames#var]]_t3#1 ON [[VarNames#var]]_t2#2; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t3#1 ON [[VarNames#var]]_t2#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t3#1 ON [[VarNames#var]]_t2#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t3#1 ON [[VarNames#var]]_t2#5; [[/p > 5]]
+
+[[p > 2]] [[VarNames#var]]_t3#2 ON [[VarNames#var]]_t2#2; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t3#2 ON [[VarNames#var]]_t2#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t3#2 ON [[VarNames#var]]_t2#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t3#2 ON [[VarNames#var]]_t2#5; [[/p > 5]]
+
+[[p > 3]] [[VarNames#var]]_t3#3 ON [[VarNames#var]]_t2#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t3#3 ON [[VarNames#var]]_t2#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t3#3 ON [[VarNames#var]]_t2#5; [[/p > 5]]
+
+[[p > 4]] [[VarNames#var]]_t3#4 ON [[VarNames#var]]_t2#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t3#4 ON [[VarNames#var]]_t2#5; [[/p > 5]]
+
+[[p > 5]] [[VarNames#var]]_t3#5 ON [[VarNames#var]]_t2#5; [[/p > 5]]
+
+[[VarNames#var]]_t2#1 ON [[VarNames#var]]_t1#1;
+[[p > 2]] [[VarNames#var]]_t2#1 ON [[VarNames#var]]_t1#2; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t2#1 ON [[VarNames#var]]_t1#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t2#1 ON [[VarNames#var]]_t1#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t2#1 ON [[VarNames#var]]_t1#5; [[/p > 5]]
+
+[[p > 2]] [[VarNames#var]]_t2#2 ON [[VarNames#var]]_t1#2; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t2#2 ON [[VarNames#var]]_t1#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t2#2 ON [[VarNames#var]]_t1#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t2#2 ON [[VarNames#var]]_t1#5; [[/p > 5]]
+
+[[p > 3]] [[VarNames#var]]_t2#3 ON [[VarNames#var]]_t1#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t2#3 ON [[VarNames#var]]_t1#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t2#3 ON [[VarNames#var]]_t1#5; [[/p > 5]]
+
+[[p > 4]] [[VarNames#var]]_t2#4 ON [[VarNames#var]]_t1#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t2#4 ON [[VarNames#var]]_t1#5; [[/p > 5]]
+
+[[p > 5]] [[VarNames#var]]_t2#5 ON [[VarNames#var]]_t1#5; [[/p > 5]]
+
+[[VarNames#var]]_t1#1;
+[[p > 2]] [[VarNames#var]]_t1#2; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t1#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t1#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t1#5; [[/p > 5]]
+[[VarNames#var]]_t2#1;
+[[p > 2]] [[VarNames#var]]_t2#2; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t2#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t2#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t2#5; [[/p > 5]]
+[[VarNames#var]]_t3#1;
+[[p > 2]] [[VarNames#var]]_t3#2; [[/p > 2]]
+[[p > 3]] [[VarNames#var]]_t3#3; [[/p > 3]]
+[[p > 4]] [[VarNames#var]]_t3#4; [[/p > 4]]
+[[p > 5]] [[VarNames#var]]_t3#5; [[/p > 5]]
+[[/m = 4]]
+
+MODEL gender:
+
+[[m > 1]] %WITHIN% [[/m > 1]]
+
+%gender#1%
+[[VarNames#var]]_t3 ON [[VarNames#var]]_t2;
+[[VarNames#var]]_t2 ON [[VarNames#var]]_t1;
+%gender#2%
+[[VarNames#var]]_t3 ON [[VarNames#var]]_t2;
+[[VarNames#var]]_t2 ON [[VarNames#var]]_t1;
+[[/g > 1]]
+
+Model [[VarNames#var]]_t1:
+
+[[m > 1]] [[m != 4]] %WITHIN% [[/m != 4]] [[/m > 1]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+
+%[[VarNames#var]]_t1#1%
+
+[[[VarNames#var]]MA1](a);
+[[[VarNames#var]]DE1](b);
+[[[VarNames#var]]EN1](c);
+[[[VarNames#var]]FR1](d);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t1#1%
+[[/m = 4]]
+
+[[VarNames#var]]MA1(1);
+[[VarNames#var]]DE1(2);
+[[VarNames#var]]EN1(3);
+[[VarNames#var]]FR1(4);
+
+[[m = 4]] %BETWEEN% [[/m = 4]]
+
+%[[VarNames#var]]_t1#2%
+
+[[[VarNames#var]]MA1](e);
+[[[VarNames#var]]DE1](f);
+[[[VarNames#var]]EN1](g);
+[[[VarNames#var]]FR1](h);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t1#2%
+[[/m = 4]]
+
+[[VarNames#var]]MA1(5);
+[[VarNames#var]]DE1(6);
+[[VarNames#var]]EN1(7);
+[[VarNames#var]]FR1(8);
+
+[[p > 2]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t1#3%
+
+[[[VarNames#var]]MA1](i);
+[[[VarNames#var]]DE1](j);
+[[[VarNames#var]]EN1](k);
+[[[VarNames#var]]FR1](l);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t1#3%
+[[/m = 4]]
+
+[[VarNames#var]]MA1(9);
+[[VarNames#var]]DE1(10);
+[[VarNames#var]]EN1(11);
+[[VarNames#var]]FR1(12);
+[[/p > 2]]
+
+[[p > 3]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t1#4%
+
+[[[VarNames#var]]MA1](m);
+[[[VarNames#var]]DE1](n);
+[[[VarNames#var]]EN1](o);
+[[[VarNames#var]]FR1](p);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t1#4%
+[[/m = 4]]
+
+[[VarNames#var]]MA1(13);
+[[VarNames#var]]DE1(14);
+[[VarNames#var]]EN1(15);
+[[VarNames#var]]FR1(16);
+[[/p > 3]]
+
+[[p > 4]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t1#5%
+
+[[[VarNames#var]]MA1](q);
+[[[VarNames#var]]DE1](r);
+[[[VarNames#var]]EN1](s);
+[[[VarNames#var]]FR1](t);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t1#5%
+[[/m = 4]]
+
+[[VarNames#var]]MA1(17);
+[[VarNames#var]]DE1(18);
+[[VarNames#var]]EN1(19);
+[[VarNames#var]]FR1(20);
+[[/p > 4]]
+
+[[p > 5]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t1#6%
+
+[[[VarNames#var]]MA1](u);
+[[[VarNames#var]]DE1](v);
+[[[VarNames#var]]EN1](w);
+[[[VarNames#var]]FR1](x);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t1#6%
+[[/m = 4]]
+
+[[VarNames#var]]MA1(21);
+[[VarNames#var]]DE1(22);
+[[VarNames#var]]EN1(23);
+[[VarNames#var]]FR1(24);
+[[/p > 5]]
+
+Model [[VarNames#var]]_t2:
+
+[[m > 1]] [[m != 4]] %WITHIN% [[/m != 4]] [[/m > 1]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+
+%[[VarNames#var]]_t2#1%
+
+[[[VarNames#var]]MA2](a);
+[[[VarNames#var]]DE2](b);
+[[[VarNames#var]]EN2](c);
+[[[VarNames#var]]FR2](d);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t2#1%
+[[/m = 4]]
+
+[[VarNames#var]]MA2(1);
+[[VarNames#var]]DE2(2);
+[[VarNames#var]]EN2(3);
+[[VarNames#var]]FR2(4);
+
+[[m = 4]] %BETWEEN% [[/m = 4]]
+
+%[[VarNames#var]]_t2#2%
+
+[[[VarNames#var]]MA2](e);
+[[[VarNames#var]]DE2](f);
+[[[VarNames#var]]EN2](g);
+[[[VarNames#var]]FR2](h);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t2#2%
+[[/m = 4]]
+
+[[VarNames#var]]MA2(5);
+[[VarNames#var]]DE2(6);
+[[VarNames#var]]EN2(7);
+[[VarNames#var]]FR2(8);
+
+[[p > 2]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t2#3%
+
+[[[VarNames#var]]MA2](i);
+[[[VarNames#var]]DE2](j);
+[[[VarNames#var]]EN2](k);
+[[[VarNames#var]]FR2](l);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t2#3%
+[[/m = 4]]
+
+[[VarNames#var]]MA2(9);
+[[VarNames#var]]DE2(10);
+[[VarNames#var]]EN2(11);
+[[VarNames#var]]FR2(12);
+[[/p > 2]]
+
+[[p > 3]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t2#4%
+
+[[[VarNames#var]]MA2](m);
+[[[VarNames#var]]DE2](n);
+[[[VarNames#var]]EN2](o);
+[[[VarNames#var]]FR2](p);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t2#4%
+[[/m = 4]]
+
+[[VarNames#var]]MA2(13);
+[[VarNames#var]]DE2(14);
+[[VarNames#var]]EN2(15);
+[[VarNames#var]]FR2(16);
+[[/p > 3]]
+
+[[p > 4]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t2#5%
+
+[[[VarNames#var]]MA2](q);
+[[[VarNames#var]]DE2](r);
+[[[VarNames#var]]EN2](s);
+[[[VarNames#var]]FR2](t);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t2#5%
+[[/m = 4]]
+
+[[VarNames#var]]MA2(17);
+[[VarNames#var]]DE2(18);
+[[VarNames#var]]EN2(19);
+[[VarNames#var]]FR2(20);
+[[/p > 4]]
+
+[[p > 5]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t2#6%
+
+[[[VarNames#var]]MA2](u);
+[[[VarNames#var]]DE2](v);
+[[[VarNames#var]]EN2](w);
+[[[VarNames#var]]FR2](x);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t2#6%
+[[/m = 4]]
+
+[[VarNames#var]]MA2(21);
+[[VarNames#var]]DE2(22);
+[[VarNames#var]]EN2(23);
+[[VarNames#var]]FR2(24);
+[[/p > 5]]
+
+Model [[VarNames#var]]_t3:
+
+[[m > 1]] [[m != 4]] %WITHIN% [[/m != 4]] [[/m > 1]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+
+%[[VarNames#var]]_t3#1%
+
+[[[VarNames#var]]MA3](a);
+[[[VarNames#var]]DE3](b);
+[[[VarNames#var]]EN3](c);
+[[[VarNames#var]]FR3](d);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t3#1%
+[[/m = 4]]
+
+[[VarNames#var]]MA3(1);
+[[VarNames#var]]DE3(2);
+[[VarNames#var]]EN3(3);
+[[VarNames#var]]FR3(4);
+
+[[m = 4]] %BETWEEN% [[/m = 4]]
+
+%[[VarNames#var]]_t3#2%
+
+[[[VarNames#var]]MA3](e);
+[[[VarNames#var]]DE3](f);
+[[[VarNames#var]]EN3](g);
+[[[VarNames#var]]FR3](h);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t3#2%
+[[/m = 4]]
+
+[[VarNames#var]]MA3(5);
+[[VarNames#var]]DE3(6);
+[[VarNames#var]]EN3(7);
+[[VarNames#var]]FR3(8);
+
+[[p > 2]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t3#3%
+
+[[[VarNames#var]]MA3](i);
+[[[VarNames#var]]DE3](j);
+[[[VarNames#var]]EN3](k);
+[[[VarNames#var]]FR3](l);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t3#3%
+[[/m = 4]]
+
+[[VarNames#var]]MA3(9);
+[[VarNames#var]]DE3(10);
+[[VarNames#var]]EN3(11);
+[[VarNames#var]]FR3(12);
+[[/p > 2]]
+
+[[p > 3]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t3#4%
+
+[[[VarNames#var]]MA3](m);
+[[[VarNames#var]]DE3](n);
+[[[VarNames#var]]EN3](o);
+[[[VarNames#var]]FR3](p);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t3#4%
+[[/m = 4]]
+
+[[VarNames#var]]MA3(13);
+[[VarNames#var]]DE3(14);
+[[VarNames#var]]EN3(15);
+[[VarNames#var]]FR3(16);
+[[/p > 3]]
+
+[[p > 4]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t3#5%
+
+[[[VarNames#var]]MA3](q);
+[[[VarNames#var]]DE3](r);
+[[[VarNames#var]]EN3](s);
+[[[VarNames#var]]FR3](t);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t3#5%
+[[/m = 4]]
+
+[[VarNames#var]]MA3(17);
+[[VarNames#var]]DE3(18);
+[[VarNames#var]]EN3(19);
+[[VarNames#var]]FR3(20);
+[[/p > 4]]
+
+[[p > 5]]
+[[m = 4]] %BETWEEN% [[/m = 4]]
+%[[VarNames#var]]_t3#6%
+
+[[[VarNames#var]]MA3](u);
+[[[VarNames#var]]DE3](v);
+[[[VarNames#var]]EN3](w);
+[[[VarNames#var]]FR3](x);
+
+[[m = 4]]
+%WITHIN% 
+%[[VarNames#var]]_t3#6%
+[[/m = 4]]
+
+[[VarNames#var]]MA3(21);
+[[VarNames#var]]DE3(22);
+[[VarNames#var]]EN3(23);
+[[VarNames#var]]FR3(24);
+[[/p > 5]]
+
+OUTPUT:
+sampstat residual tech1 tech4 tech15;
+
+PLOT:
+type is plot1 plot2 plot3;
+SERIES IS [[VarNames#var]]MA1 (1) [[VarNames#var]]DE1 (2) [[VarNames#var]]EN1 (3) [[VarNames#var]]FR1 (4);
+
+

@@ -1,0 +1,375 @@
+
+TITLE:
+LTA_Intr_multilevel_gaussian_nocov_6p
+
+DATA:
+FILE IS
+"C:/local user data/OPFE/OPFE_R/mot_mplus_fullgender_sp_noschaffhausen.txt";
+
+VARIABLE:
+
+NAMES ARE
+ID Class Male1 Age1
+AutoMA1 AutoMA2 AutoMA3 AutoDE1 AutoDE2 AutoDE3
+AutoEN1 AutoEN2 AutoEN3 AutoFR1 AutoFR2 AutoFR3
+KomMA1 KomMA2 KomMA3 KomEN1 KomEN2 KomEN3
+KomFR1 KomFR2 KomFR3 KomDE1 KomDE2 KomDE3
+SozMA1 SozMA2 SozMA3 SozEN1 SozEN2 SozEN3
+SozFR1 SozFR2 SozFR3 SozDE1 SozDE2 SozDE3
+Neurot1 Extrav1 Offen1 Toler1 Consc1
+Consc3 Offen3 Neurot3 Extrav3 Toler3
+ExtrMA1 IntrMA1 ExtrEN1 IntrEN1 ExtrFR1 IntrFR1 ExtrDE1 IntrDE1
+ExtrMA2 IntrMA2 ExtrEN2 IntrEN2 ExtrFR2 IntrFR2 ExtrDE2 IntrDE2
+ExtrMA3 IntrMA3 ExtrEN3 IntrEN3 ExtrFR3 IntrFR3 ExtrDE3 IntrDE3
+male1ful sp
+;
+
+MISSING ARE ALL(9999);
+
+USEVARIABLES ARE IntrMA1
+                 IntrDE1
+                 IntrEN1
+                 IntrFR1
+                 IntrMA2
+                 IntrDE2
+                 IntrEN2
+                 IntrFR2
+                 IntrMA3
+                 IntrDE3
+                 IntrEN3
+                 IntrFR3
+;
+
+CLASSES = 
+          Intr_t1 (6)
+          Intr_t2 (6)
+          Intr_t3 (6)
+;
+
+
+
+CLUSTER = Class;
+
+ANALYSIS:
+ TYPE IS TWOLEVEL MIXTURE; 
+STARTS = 1000 400;
+PROCESS = 8;
+STSEED = 666;
+
+MODEL:
+
+ %WITHIN% 
+%OVERALL%
+
+Intr_t3 ON Intr_t2;
+Intr_t2 ON Intr_t1;
+
+
+Model Intr_t1:
+
+ %BETWEEN% 
+
+%Intr_t1#1%
+
+[IntrMA1](a);
+[IntrDE1](b);
+[IntrEN1](c);
+[IntrFR1](d);
+
+%WITHIN% 
+%Intr_t1#1%
+
+IntrMA1(1);
+IntrDE1(2);
+IntrEN1(3);
+IntrFR1(4);
+
+ %BETWEEN% 
+
+%Intr_t1#2%
+
+[IntrMA1](e);
+[IntrDE1](f);
+[IntrEN1](g);
+[IntrFR1](h);
+
+%WITHIN% 
+%Intr_t1#2%
+
+IntrMA1(5);
+IntrDE1(6);
+IntrEN1(7);
+IntrFR1(8);
+
+ %BETWEEN% 
+%Intr_t1#3%
+
+[IntrMA1](i);
+[IntrDE1](j);
+[IntrEN1](k);
+[IntrFR1](l);
+
+%WITHIN% 
+%Intr_t1#3%
+
+IntrMA1(9);
+IntrDE1(10);
+IntrEN1(11);
+IntrFR1(12);
+
+ %BETWEEN% 
+%Intr_t1#4%
+
+[IntrMA1](m);
+[IntrDE1](n);
+[IntrEN1](o);
+[IntrFR1](p);
+
+%WITHIN% 
+%Intr_t1#4%
+
+IntrMA1(13);
+IntrDE1(14);
+IntrEN1(15);
+IntrFR1(16);
+
+ %BETWEEN% 
+%Intr_t1#5%
+
+[IntrMA1](q);
+[IntrDE1](r);
+[IntrEN1](s);
+[IntrFR1](t);
+
+%WITHIN% 
+%Intr_t1#5%
+
+IntrMA1(17);
+IntrDE1(18);
+IntrEN1(19);
+IntrFR1(20);
+
+ %BETWEEN% 
+%Intr_t1#6%
+
+[IntrMA1](u);
+[IntrDE1](v);
+[IntrEN1](w);
+[IntrFR1](x);
+
+%WITHIN% 
+%Intr_t1#6%
+
+IntrMA1(21);
+IntrDE1(22);
+IntrEN1(23);
+IntrFR1(24);
+
+Model Intr_t2:
+
+ %BETWEEN% 
+
+%Intr_t2#1%
+
+[IntrMA2](a);
+[IntrDE2](b);
+[IntrEN2](c);
+[IntrFR2](d);
+
+%WITHIN% 
+%Intr_t2#1%
+
+IntrMA2(1);
+IntrDE2(2);
+IntrEN2(3);
+IntrFR2(4);
+
+ %BETWEEN% 
+
+%Intr_t2#2%
+
+[IntrMA2](e);
+[IntrDE2](f);
+[IntrEN2](g);
+[IntrFR2](h);
+
+%WITHIN% 
+%Intr_t2#2%
+
+IntrMA2(5);
+IntrDE2(6);
+IntrEN2(7);
+IntrFR2(8);
+
+ %BETWEEN% 
+%Intr_t2#3%
+
+[IntrMA2](i);
+[IntrDE2](j);
+[IntrEN2](k);
+[IntrFR2](l);
+
+%WITHIN% 
+%Intr_t2#3%
+
+IntrMA2(9);
+IntrDE2(10);
+IntrEN2(11);
+IntrFR2(12);
+
+ %BETWEEN% 
+%Intr_t2#4%
+
+[IntrMA2](m);
+[IntrDE2](n);
+[IntrEN2](o);
+[IntrFR2](p);
+
+%WITHIN% 
+%Intr_t2#4%
+
+IntrMA2(13);
+IntrDE2(14);
+IntrEN2(15);
+IntrFR2(16);
+
+ %BETWEEN% 
+%Intr_t2#5%
+
+[IntrMA2](q);
+[IntrDE2](r);
+[IntrEN2](s);
+[IntrFR2](t);
+
+%WITHIN% 
+%Intr_t2#5%
+
+IntrMA2(17);
+IntrDE2(18);
+IntrEN2(19);
+IntrFR2(20);
+
+ %BETWEEN% 
+%Intr_t2#6%
+
+[IntrMA2](u);
+[IntrDE2](v);
+[IntrEN2](w);
+[IntrFR2](x);
+
+%WITHIN% 
+%Intr_t2#6%
+
+IntrMA2(21);
+IntrDE2(22);
+IntrEN2(23);
+IntrFR2(24);
+
+Model Intr_t3:
+
+ %BETWEEN% 
+
+%Intr_t3#1%
+
+[IntrMA3](a);
+[IntrDE3](b);
+[IntrEN3](c);
+[IntrFR3](d);
+
+%WITHIN% 
+%Intr_t3#1%
+
+IntrMA3(1);
+IntrDE3(2);
+IntrEN3(3);
+IntrFR3(4);
+
+ %BETWEEN% 
+
+%Intr_t3#2%
+
+[IntrMA3](e);
+[IntrDE3](f);
+[IntrEN3](g);
+[IntrFR3](h);
+
+%WITHIN% 
+%Intr_t3#2%
+
+IntrMA3(5);
+IntrDE3(6);
+IntrEN3(7);
+IntrFR3(8);
+
+ %BETWEEN% 
+%Intr_t3#3%
+
+[IntrMA3](i);
+[IntrDE3](j);
+[IntrEN3](k);
+[IntrFR3](l);
+
+%WITHIN% 
+%Intr_t3#3%
+
+IntrMA3(9);
+IntrDE3(10);
+IntrEN3(11);
+IntrFR3(12);
+
+ %BETWEEN% 
+%Intr_t3#4%
+
+[IntrMA3](m);
+[IntrDE3](n);
+[IntrEN3](o);
+[IntrFR3](p);
+
+%WITHIN% 
+%Intr_t3#4%
+
+IntrMA3(13);
+IntrDE3(14);
+IntrEN3(15);
+IntrFR3(16);
+
+ %BETWEEN% 
+%Intr_t3#5%
+
+[IntrMA3](q);
+[IntrDE3](r);
+[IntrEN3](s);
+[IntrFR3](t);
+
+%WITHIN% 
+%Intr_t3#5%
+
+IntrMA3(17);
+IntrDE3(18);
+IntrEN3(19);
+IntrFR3(20);
+
+ %BETWEEN% 
+%Intr_t3#6%
+
+[IntrMA3](u);
+[IntrDE3](v);
+[IntrEN3](w);
+[IntrFR3](x);
+
+%WITHIN% 
+%Intr_t3#6%
+
+IntrMA3(21);
+IntrDE3(22);
+IntrEN3(23);
+IntrFR3(24);
+
+OUTPUT:
+sampstat residual tech1 tech4 tech15;
+
+PLOT:
+type is plot1 plot2 plot3;
+SERIES IS IntrMA1 (1) IntrDE1 (2) IntrEN1 (3) IntrFR1 (4);
+
+
