@@ -1,0 +1,391 @@
+
+TITLE:
+GMM_Extr_het_uns_6p
+
+DATA:
+FILE IS
+"C:/local user data/OPFE/OPFE_R/mot_mplus_fullgender_sp_noschaffhausen.txt";
+
+VARIABLE:
+
+NAMES ARE
+ID Class Male1 Age1
+AutoMA1 AutoMA2 AutoMA3 AutoDE1 AutoDE2 AutoDE3
+AutoEN1 AutoEN2 AutoEN3 AutoFR1 AutoFR2 AutoFR3
+KomMA1 KomMA2 KomMA3 KomEN1 KomEN2 KomEN3
+KomFR1 KomFR2 KomFR3 KomDE1 KomDE2 KomDE3
+SozMA1 SozMA2 SozMA3 SozEN1 SozEN2 SozEN3
+SozFR1 SozFR2 SozFR3 SozDE1 SozDE2 SozDE3
+Neurot1 Extrav1 Offen1 Toler1 Consc1
+Consc3 Offen3 Neurot3 Extrav3 Toler3
+ExtrMA1 IntrMA1 ExtrEN1 IntrEN1 ExtrFR1 IntrFR1 ExtrDE1 IntrDE1
+ExtrMA2 IntrMA2 ExtrEN2 IntrEN2 ExtrFR2 IntrFR2 ExtrDE2 IntrDE2
+ExtrMA3 IntrMA3 ExtrEN3 IntrEN3 ExtrFR3 IntrFR3 ExtrDE3 IntrDE3
+male1ful sp
+;
+
+MISSING ARE ALL(9999);
+
+USEVARIABLES ARE ExtrMA1
+                 ExtrDE1
+                 ExtrEN1
+                 ExtrFR1
+                 ExtrMA2
+                 ExtrDE2
+                 ExtrEN2
+                 ExtrFR2
+                 ExtrMA3
+                 ExtrDE3
+                 ExtrEN3
+                 ExtrFR3
+;
+
+CLASSES = 
+          Extr_p (6)
+
+;
+
+
+ANALYSIS:
+TYPE IS MIXTURE;
+
+STARTS = 1000 400;
+PROCESS = 8 1;
+STSEED = 666;
+
+MODEL:
+
+%OVERALL%
+
+! Define latent growth factors for each process
+  iMA sMA | ExtrMA1@0 ExtrMA2@1 ExtrMA3@2;
+  iDE sDE | ExtrDE1@0 ExtrDE2@1 ExtrDE3@2;
+  iEN sEN | ExtrEN1@0 ExtrEN2@1 ExtrEN3@2;
+  iFR sFR | ExtrFR1@0 ExtrFR2@1 ExtrFR3@2;
+
+%Extr_p#1%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+
+
+
+!Residual variance structure
+
+ !heterogeneous variances, unstructured residual variances
+
+ExtrMA1 (MAvar1a);
+ExtrMA2 (MAvar2a);
+ExtrMA3 (MAvar3a);
+
+ExtrMA1 WITH ExtrMA2 (MAa1);
+ExtrMA2 WITH ExtrMA3 (MAa1);
+ExtrMA1 WITH ExtrMA3 (MAa1);
+
+ExtrDE1 (DEvar1a);
+ExtrDE2 (DEvar2a);
+ExtrDE3 (DEvar3a);
+
+ExtrDE1 WITH ExtrDE2 (DEa1);
+ExtrDE2 WITH ExtrDE3 (DEa1);
+ExtrDE1 WITH ExtrDE3 (DEa1);
+
+ExtrEN1 (ENvar1a);
+ExtrEN2 (ENvar2a);
+ExtrEN3 (ENvar3a);
+
+ExtrEN1 WITH ExtrEN2 (ENa1);
+ExtrEN2 WITH ExtrEN3 (ENa1);
+ExtrEN1 WITH ExtrEN3 (ENa1);
+
+ExtrFR1 (FRvar1a);
+ExtrFR2 (FRvar2a);
+ExtrFR3 (FRvar3a);
+
+ExtrFR1 WITH ExtrFR2 (FRa1);
+ExtrFR2 WITH ExtrFR3 (FRa1);
+ExtrFR1 WITH ExtrFR3 (FRa1);
+
+
+
+
+
+
+
+%Extr_p#2%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+
+
+
+!Residual variance structure
+
+ !heterogeneous variances, unstructured residual variances
+
+ExtrMA1 (MAvar1b);
+ExtrMA2 (MAvar2b);
+ExtrMA3 (MAvar3b);
+
+ExtrMA1 WITH ExtrMA2 (MAb1);
+ExtrMA2 WITH ExtrMA3 (MAb1);
+ExtrMA1 WITH ExtrMA3 (MAb1);
+
+ExtrDE1 (DEvar1b);
+ExtrDE2 (DEvar2b);
+ExtrDE3 (DEvar3b);
+
+ExtrDE1 WITH ExtrDE2 (DEb1);
+ExtrDE2 WITH ExtrDE3 (DEb1);
+ExtrDE1 WITH ExtrDE3 (DEb1);
+
+ExtrEN1 (ENvar1b);
+ExtrEN2 (ENvar2b);
+ExtrEN3 (ENvar3b);
+
+ExtrEN1 WITH ExtrEN2 (ENb1);
+ExtrEN2 WITH ExtrEN3 (ENb1);
+ExtrEN1 WITH ExtrEN3 (ENb1);
+
+ExtrFR1 (FRvar1b);
+ExtrFR2 (FRvar2b);
+ExtrFR3 (FRvar3b);
+
+ExtrFR1 WITH ExtrFR2 (FRb1);
+ExtrFR2 WITH ExtrFR3 (FRb1);
+ExtrFR1 WITH ExtrFR3 (FRb1);
+
+
+
+
+
+
+%Extr_p#3%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+
+
+
+!Residual variance structure
+
+ !heterogeneous variances, unstructured residual variances
+
+ExtrMA1 (MAvar1c);
+ExtrMA2 (MAvar2c);
+ExtrMA3 (MAvar3c);
+
+ExtrMA1 WITH ExtrMA2 (MAc1);
+ExtrMA2 WITH ExtrMA3 (MAc1);
+ExtrMA1 WITH ExtrMA3 (MAc1);
+
+ExtrDE1 (DEvar1c);
+ExtrDE2 (DEvar2c);
+ExtrDE3 (DEvar3c);
+
+ExtrDE1 WITH ExtrDE2 (DEc1);
+ExtrDE2 WITH ExtrDE3 (DEc1);
+ExtrDE1 WITH ExtrDE3 (DEc1);
+
+ExtrEN1 (ENvar1c);
+ExtrEN2 (ENvar2c);
+ExtrEN3 (ENvar3c);
+
+ExtrEN1 WITH ExtrEN2 (ENc1);
+ExtrEN2 WITH ExtrEN3 (ENc1);
+ExtrEN1 WITH ExtrEN3 (ENc1);
+
+ExtrFR1 (FRvar1c);
+ExtrFR2 (FRvar2c);
+ExtrFR3 (FRvar3c);
+
+ExtrFR1 WITH ExtrFR2 (FRc1);
+ExtrFR2 WITH ExtrFR3 (FRc1);
+ExtrFR1 WITH ExtrFR3 (FRc1);
+
+
+
+
+
+
+
+%Extr_p#4%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+
+
+
+!Residual variance structure
+
+ !heterogeneous variances, unstructured residual variances
+
+ExtrMA1 (MAvar1d);
+ExtrMA2 (MAvar2d);
+ExtrMA3 (MAvar3d);
+
+ExtrMA1 WITH ExtrMA2 (MAd1);
+ExtrMA2 WITH ExtrMA3 (MAd1);
+ExtrMA1 WITH ExtrMA3 (MAd1);
+
+ExtrDE1 (DEvar1d);
+ExtrDE2 (DEvar2d);
+ExtrDE3 (DEvar3d);
+
+ExtrDE1 WITH ExtrDE2 (DEd1);
+ExtrDE2 WITH ExtrDE3 (DEd1);
+ExtrDE1 WITH ExtrDE3 (DEd1);
+
+ExtrEN1 (ENvar1d);
+ExtrEN2 (ENvar2d);
+ExtrEN3 (ENvar3d);
+
+ExtrEN1 WITH ExtrEN2 (ENd1);
+ExtrEN2 WITH ExtrEN3 (ENd1);
+ExtrEN1 WITH ExtrEN3 (ENd1);
+
+ExtrFR1 (FRvar1d);
+ExtrFR2 (FRvar2d);
+ExtrFR3 (FRvar3d);
+
+ExtrFR1 WITH ExtrFR2 (FRd1);
+ExtrFR2 WITH ExtrFR3 (FRd1);
+ExtrFR1 WITH ExtrFR3 (FRd1);
+
+
+
+
+
+
+
+%Extr_p#5%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+
+
+
+!Residual variance structure
+
+ !heterogeneous variances, unstructured residual variances
+
+ExtrMA1 (MAvar1e);
+ExtrMA2 (MAvar2e);
+ExtrMA3 (MAvar3e);
+
+ExtrMA1 WITH ExtrMA2 (MAe1);
+ExtrMA2 WITH ExtrMA3 (MAe1);
+ExtrMA1 WITH ExtrMA3 (MAe1);
+
+ExtrDE1 (DEvar1e);
+ExtrDE2 (DEvar2e);
+ExtrDE3 (DEvar3e);
+
+ExtrDE1 WITH ExtrDE2 (DEe1);
+ExtrDE2 WITH ExtrDE3 (DEe1);
+ExtrDE1 WITH ExtrDE3 (DEe1);
+
+ExtrEN1 (ENvar1e);
+ExtrEN2 (ENvar2e);
+ExtrEN3 (ENvar3e);
+
+ExtrEN1 WITH ExtrEN2 (ENe1);
+ExtrEN2 WITH ExtrEN3 (ENe1);
+ExtrEN1 WITH ExtrEN3 (ENe1);
+
+ExtrFR1 (FRvar1e);
+ExtrFR2 (FRvar2e);
+ExtrFR3 (FRvar3e);
+
+ExtrFR1 WITH ExtrFR2 (FRe1);
+ExtrFR2 WITH ExtrFR3 (FRe1);
+ExtrFR1 WITH ExtrFR3 (FRe1);
+
+
+
+
+
+
+%Extr_p#6%
+
+[iMA sMA iDE sDE iEN sEN iFR sFR];
+iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+!Residual variance structure
+
+
+
+
+
+!Residual variance structure
+
+ !heterogeneous variances, unstructured residual variances
+
+ExtrMA1 (MAvar1f);
+ExtrMA2 (MAvar2f);
+ExtrMA3 (MAvar3f);
+
+ExtrMA1 WITH ExtrMA2 (MAf1);
+ExtrMA2 WITH ExtrMA3 (MAf1);
+ExtrMA1 WITH ExtrMA3 (MAf1);
+
+ExtrDE1 (DEvar1f);
+ExtrDE2 (DEvar2f);
+ExtrDE3 (DEvar3f);
+
+ExtrDE1 WITH ExtrDE2 (DEf1);
+ExtrDE2 WITH ExtrDE3 (DEf1);
+ExtrDE1 WITH ExtrDE3 (DEf1);
+
+ExtrEN1 (ENvar1f);
+ExtrEN2 (ENvar2f);
+ExtrEN3 (ENvar3f);
+
+ExtrEN1 WITH ExtrEN2 (ENf1);
+ExtrEN2 WITH ExtrEN3 (ENf1);
+ExtrEN1 WITH ExtrEN3 (ENf1);
+
+ExtrFR1 (FRvar1f);
+ExtrFR2 (FRvar2f);
+ExtrFR3 (FRvar3f);
+
+ExtrFR1 WITH ExtrFR2 (FRf1);
+ExtrFR2 WITH ExtrFR3 (FRf1);
+ExtrFR1 WITH ExtrFR3 (FRf1);
+
+
+
+
+
+
+
+
+
+
+
+OUTPUT:
+sampstat residual tech1 tech4 tech15;
+
+
+
+

@@ -1,0 +1,2634 @@
+Mplus VERSION 8.5
+MUTHEN & MUTHEN
+04/16/2025  11:11 PM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE:
+  GMM_Intr_het_toe_2p
+
+  DATA:
+  FILE IS
+  "C:/local user data/OPFE/OPFE_R/mot_mplus_fullgender_sp_noschaffhausen.txt";
+
+  VARIABLE:
+
+  NAMES ARE
+  ID Class Male1 Age1
+  AutoMA1 AutoMA2 AutoMA3 AutoDE1 AutoDE2 AutoDE3
+  AutoEN1 AutoEN2 AutoEN3 AutoFR1 AutoFR2 AutoFR3
+  KomMA1 KomMA2 KomMA3 KomEN1 KomEN2 KomEN3
+  KomFR1 KomFR2 KomFR3 KomDE1 KomDE2 KomDE3
+  SozMA1 SozMA2 SozMA3 SozEN1 SozEN2 SozEN3
+  SozFR1 SozFR2 SozFR3 SozDE1 SozDE2 SozDE3
+  Neurot1 Extrav1 Offen1 Toler1 Consc1
+  Consc3 Offen3 Neurot3 Extrav3 Toler3
+  ExtrMA1 IntrMA1 ExtrEN1 IntrEN1 ExtrFR1 IntrFR1 ExtrDE1 IntrDE1
+  ExtrMA2 IntrMA2 ExtrEN2 IntrEN2 ExtrFR2 IntrFR2 ExtrDE2 IntrDE2
+  ExtrMA3 IntrMA3 ExtrEN3 IntrEN3 ExtrFR3 IntrFR3 ExtrDE3 IntrDE3
+  male1ful sp
+  ;
+
+  MISSING ARE ALL(9999);
+
+  USEVARIABLES ARE IntrMA1
+                   IntrDE1
+                   IntrEN1
+                   IntrFR1
+                   IntrMA2
+                   IntrDE2
+                   IntrEN2
+                   IntrFR2
+                   IntrMA3
+                   IntrDE3
+                   IntrEN3
+                   IntrFR3
+  ;
+
+  CLASSES =
+            Intr_p (2)
+
+  ;
+
+
+  ANALYSIS:
+  TYPE IS MIXTURE;
+
+  STARTS = 1000 400;
+  PROCESS = 8 1;
+  STSEED = 666;
+
+  MODEL:
+
+  %OVERALL%
+
+  ! Define latent growth factors for each process
+    iMA sMA | IntrMA1@0 IntrMA2@1 IntrMA3@2;
+    iDE sDE | IntrDE1@0 IntrDE2@1 IntrDE3@2;
+    iEN sEN | IntrEN1@0 IntrEN2@1 IntrEN3@2;
+    iFR sFR | IntrFR1@0 IntrFR2@1 IntrFR3@2;
+
+  %Intr_p#1%
+
+  [iMA sMA iDE sDE iEN sEN iFR sFR];
+  iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+  !Residual variance structure
+
+
+
+
+
+  !Residual variance structure
+
+
+
+
+   !heterogeneous variances, toeplitz residual variances
+
+  IntrMA1 (MAvar1a);
+  IntrMA2 (MAvar2a);
+  IntrMA3 (MAvar3a);
+
+  IntrMA1 WITH IntrMA2 (MAa1);
+  IntrMA2 WITH IntrMA3 (MAa2);
+  IntrMA1 WITH IntrMA3 (MAa1);
+
+  IntrDE1 (DEvar1a);
+  IntrDE2 (DEvar2a);
+  IntrDE3 (DEvar3a);
+
+  IntrDE1 WITH IntrDE2 (DEa1);
+  IntrDE2 WITH IntrDE3 (DEa2);
+  IntrDE1 WITH IntrDE3 (DEa1);
+
+  IntrEN1 (ENvar1a);
+  IntrEN2 (ENvar2a);
+  IntrEN3 (ENvar3a);
+
+  IntrEN1 WITH IntrEN2 (ENa1);
+  IntrEN2 WITH IntrEN3 (ENa2);
+  IntrEN1 WITH IntrEN3 (ENa1);
+
+  IntrFR1 (FRvar1a);
+  IntrFR2 (FRvar2a);
+  IntrFR3 (FRvar3a);
+
+  IntrFR1 WITH IntrFR2 (FRa1);
+  IntrFR2 WITH IntrFR3 (FRa2);
+  IntrFR1 WITH IntrFR3 (FRa1);
+
+
+
+
+  %Intr_p#2%
+
+  [iMA sMA iDE sDE iEN sEN iFR sFR];
+  iMA@0 sMA@0 iDE@0 sDE@0 iEN@0 sEN@0 iFR@0 sFR@0;
+
+  !Residual variance structure
+
+
+
+
+
+  !Residual variance structure
+
+
+
+
+   !heterogeneous variances, toeplitz residual variances
+
+  IntrMA1 (MAvar1b);
+  IntrMA2 (MAvar2b);
+  IntrMA3 (MAvar3b);
+
+  IntrMA1 WITH IntrMA2 (MAb1);
+  IntrMA2 WITH IntrMA3 (MAb2);
+  IntrMA1 WITH IntrMA3 (MAb1);
+
+  IntrDE1 (DEvar1b);
+  IntrDE2 (DEvar2b);
+  IntrDE3 (DEvar3b);
+
+  IntrDE1 WITH IntrDE2 (DEb1);
+  IntrDE2 WITH IntrDE3 (DEb2);
+  IntrDE1 WITH IntrDE3 (DEb1);
+
+  IntrEN1 (ENvar1b);
+  IntrEN2 (ENvar2b);
+  IntrEN3 (ENvar3b);
+
+  IntrEN1 WITH IntrEN2 (ENb1);
+  IntrEN2 WITH IntrEN3 (ENb2);
+  IntrEN1 WITH IntrEN3 (ENb1);
+
+  IntrFR1 (FRvar1b);
+  IntrFR2 (FRvar2b);
+  IntrFR3 (FRvar3b);
+
+  IntrFR1 WITH IntrFR2 (FRb1);
+  IntrFR2 WITH IntrFR3 (FRb2);
+  IntrFR1 WITH IntrFR3 (FRb1);
+
+
+
+
+
+
+
+
+
+
+
+  OUTPUT:
+  sampstat residual tech1 tech4 tech15;
+
+
+
+
+
+
+
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving IMA have been fixed to 0
+  because the variance of IMA is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving SMA have been fixed to 0
+  because the variance of SMA is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving IDE have been fixed to 0
+  because the variance of IDE is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving SDE have been fixed to 0
+  because the variance of SDE is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving IEN have been fixed to 0
+  because the variance of IEN is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving SEN have been fixed to 0
+  because the variance of SEN is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving IFR have been fixed to 0
+  because the variance of IFR is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving IMA have been fixed to 0
+  because the variance of IMA is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving SMA have been fixed to 0
+  because the variance of SMA is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving IDE have been fixed to 0
+  because the variance of IDE is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving SDE have been fixed to 0
+  because the variance of SDE is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving IEN have been fixed to 0
+  because the variance of IEN is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving SEN have been fixed to 0
+  because the variance of SEN is fixed at 0.
+*** WARNING in MODEL command
+  All continuous latent variable covariances involving IFR have been fixed to 0
+  because the variance of IFR is fixed at 0.
+*** WARNING in OUTPUT command
+  TECH15 option is not available for TYPE=MIXTURE with a single latent class
+  variable.  Request for TECH15 will be ignored.
+*** WARNING
+  Data set contains cases with missing on all variables.
+  These cases were not included in the analysis.
+  Number of cases with missing on all variables:  3
+  16 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+
+GMM_Intr_het_toe_2p
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         847
+
+Number of dependent variables                                   12
+Number of independent variables                                  0
+Number of continuous latent variables                            8
+Number of categorical latent variables                           1
+
+Observed dependent variables
+
+  Continuous
+   INTRMA1     INTRDE1     INTREN1     INTRFR1     INTRMA2     INTRDE2
+   INTREN2     INTRFR2     INTRMA3     INTRDE3     INTREN3     INTRFR3
+
+Continuous latent variables
+   IMA         SMA         IDE         SDE         IEN         SEN
+   IFR         SFR
+
+Categorical latent variables
+   INTR_P
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Optimization Specifications for the Quasi-Newton Algorithm for
+Continuous Outcomes
+  Maximum number of iterations                                 100
+  Convergence criterion                                  0.100D-05
+Optimization Specifications for the EM Algorithm
+  Maximum number of iterations                                 500
+  Convergence criteria
+    Loglikelihood change                                 0.100D-06
+    Relative loglikelihood change                        0.100D-06
+    Derivative                                           0.100D-05
+Optimization Specifications for the M step of the EM Algorithm for
+Categorical Latent variables
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-05
+  Basis for M step termination                           ITERATION
+Optimization Specifications for the M step of the EM Algorithm for
+Censored, Binary or Ordered Categorical (Ordinal), Unordered
+Categorical (Nominal) and Count Outcomes
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-05
+  Basis for M step termination                           ITERATION
+  Maximum value for logit thresholds                            15
+  Minimum value for logit thresholds                           -15
+  Minimum expected cell size for chi-square              0.100D-01
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+Optimization algorithm                                         EMA
+Random Starts Specifications
+  Number of initial stage random starts                       1000
+  Number of final stage optimizations                          400
+  Number of initial stage iterations                            10
+  Initial stage convergence criterion                    0.100D+01
+  Random starts scale                                    0.500D+01
+  Random seed for generating random starts                     666
+
+Input data file(s)
+  C:/local user data/OPFE/OPFE_R/mot_mplus_fullgender_sp_noschaffhausen.txt
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            24
+     Number of y missing data patterns          24
+     Number of u missing data patterns           0
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT FOR Y
+
+
+           Covariance Coverage
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1        0.888
+ INTRDE1        0.884         0.885
+ INTREN1        0.883         0.882         0.884
+ INTRFR1        0.887         0.884         0.883         0.888
+ INTRMA2        0.715         0.714         0.714         0.717         0.778
+ INTRDE2        0.715         0.714         0.714         0.717         0.778
+ INTREN2        0.715         0.714         0.714         0.717         0.778
+ INTRFR2        0.713         0.712         0.712         0.714         0.774
+ INTRMA3        0.689         0.687         0.686         0.689         0.666
+ INTRDE3        0.688         0.686         0.685         0.688         0.664
+ INTREN3        0.686         0.684         0.682         0.686         0.662
+ INTRFR3        0.681         0.679         0.678         0.681         0.662
+
+
+           Covariance Coverage
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        0.778
+ INTREN2        0.778         0.778
+ INTRFR2        0.774         0.774         0.774
+ INTRMA3        0.666         0.666         0.665         0.787
+ INTRDE3        0.664         0.664         0.662         0.784         0.784
+ INTREN3        0.662         0.662         0.661         0.784         0.780
+ INTRFR3        0.662         0.662         0.661         0.779         0.777
+
+
+           Covariance Coverage
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3        0.784
+ INTRFR3        0.776         0.779
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                3.026         3.085         3.821         2.898         2.885
+
+
+           Means
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+                2.965         3.829         2.817         2.882         2.941
+
+
+           Means
+              INTREN3       INTRFR3
+              ________      ________
+                3.866         2.668
+
+
+           Covariances
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1        1.123
+ INTRDE1        0.023         0.790
+ INTREN1       -0.067         0.154         0.564
+ INTRFR1       -0.089         0.192         0.206         1.057
+ INTRMA2        0.806        -0.029        -0.072        -0.039         1.147
+ INTRDE2       -0.036         0.510         0.127         0.169        -0.044
+ INTREN2       -0.053         0.107         0.338         0.147        -0.018
+ INTRFR2       -0.079         0.190         0.142         0.727         0.004
+ INTRMA3        0.746        -0.049        -0.067        -0.064         0.857
+ INTRDE3       -0.093         0.428         0.092         0.179        -0.096
+ INTREN3       -0.061         0.080         0.269         0.092        -0.105
+ INTRFR3       -0.118         0.193         0.143         0.666        -0.090
+
+
+           Covariances
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        0.927
+ INTREN2        0.182         0.552
+ INTRFR2        0.274         0.148         1.024
+ INTRMA3       -0.051        -0.072        -0.057         1.167
+ INTRDE3        0.649         0.149         0.252        -0.086         0.919
+ INTREN3        0.108         0.320         0.077        -0.040         0.184
+ INTRFR3        0.253         0.147         0.753        -0.040         0.316
+
+
+           Covariances
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3        0.501
+ INTRFR3        0.141         1.093
+
+
+           Correlations
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1        1.000
+ INTRDE1        0.024         1.000
+ INTREN1       -0.084         0.230         1.000
+ INTRFR1       -0.081         0.210         0.266         1.000
+ INTRMA2        0.710        -0.031        -0.090        -0.036         1.000
+ INTRDE2       -0.035         0.596         0.176         0.170        -0.042
+ INTREN2       -0.068         0.161         0.606         0.192        -0.023
+ INTRFR2       -0.074         0.211         0.187         0.699         0.004
+ INTRMA3        0.651        -0.051        -0.083        -0.057         0.741
+ INTRDE3       -0.092         0.502         0.128         0.182        -0.094
+ INTREN3       -0.081         0.127         0.506         0.127        -0.138
+ INTRFR3       -0.106         0.208         0.182         0.620        -0.080
+
+
+           Correlations
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        1.000
+ INTREN2        0.255         1.000
+ INTRFR2        0.281         0.197         1.000
+ INTRMA3       -0.049        -0.090        -0.052         1.000
+ INTRDE3        0.703         0.209         0.260        -0.083         1.000
+ INTREN3        0.158         0.608         0.108        -0.052         0.271
+ INTRFR3        0.252         0.189         0.712        -0.036         0.315
+
+
+           Correlations
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3        1.000
+ INTRFR3        0.191         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -9462.373
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     INTRMA1               3.032      -0.059       1.000    3.99%       2.000      2.667      3.000
+             752.000       1.110      -0.832       5.000    4.12%       3.333      4.000
+     INTRDE1               3.092      -0.102       1.000    2.27%       2.333      3.000      3.000
+             750.000       0.788      -0.391       5.000    1.60%       3.333      4.000
+     INTREN1               3.816      -0.634       1.000    0.40%       3.333      3.667      4.000
+             749.000       0.559       0.350       5.000    6.81%       4.000      4.333
+     INTRFR1               2.905      -0.016       1.000    5.85%       2.000      2.667      3.000
+             752.000       1.055      -0.742       5.000    2.39%       3.333      3.667
+     INTRMA2               2.887       0.030       1.000    6.83%       2.000      2.667      3.000
+             659.000       1.132      -0.733       5.000    3.79%       3.333      3.667
+     INTRDE2               2.950      -0.097       1.000    4.10%       2.000      2.667      3.000
+             659.000       0.928      -0.563       5.000    2.58%       3.333      3.667
+     INTREN2               3.828      -0.776       1.000    0.61%       3.333      3.667      4.000
+             659.000       0.554       0.839       5.000    6.07%       4.000      4.333
+     INTRFR2               2.847      -0.100       1.000    7.77%       2.000      2.667      3.000
+             656.000       1.036      -0.761       5.000    1.52%       3.333      3.667
+     INTRMA3               2.900       0.053       1.000    5.10%       2.000      2.667      3.000
+             667.000       1.148      -0.913       5.000    3.15%       3.333      4.000
+     INTRDE3               2.954      -0.048       1.000    4.22%       2.000      2.667      3.000
+             664.000       0.910      -0.539       5.000    1.81%       3.333      3.667
+     INTREN3               3.867      -0.859       1.000    0.15%       3.333      3.667      4.000
+             664.000       0.504       0.956       5.000    5.57%       4.000      4.333
+     INTRFR3               2.680       0.131       1.000    9.55%       1.667      2.333      2.667
+             660.000       1.098      -0.868       5.000    1.21%       3.000      3.667
+
+RANDOM STARTS RESULTS RANKED FROM THE BEST TO THE WORST LOGLIKELIHOOD VALUES
+
+363 perturbed starting value run(s) did not converge in the initial stage
+optimizations.
+
+Final stage loglikelihood values at local maxima, seeds, and initial stage start numbers:
+
+           -9440.118  367329           66
+           -9440.118  340060           544
+           -9440.118  539243           432
+           -9440.118  521739           172
+           -9440.118  654559           725
+           -9440.118  372617           512
+           -9440.118  342249           793
+           -9440.118  511859           118
+           -9440.118  555923           886
+           -9440.118  959014           502
+           -9440.118  955030           457
+           -9440.118  261411           766
+           -9440.118  297193           101
+           -9440.118  780777           446
+           -9440.118  88373            27
+           -9440.118  762333           850
+           -9440.118  188106           542
+           -9440.118  740624           296
+           -9440.118  131357           916
+           -9440.118  677936           304
+           -9440.118  568454           299
+           -9440.118  907253           25
+           -9440.118  454040           285
+           -9440.118  602622           271
+           -9440.118  521200           280
+           -9440.118  267147           582
+           -9440.118  729270           960
+           -9440.118  77683            341
+           -9440.118  851932           75
+           -9440.118  663904           707
+           -9440.118  706735           824
+           -9440.118  651175           924
+           -9440.118  371023           91
+           -9440.118  353214           340
+           -9440.118  825440           905
+           -9440.118  371202           953
+           -9440.118  429802           427
+           -9440.118  967107           496
+           -9440.118  679427           836
+           -9440.118  390054           379
+           -9440.118  290699           539
+           -9440.118  708687           923
+           -9440.118  953266           40
+           -9440.118  830443           192
+           -9440.118  733113           791
+           -9440.118  119713           910
+           -9440.118  84913            15
+           -9440.118  935792           234
+           -9440.118  422970           62
+           -9440.118  764573           852
+           -9440.118  888019           919
+           -9440.118  482834           606
+           -9440.118  850870           320
+           -9440.118  656296           702
+           -9440.118  272145           784
+           -9440.118  93558            220
+           -9440.118  787626           897
+           -9440.118  167926           248
+           -9440.118  36450            506
+           -9440.118  448215           931
+           -9440.118  439764           383
+           -9440.118  485633           390
+           -9440.118  680423           575
+           -9440.118  437362           656
+           -9440.118  690152           885
+           -9440.118  994605           160
+           -9440.118  999739           122
+           -9440.118  110958           300
+           -9440.118  630857           165
+           -9440.118  5370             831
+           -9440.118  577800           525
+           -9440.118  407143           243
+           -9440.118  332216           297
+           -9440.118  625704           197
+           -9440.118  82572            448
+           -9440.118  941942           247
+           -9440.118  12390            753
+           -9440.118  211688           571
+           -9440.118  597584           847
+           -9440.118  399652           109
+           -9440.118  641629           503
+           -9440.118  262864           554
+           -9440.118  999886           578
+           -9440.118  62958            249
+           -9440.118  845487           726
+           -9440.118  92676            921
+           -9440.118  179021           964
+           -9440.118  624694           141
+           -9440.118  377443           349
+           -9440.118  701037           423
+           -9440.118  38339            421
+           -9440.118  762659           511
+           -9440.118  505845           20
+           -9440.118  865808           866
+           -9440.118  761729           666
+           -9440.118  156868           323
+           -9440.118  91797            189
+           -9440.118  139153           583
+           -9440.118  920448           634
+           -9440.118  373200           723
+           -9440.118  565722           780
+           -9440.118  480052           812
+           -9440.118  600655           407
+           -9440.118  561533           36
+           -9440.118  713772           311
+           -9440.118  544698           704
+           -9440.118  725295           869
+           -9440.118  501819           391
+           -9440.118  978139           837
+           -9440.118  758274           977
+           -9440.118  898628           264
+           -9440.118  550436           534
+           -9440.118  771045           664
+           -9440.118  346270           60
+           -9440.118  690060           774
+           -9440.118  653041           110
+           -9440.118  662197           497
+           -9440.118  748893           335
+           -9440.118  880884           482
+           -9440.118  522339           133
+           -9440.118  671495           275
+           -9440.118  910985           301
+           -9440.118  853726           769
+           -9440.118  770101           393
+           -9440.118  806885           961
+           -9440.118  692515           3
+           -9440.118  27867            587
+           -9440.118  384525           615
+           -9440.118  459432           659
+           -9440.118  569338           677
+           -9440.118  85812            854
+           -9440.118  281483           490
+           -9440.118  53394            159
+           -9440.118  178152           493
+           -9440.118  678595           35
+           -9440.118  741250           971
+           -9440.118  847068           748
+           -9440.118  976605           911
+           -9440.118  780314           932
+           -9440.118  134795           546
+           -9440.118  328381           687
+           -9440.118  423870           851
+           -9440.118  473494           935
+           -9440.118  566389           671
+           -9440.118  795452           754
+           -9440.118  941597           912
+           -9440.118  887671           328
+           -9440.118  825313           342
+           -9440.118  25899            864
+           -9440.118  994349           865
+           -9440.118  450601           816
+           -9440.118  506842           968
+           -9440.118  376396           389
+           -9440.118  914744           59
+           -9440.118  460218           186
+           -9440.118  172338           400
+           -9440.118  267224           820
+           -9440.118  627511           909
+           -9440.118  934751           290
+           -9440.118  794491           83
+           -9440.118  907642           644
+           -9440.118  253150           408
+           -9440.118  485384           987
+           -9440.118  222233           456
+           -9440.118  244257           358
+           -9440.118  322019           832
+           -9440.118  973160           507
+           -9440.118  909117           794
+           -9440.118  413894           890
+           -9440.118  126211           163
+           -9440.118  98628            129
+           -9440.118  669153           607
+           -9440.118  313135           691
+           -9440.118  242345           962
+           -9440.118  571096           532
+           -9440.118  564941           564
+           -9440.118  555560           692
+           -9440.118  905245           661
+           -9440.118  42351            631
+           -9440.118  18225            166
+           -9440.118  470294           621
+           -9440.118  607366           673
+           -9440.118  15024            742
+           -9440.118  822617           173
+           -9440.118  348599           233
+           -9440.118  42232            164
+           -9440.118  688792           622
+           -9440.118  78050            134
+           -9440.118  22734            547
+           -9440.118  846605           654
+           -9440.118  415679           572
+           -9440.118  829290           193
+           -9440.118  918230           260
+           -9440.118  945658           369
+           -9440.118  821823           773
+           -9440.118  443440           385
+           -9440.118  574582           792
+           -9440.118  42433            669
+           -9440.118  721069           467
+           -9440.118  174182           106
+           -9440.118  936450           695
+           -9440.118  801016           699
+           -9440.118  221040           740
+           -9440.118  9994             49
+           -9440.118  311205           350
+           -9440.118  29590            981
+           -9440.118  242984           630
+           -9440.118  738035           317
+           -9440.118  997941           892
+           -9440.118  2949             527
+           -9440.118  496455           380
+           -9440.118  235159           97
+           -9440.118  8400             548
+           -9440.118  988087           191
+           -9440.118  873795           465
+           -9440.118  222413           744
+           -9440.118  236728           939
+           -9440.118  425595           738
+           -9440.118  487534           364
+           -9440.118  811385           741
+           -9440.118  401849           442
+           -9440.118  886360           505
+           -9440.118  256280           828
+           -9440.118  847627           991
+           -9440.118  458056           6
+           -9440.118  968541           433
+           -9440.118  817472           488
+           -9440.118  33516            859
+           -9440.118  253819           334
+           -9440.118  183316           221
+           -9440.118  230755           312
+           -9440.118  525040           318
+           -9440.118  144725           329
+           -9440.118  255472           914
+           -9440.118  571833           277
+           -9440.118  738500           443
+           -9440.118  860513           889
+           -9440.118  105031           508
+           -9440.118  221785           526
+           -9440.118  68024            768
+           -9440.118  521218           920
+           -9440.118  41190            298
+           -9440.118  895777           451
+           -9440.118  712772           520
+           -9440.118  60132            114
+           -9440.118  263699           617
+           -9440.118  198483           829
+           -9440.118  681602           799
+           -9440.118  892835           376
+           -9440.118  476101           915
+           -9440.118  661485           775
+           -9440.118  149886           330
+           -9440.118  194454           319
+           -9440.118  861684           337
+           -9440.118  586461           210
+           -9440.118  687461           441
+           -9440.118  362575           556
+           -9440.118  978097           244
+           -9440.118  695001           993
+           -9440.118  392266           30
+           -9440.118  508073           611
+           -9440.118  41156            196
+           -9440.118  177780           242
+           -9440.118  119025           31
+           -9440.118  105041           411
+           -9440.118  748746           759
+           -9440.118  177214           288
+           -9440.118  193766           1
+           -9440.118  464499           589
+           -9440.118  746362           518
+           -9440.118  683785           761
+           -9440.118  326155           898
+           -9440.118  385001           460
+           -9440.118  691987           976
+           -9440.118  644243           343
+           -9440.118  682135           895
+           -9440.118  896621           252
+           -9440.118  143152           469
+           -9440.118  92587            675
+           -9440.118  924234           529
+           -9440.118  129653           73
+           -9440.118  998205           155
+           -9440.118  958706           545
+           -9440.118  719031           53
+           -9440.118  338730           176
+           -9440.118  85965            117
+           -9440.118  683600           878
+           -9440.118  140877           973
+           -9440.118  985690           281
+           -9440.118  547344           387
+           -9440.118  272579           278
+           -9440.118  315204           37
+           -9440.118  140610           386
+           -9440.118  638821           514
+           -9440.118  10169            857
+           -9440.118  986697           79
+           -9440.118  837012           893
+           -9440.118  135486           111
+           -9440.118  13774            733
+           -9440.118  286765           868
+           -9440.118  758664           870
+           -9440.118  182795           495
+           -9440.118  544615           683
+           -9440.118  413603           255
+           -9440.118  723435           999
+           -9440.118  143995           803
+           -9440.118  580646           787
+           -9440.118  237390           872
+           -9440.118  359942           984
+           -9440.118  776592           593
+           -9440.118  914119           116
+           -9440.118  68450            849
+           -9440.118  998906           867
+           -9440.118  741681           402
+           -9440.118  501251           65
+           -9440.118  242417           416
+           -9440.118  984916           397
+           -9440.118  760527           811
+           -9440.118  377133           613
+           -9440.118  476860           718
+           -9440.118  788272           439
+           -9440.118  808674           200
+           -9440.118  387325           291
+           -9440.118  221753           201
+           -9440.118  569589           199
+           -9440.118  569240           543
+           -9440.118  991938           632
+           -9440.118  100224           876
+           -9440.118  77897            805
+           -9440.118  585592           601
+           -9440.118  751105           779
+           -9440.118  245361           653
+           -9440.118  172360           371
+           -9440.118  369545           966
+           -9440.118  507184           430
+           -9440.118  636324           900
+           -9440.118  67297            452
+           -9440.118  405645           108
+           -9440.118  536085           933
+           -9440.118  553823           470
+           -9440.118  354969           479
+           -9440.118  986702           903
+           -9440.118  142851           688
+           -9440.118  167467           880
+           -9440.118  207173           838
+           -9440.118  745901           524
+           -9440.118  769546           557
+           -9440.118  936764           701
+           -9440.118  586512           113
+           -9440.118  160965           736
+           -9440.118  129976           658
+           -9440.118  203236           874
+           -9440.118  890895           445
+           -9440.118  364533           682
+           -9440.118  379547           789
+           -9440.118  424494           730
+           -9440.118  792390           635
+           -9440.118  500754           756
+           -9440.118  7138             468
+           -9440.118  829839           13
+           -9440.118  512618           856
+           -9440.118  753368           834
+           -9440.118  720533           624
+           -9440.118  651651           596
+           -9440.118  517007           130
+           -9440.118  23641            344
+           -9440.118  960997           969
+           -9440.118  996741           93
+           -9440.118  777119           612
+           -9440.118  203945           216
+           -9440.118  424427           428
+           -9440.118  940672           599
+           -9440.118  427481           284
+           -9440.118  704390           908
+           -9440.118  996044           293
+           -9440.118  638835           377
+           -9440.118  90023            11
+           -9440.118  18885            705
+           -9440.118  141225           121
+           -9440.118  535631           711
+           -9440.118  541324           994
+           -9440.118  130131           237
+           -9440.118  763434           267
+           -9440.118  219722           871
+           -9440.118  267346           568
+           -9440.118  613              415
+           -9440.118  138193           637
+           -9440.118  683204           693
+           -9440.118  731972           698
+           -9440.118  7455             533
+           -9440.118  699822           519
+           -9440.118  734995           190
+           -9440.118  152537           283
+
+7 perturbed starting value run(s) did not converge or were rejected in the third stage.
+
+
+
+THE BEST LOGLIKELIHOOD VALUE HAS BEEN REPLICATED.  RERUN WITH AT LEAST TWICE THE
+RANDOM STARTS TO CHECK THAT THE BEST LOGLIKELIHOOD IS STILL OBTAINED AND REPLICATED.
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       57
+
+Loglikelihood
+
+          H0 Value                       -9440.118
+          H0 Scaling Correction Factor      1.1044
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   18994.235
+          Bayesian (BIC)                 19264.512
+          Sample-Size Adjusted BIC       19083.497
+            (n* = (n + 2) / 24)
+
+
+
+FINAL CLASS COUNTS AND PROPORTIONS FOR THE LATENT CLASSES
+BASED ON THE ESTIMATED MODEL
+
+    Latent
+   Classes
+
+       1        385.50931          0.45515
+       2        461.49069          0.54485
+
+
+FINAL CLASS COUNTS AND PROPORTIONS FOR THE LATENT CLASSES
+BASED ON ESTIMATED POSTERIOR PROBABILITIES
+
+    Latent
+   Classes
+
+       1        385.50931          0.45515
+       2        461.49069          0.54485
+
+
+FINAL CLASS COUNTS AND PROPORTIONS FOR THE LATENT CLASSES
+BASED ON THEIR MOST LIKELY LATENT CLASS MEMBERSHIP
+
+Class Counts and Proportions
+
+    Latent
+   Classes
+
+       1              359          0.42385
+       2              488          0.57615
+
+
+CLASSIFICATION QUALITY
+
+     Entropy                         0.520
+
+
+Average Latent Class Probabilities for Most Likely Latent Class Membership (Row)
+by Latent Class (Column)
+
+           1        2
+
+    1   0.859    0.141
+    2   0.158    0.842
+
+
+Classification Probabilities for the Most Likely Latent Class Membership (Column)
+by Latent Class (Row)
+
+           1        2
+
+    1   0.800    0.200
+    2   0.110    0.890
+
+
+Logits for the Classification Probabilities for the Most Likely Latent Class Membership (Column)
+by Latent Class (Row)
+
+              1        2
+
+    1      1.384    0.000
+    2     -2.091    0.000
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Latent Class 1
+
+ IMA      |
+    INTRMA1            1.000      0.000    999.000    999.000
+    INTRMA2            1.000      0.000    999.000    999.000
+    INTRMA3            1.000      0.000    999.000    999.000
+
+ SMA      |
+    INTRMA1            0.000      0.000    999.000    999.000
+    INTRMA2            1.000      0.000    999.000    999.000
+    INTRMA3            2.000      0.000    999.000    999.000
+
+ IDE      |
+    INTRDE1            1.000      0.000    999.000    999.000
+    INTRDE2            1.000      0.000    999.000    999.000
+    INTRDE3            1.000      0.000    999.000    999.000
+
+ SDE      |
+    INTRDE1            0.000      0.000    999.000    999.000
+    INTRDE2            1.000      0.000    999.000    999.000
+    INTRDE3            2.000      0.000    999.000    999.000
+
+ IEN      |
+    INTREN1            1.000      0.000    999.000    999.000
+    INTREN2            1.000      0.000    999.000    999.000
+    INTREN3            1.000      0.000    999.000    999.000
+
+ SEN      |
+    INTREN1            0.000      0.000    999.000    999.000
+    INTREN2            1.000      0.000    999.000    999.000
+    INTREN3            2.000      0.000    999.000    999.000
+
+ IFR      |
+    INTRFR1            1.000      0.000    999.000    999.000
+    INTRFR2            1.000      0.000    999.000    999.000
+    INTRFR3            1.000      0.000    999.000    999.000
+
+ SFR      |
+    INTRFR1            0.000      0.000    999.000    999.000
+    INTRFR2            1.000      0.000    999.000    999.000
+    INTRFR3            2.000      0.000    999.000    999.000
+
+ SMA      WITH
+    IMA                0.000      0.000    999.000    999.000
+
+ IDE      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+
+ SDE      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+
+ IEN      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+
+ SEN      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+    IEN                0.000      0.000    999.000    999.000
+
+ IFR      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+    IEN                0.000      0.000    999.000    999.000
+    SEN                0.000      0.000    999.000    999.000
+
+ SFR      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+    IEN                0.000      0.000    999.000    999.000
+    SEN                0.000      0.000    999.000    999.000
+    IFR                0.000      0.000    999.000    999.000
+
+ INTRMA1  WITH
+    INTRMA2            0.638      0.076      8.445      0.000
+    INTRMA3            0.638      0.076      8.445      0.000
+
+ INTRMA2  WITH
+    INTRMA3            0.749      0.087      8.635      0.000
+
+ INTRDE1  WITH
+    INTRDE2            0.388      0.056      6.920      0.000
+    INTRDE3            0.388      0.056      6.920      0.000
+
+ INTRDE2  WITH
+    INTRDE3            0.529      0.065      8.174      0.000
+
+ INTREN1  WITH
+    INTREN2            0.260      0.048      5.430      0.000
+    INTREN3            0.260      0.048      5.430      0.000
+
+ INTREN2  WITH
+    INTREN3            0.308      0.051      6.061      0.000
+
+ INTRFR1  WITH
+    INTRFR2            0.468      0.067      7.014      0.000
+    INTRFR3            0.468      0.067      7.014      0.000
+
+ INTRFR2  WITH
+    INTRFR3            0.478      0.065      7.398      0.000
+
+ Means
+    IMA                3.068      0.069     44.595      0.000
+    SMA               -0.094      0.038     -2.476      0.013
+    IDE                2.785      0.062     44.584      0.000
+    SDE               -0.097      0.045     -2.147      0.032
+    IEN                3.479      0.079     44.141      0.000
+    SEN                0.034      0.036      0.950      0.342
+    IFR                2.556      0.072     35.253      0.000
+    SFR               -0.130      0.041     -3.197      0.001
+
+ Intercepts
+    INTRMA1            0.000      0.000    999.000    999.000
+    INTRDE1            0.000      0.000    999.000    999.000
+    INTREN1            0.000      0.000    999.000    999.000
+    INTRFR1            0.000      0.000    999.000    999.000
+    INTRMA2            0.000      0.000    999.000    999.000
+    INTRDE2            0.000      0.000    999.000    999.000
+    INTREN2            0.000      0.000    999.000    999.000
+    INTRFR2            0.000      0.000    999.000    999.000
+    INTRMA3            0.000      0.000    999.000    999.000
+    INTRDE3            0.000      0.000    999.000    999.000
+    INTREN3            0.000      0.000    999.000    999.000
+    INTRFR3            0.000      0.000    999.000    999.000
+
+ Variances
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+    IEN                0.000      0.000    999.000    999.000
+    SEN                0.000      0.000    999.000    999.000
+    IFR                0.000      0.000    999.000    999.000
+    SFR                0.000      0.000    999.000    999.000
+
+ Residual Variances
+    INTRMA1            1.183      0.084     14.005      0.000
+    INTRDE1            0.814      0.067     12.182      0.000
+    INTREN1            0.661      0.063     10.492      0.000
+    INTRFR1            0.977      0.074     13.234      0.000
+    INTRMA2            1.143      0.084     13.640      0.000
+    INTRDE2            0.955      0.082     11.641      0.000
+    INTREN2            0.669      0.081      8.283      0.000
+    INTRFR2            0.889      0.058     15.389      0.000
+    INTRMA3            1.193      0.083     14.312      0.000
+    INTRDE3            0.920      0.073     12.527      0.000
+    INTREN3            0.669      0.069      9.716      0.000
+    INTRFR3            0.967      0.077     12.485      0.000
+
+Latent Class 2
+
+ IMA      |
+    INTRMA1            1.000      0.000    999.000    999.000
+    INTRMA2            1.000      0.000    999.000    999.000
+    INTRMA3            1.000      0.000    999.000    999.000
+
+ SMA      |
+    INTRMA1            0.000      0.000    999.000    999.000
+    INTRMA2            1.000      0.000    999.000    999.000
+    INTRMA3            2.000      0.000    999.000    999.000
+
+ IDE      |
+    INTRDE1            1.000      0.000    999.000    999.000
+    INTRDE2            1.000      0.000    999.000    999.000
+    INTRDE3            1.000      0.000    999.000    999.000
+
+ SDE      |
+    INTRDE1            0.000      0.000    999.000    999.000
+    INTRDE2            1.000      0.000    999.000    999.000
+    INTRDE3            2.000      0.000    999.000    999.000
+
+ IEN      |
+    INTREN1            1.000      0.000    999.000    999.000
+    INTREN2            1.000      0.000    999.000    999.000
+    INTREN3            1.000      0.000    999.000    999.000
+
+ SEN      |
+    INTREN1            0.000      0.000    999.000    999.000
+    INTREN2            1.000      0.000    999.000    999.000
+    INTREN3            2.000      0.000    999.000    999.000
+
+ IFR      |
+    INTRFR1            1.000      0.000    999.000    999.000
+    INTRFR2            1.000      0.000    999.000    999.000
+    INTRFR3            1.000      0.000    999.000    999.000
+
+ SFR      |
+    INTRFR1            0.000      0.000    999.000    999.000
+    INTRFR2            1.000      0.000    999.000    999.000
+    INTRFR3            2.000      0.000    999.000    999.000
+
+ SMA      WITH
+    IMA                0.000      0.000    999.000    999.000
+
+ IDE      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+
+ SDE      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+
+ IEN      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+
+ SEN      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+    IEN                0.000      0.000    999.000    999.000
+
+ IFR      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+    IEN                0.000      0.000    999.000    999.000
+    SEN                0.000      0.000    999.000    999.000
+
+ SFR      WITH
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+    IEN                0.000      0.000    999.000    999.000
+    SEN                0.000      0.000    999.000    999.000
+    IFR                0.000      0.000    999.000    999.000
+
+ INTRMA1  WITH
+    INTRMA2            0.895      0.064     13.966      0.000
+    INTRMA3            0.895      0.064     13.966      0.000
+
+ INTRMA2  WITH
+    INTRMA3            0.950      0.069     13.813      0.000
+
+ INTRDE1  WITH
+    INTRDE2            0.398      0.065      6.166      0.000
+    INTRDE3            0.398      0.065      6.166      0.000
+
+ INTRDE2  WITH
+    INTRDE3            0.580      0.070      8.327      0.000
+
+ INTREN1  WITH
+    INTREN2            0.177      0.023      7.589      0.000
+    INTREN3            0.177      0.023      7.589      0.000
+
+ INTREN2  WITH
+    INTREN3            0.177      0.019      9.353      0.000
+
+ INTRFR1  WITH
+    INTRFR2            0.693      0.076      9.092      0.000
+    INTRFR3            0.693      0.076      9.092      0.000
+
+ INTRFR2  WITH
+    INTRFR3            0.771      0.071     10.783      0.000
+
+ Means
+    IMA                2.951      0.063     46.601      0.000
+    SMA               -0.050      0.023     -2.143      0.032
+    IDE                3.311      0.113     29.191      0.000
+    SDE               -0.048      0.032     -1.519      0.129
+    IEN                4.097      0.065     62.620      0.000
+    SEN                0.011      0.024      0.470      0.639
+    IFR                3.201      0.117     27.460      0.000
+    SFR               -0.102      0.028     -3.631      0.000
+
+ Intercepts
+    INTRMA1            0.000      0.000    999.000    999.000
+    INTRDE1            0.000      0.000    999.000    999.000
+    INTREN1            0.000      0.000    999.000    999.000
+    INTRFR1            0.000      0.000    999.000    999.000
+    INTRMA2            0.000      0.000    999.000    999.000
+    INTRDE2            0.000      0.000    999.000    999.000
+    INTREN2            0.000      0.000    999.000    999.000
+    INTRFR2            0.000      0.000    999.000    999.000
+    INTRMA3            0.000      0.000    999.000    999.000
+    INTRDE3            0.000      0.000    999.000    999.000
+    INTREN3            0.000      0.000    999.000    999.000
+    INTRFR3            0.000      0.000    999.000    999.000
+
+ Variances
+    IMA                0.000      0.000    999.000    999.000
+    SMA                0.000      0.000    999.000    999.000
+    IDE                0.000      0.000    999.000    999.000
+    SDE                0.000      0.000    999.000    999.000
+    IEN                0.000      0.000    999.000    999.000
+    SEN                0.000      0.000    999.000    999.000
+    IFR                0.000      0.000    999.000    999.000
+    SFR                0.000      0.000    999.000    999.000
+
+ Residual Variances
+    INTRMA1            1.067      0.061     17.630      0.000
+    INTRDE1            0.653      0.079      8.309      0.000
+    INTREN1            0.312      0.044      7.172      0.000
+    INTRFR1            0.926      0.100      9.226      0.000
+    INTRMA2            1.097      0.064     17.120      0.000
+    INTRDE2            0.673      0.081      8.350      0.000
+    INTREN2            0.251      0.021     11.999      0.000
+    INTRFR2            0.896      0.075     11.944      0.000
+    INTRMA3            1.224      0.066     18.479      0.000
+    INTRDE3            0.823      0.082     10.093      0.000
+    INTREN3            0.265      0.022     12.298      0.000
+    INTRFR3            1.030      0.070     14.769      0.000
+
+Categorical Latent Variables
+
+ Means
+    INTR_P#1          -0.180      0.364     -0.494      0.621
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.484E-03
+       (ratio of smallest to largest eigenvalue)
+
+
+RESIDUAL OUTPUT
+
+
+     ESTIMATED MODEL AND RESIDUALS (OBSERVED - ESTIMATED) FOR CLASS 1
+
+
+           Model Estimated Means
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                3.068         2.785         3.479         2.556         2.974
+
+
+           Model Estimated Means
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+                2.688         3.513         2.426         2.881         2.591
+
+
+           Model Estimated Means
+              INTREN3       INTRFR3
+              ________      ________
+                3.547         2.295
+
+
+           Residuals for Means
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                0.048         0.032         0.000        -0.012        -0.065
+
+
+           Residuals for Means
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+               -0.085        -0.013         0.054         0.057         0.027
+
+
+           Residuals for Means
+              INTREN3       INTRFR3
+              ________      ________
+                0.006        -0.011
+
+
+           Model Estimated Covariances
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1        1.183
+ INTRDE1        0.000         0.814
+ INTREN1        0.000         0.000         0.661
+ INTRFR1        0.000         0.000         0.000         0.977
+ INTRMA2        0.638         0.000         0.000         0.000         1.143
+ INTRDE2        0.000         0.388         0.000         0.000         0.000
+ INTREN2        0.000         0.000         0.260         0.000         0.000
+ INTRFR2        0.000         0.000         0.000         0.468         0.000
+ INTRMA3        0.638         0.000         0.000         0.000         0.749
+ INTRDE3        0.000         0.388         0.000         0.000         0.000
+ INTREN3        0.000         0.000         0.260         0.000         0.000
+ INTRFR3        0.000         0.000         0.000         0.468         0.000
+
+
+           Model Estimated Covariances
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        0.955
+ INTREN2        0.000         0.669
+ INTRFR2        0.000         0.000         0.889
+ INTRMA3        0.000         0.000         0.000         1.193
+ INTRDE3        0.529         0.000         0.000         0.000         0.920
+ INTREN3        0.000         0.308         0.000         0.000         0.000
+ INTRFR3        0.000         0.000         0.478         0.000         0.000
+
+
+           Model Estimated Covariances
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3        0.669
+ INTRFR3        0.000         0.967
+
+
+           Residuals for Covariances
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1       -0.004
+ INTRDE1        0.066        -0.001
+ INTREN1       -0.090         0.093        -0.005
+ INTRFR1       -0.074         0.077         0.125         0.002
+ INTRMA2        0.105        -0.054        -0.064         0.185         0.021
+ INTRDE2        0.085         0.019         0.021         0.133         0.035
+ INTREN2       -0.085        -0.082         0.006         0.150         0.043
+ INTRFR2       -0.069        -0.043        -0.081         0.157         0.103
+ INTRMA3        0.106        -0.028        -0.057         0.072         0.087
+ INTRDE3        0.093        -0.089        -0.041         0.160         0.094
+ INTREN3        0.030        -0.095        -0.151         0.016         0.024
+ INTRFR3        0.099         0.138         0.153         0.108         0.030
+
+
+           Residuals for Covariances
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        0.055
+ INTREN2        0.137         0.042
+ INTRFR2        0.172         0.057         0.068
+ INTRMA3        0.093        -0.041        -0.033        -0.070
+ INTRDE3       -0.013        -0.013         0.097        -0.007        -0.068
+ INTREN3        0.062        -0.001        -0.074        -0.003         0.136
+ INTRFR3        0.131         0.092        -0.030        -0.040         0.205
+
+
+           Residuals for Covariances
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3       -0.030
+ INTRFR3        0.114        -0.063
+
+
+     ESTIMATED MODEL AND RESIDUALS (OBSERVED - ESTIMATED) FOR CLASS 2
+
+
+           Model Estimated Means
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                2.951         3.311         4.097         3.201         2.901
+
+
+           Model Estimated Means
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+                3.263         4.109         3.099         2.851         3.215
+
+
+           Model Estimated Means
+              INTREN3       INTRFR3
+              ________      ________
+                4.120         2.997
+
+
+           Residuals for Means
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                0.013         0.004        -0.004         0.002        -0.032
+
+
+           Residuals for Means
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+               -0.028        -0.011         0.050         0.019         0.010
+
+
+           Residuals for Means
+              INTREN3       INTRFR3
+              ________      ________
+                0.003         0.005
+
+
+           Model Estimated Covariances
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1        1.067
+ INTRDE1        0.000         0.653
+ INTREN1        0.000         0.000         0.312
+ INTRFR1        0.000         0.000         0.000         0.926
+ INTRMA2        0.895         0.000         0.000         0.000         1.097
+ INTRDE2        0.000         0.398         0.000         0.000         0.000
+ INTREN2        0.000         0.000         0.177         0.000         0.000
+ INTRFR2        0.000         0.000         0.000         0.693         0.000
+ INTRMA3        0.895         0.000         0.000         0.000         0.950
+ INTRDE3        0.000         0.398         0.000         0.000         0.000
+ INTREN3        0.000         0.000         0.177         0.000         0.000
+ INTRFR3        0.000         0.000         0.000         0.693         0.000
+
+
+           Model Estimated Covariances
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        0.673
+ INTREN2        0.000         0.251
+ INTRFR2        0.000         0.000         0.896
+ INTRMA3        0.000         0.000         0.000         1.224
+ INTRDE3        0.580         0.000         0.000         0.000         0.823
+ INTREN3        0.000         0.177         0.000         0.000         0.000
+ INTRFR3        0.000         0.000         0.771         0.000         0.000
+
+
+           Model Estimated Covariances
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3        0.265
+ INTRFR3        0.000         1.030
+
+
+           Residuals for Covariances
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1       -0.024
+ INTRDE1        0.005         0.003
+ INTREN1       -0.028         0.079        -0.003
+ INTRFR1       -0.042         0.146         0.079        -0.004
+ INTRMA2       -0.094        -0.082        -0.089         0.096         0.009
+ INTRDE2       -0.142        -0.018         0.026         0.283        -0.100
+ INTREN2       -0.152        -0.025        -0.030         0.217        -0.057
+ INTRFR2       -0.093         0.136         0.070         0.187        -0.053
+ INTRMA3       -0.149        -0.053        -0.087        -0.002        -0.014
+ INTRDE3       -0.196        -0.020         0.060         0.181        -0.197
+ INTREN3       -0.212        -0.023        -0.058         0.079        -0.087
+ INTRFR3       -0.030         0.275         0.195         0.221         0.008
+
+
+           Residuals for Covariances
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        0.008
+ INTREN2        0.041         0.015
+ INTRFR2        0.165         0.040         0.003
+ INTRMA3       -0.040        -0.077        -0.039        -0.058
+ INTRDE3       -0.056        -0.061         0.051        -0.142        -0.033
+ INTREN3        0.076        -0.039        -0.011        -0.092         0.094
+ INTRFR3        0.263         0.061         0.014        -0.028         0.219
+
+
+           Residuals for Covariances
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3       -0.016
+ INTRFR3        0.020        -0.006
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR LATENT CLASS 1
+
+
+           NU
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              INTREN3       INTRFR3
+              ________      ________
+                    0             0
+
+
+           LAMBDA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ INTRMA1            0             0             0             0             0
+ INTRDE1            0             0             0             0             0
+ INTREN1            0             0             0             0             0
+ INTRFR1            0             0             0             0             0
+ INTRMA2            0             0             0             0             0
+ INTRDE2            0             0             0             0             0
+ INTREN2            0             0             0             0             0
+ INTRFR2            0             0             0             0             0
+ INTRMA3            0             0             0             0             0
+ INTRDE3            0             0             0             0             0
+ INTREN3            0             0             0             0             0
+ INTRFR3            0             0             0             0             0
+
+
+           LAMBDA
+              SEN           IFR           SFR
+              ________      ________      ________
+ INTRMA1            0             0             0
+ INTRDE1            0             0             0
+ INTREN1            0             0             0
+ INTRFR1            0             0             0
+ INTRMA2            0             0             0
+ INTRDE2            0             0             0
+ INTREN2            0             0             0
+ INTRFR2            0             0             0
+ INTRMA3            0             0             0
+ INTRDE3            0             0             0
+ INTREN3            0             0             0
+ INTRFR3            0             0             0
+
+
+           THETA
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1            1
+ INTRDE1            0             2
+ INTREN1            0             0             3
+ INTRFR1            0             0             0             4
+ INTRMA2            5             0             0             0             6
+ INTRDE2            0             7             0             0             0
+ INTREN2            0             0             9             0             0
+ INTRFR2            0             0             0            11             0
+ INTRMA3            5             0             0             0            13
+ INTRDE3            0             7             0             0             0
+ INTREN3            0             0             9             0             0
+ INTRFR3            0             0             0            11             0
+
+
+           THETA
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2            8
+ INTREN2            0            10
+ INTRFR2            0             0            12
+ INTRMA3            0             0             0            14
+ INTRDE3           15             0             0             0            16
+ INTREN3            0            17             0             0             0
+ INTRFR3            0             0            19             0             0
+
+
+           THETA
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3           18
+ INTRFR3            0            20
+
+
+           ALPHA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                   21            22            23            24            25
+
+
+           ALPHA
+              SEN           IFR           SFR
+              ________      ________      ________
+                   26            27            28
+
+
+           BETA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA                0             0             0             0             0
+ SMA                0             0             0             0             0
+ IDE                0             0             0             0             0
+ SDE                0             0             0             0             0
+ IEN                0             0             0             0             0
+ SEN                0             0             0             0             0
+ IFR                0             0             0             0             0
+ SFR                0             0             0             0             0
+
+
+           BETA
+              SEN           IFR           SFR
+              ________      ________      ________
+ IMA                0             0             0
+ SMA                0             0             0
+ IDE                0             0             0
+ SDE                0             0             0
+ IEN                0             0             0
+ SEN                0             0             0
+ IFR                0             0             0
+ SFR                0             0             0
+
+
+           PSI
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA                0
+ SMA                0             0
+ IDE                0             0             0
+ SDE                0             0             0             0
+ IEN                0             0             0             0             0
+ SEN                0             0             0             0             0
+ IFR                0             0             0             0             0
+ SFR                0             0             0             0             0
+
+
+           PSI
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN                0
+ IFR                0             0
+ SFR                0             0             0
+
+
+     PARAMETER SPECIFICATION FOR LATENT CLASS 2
+
+
+           NU
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              INTREN3       INTRFR3
+              ________      ________
+                    0             0
+
+
+           LAMBDA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ INTRMA1            0             0             0             0             0
+ INTRDE1            0             0             0             0             0
+ INTREN1            0             0             0             0             0
+ INTRFR1            0             0             0             0             0
+ INTRMA2            0             0             0             0             0
+ INTRDE2            0             0             0             0             0
+ INTREN2            0             0             0             0             0
+ INTRFR2            0             0             0             0             0
+ INTRMA3            0             0             0             0             0
+ INTRDE3            0             0             0             0             0
+ INTREN3            0             0             0             0             0
+ INTRFR3            0             0             0             0             0
+
+
+           LAMBDA
+              SEN           IFR           SFR
+              ________      ________      ________
+ INTRMA1            0             0             0
+ INTRDE1            0             0             0
+ INTREN1            0             0             0
+ INTRFR1            0             0             0
+ INTRMA2            0             0             0
+ INTRDE2            0             0             0
+ INTREN2            0             0             0
+ INTRFR2            0             0             0
+ INTRMA3            0             0             0
+ INTRDE3            0             0             0
+ INTREN3            0             0             0
+ INTRFR3            0             0             0
+
+
+           THETA
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1           29
+ INTRDE1            0            30
+ INTREN1            0             0            31
+ INTRFR1            0             0             0            32
+ INTRMA2           33             0             0             0            34
+ INTRDE2            0            35             0             0             0
+ INTREN2            0             0            37             0             0
+ INTRFR2            0             0             0            39             0
+ INTRMA3           33             0             0             0            41
+ INTRDE3            0            35             0             0             0
+ INTREN3            0             0            37             0             0
+ INTRFR3            0             0             0            39             0
+
+
+           THETA
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2           36
+ INTREN2            0            38
+ INTRFR2            0             0            40
+ INTRMA3            0             0             0            42
+ INTRDE3           43             0             0             0            44
+ INTREN3            0            45             0             0             0
+ INTRFR3            0             0            47             0             0
+
+
+           THETA
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3           46
+ INTRFR3            0            48
+
+
+           ALPHA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                   49            50            51            52            53
+
+
+           ALPHA
+              SEN           IFR           SFR
+              ________      ________      ________
+                   54            55            56
+
+
+           BETA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA                0             0             0             0             0
+ SMA                0             0             0             0             0
+ IDE                0             0             0             0             0
+ SDE                0             0             0             0             0
+ IEN                0             0             0             0             0
+ SEN                0             0             0             0             0
+ IFR                0             0             0             0             0
+ SFR                0             0             0             0             0
+
+
+           BETA
+              SEN           IFR           SFR
+              ________      ________      ________
+ IMA                0             0             0
+ SMA                0             0             0
+ IDE                0             0             0
+ SDE                0             0             0
+ IEN                0             0             0
+ SEN                0             0             0
+ IFR                0             0             0
+ SFR                0             0             0
+
+
+           PSI
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA                0
+ SMA                0             0
+ IDE                0             0             0
+ SDE                0             0             0             0
+ IEN                0             0             0             0             0
+ SEN                0             0             0             0             0
+ IFR                0             0             0             0             0
+ SFR                0             0             0             0             0
+
+
+           PSI
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN                0
+ IFR                0             0
+ SFR                0             0             0
+
+
+     PARAMETER SPECIFICATION FOR LATENT CLASS REGRESSION MODEL PART
+
+
+           ALPHA(C)
+              INTR_P#1      INTR_P#2
+              ________      ________
+                   57             0
+
+
+     STARTING VALUES FOR LATENT CLASS 1
+
+
+           NU
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              INTREN3       INTRFR3
+              ________      ________
+                0.000         0.000
+
+
+           LAMBDA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ INTRMA1        1.000         0.000         0.000         0.000         0.000
+ INTRDE1        0.000         0.000         1.000         0.000         0.000
+ INTREN1        0.000         0.000         0.000         0.000         1.000
+ INTRFR1        0.000         0.000         0.000         0.000         0.000
+ INTRMA2        1.000         1.000         0.000         0.000         0.000
+ INTRDE2        0.000         0.000         1.000         1.000         0.000
+ INTREN2        0.000         0.000         0.000         0.000         1.000
+ INTRFR2        0.000         0.000         0.000         0.000         0.000
+ INTRMA3        1.000         2.000         0.000         0.000         0.000
+ INTRDE3        0.000         0.000         1.000         2.000         0.000
+ INTREN3        0.000         0.000         0.000         0.000         1.000
+ INTRFR3        0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              SEN           IFR           SFR
+              ________      ________      ________
+ INTRMA1        0.000         0.000         0.000
+ INTRDE1        0.000         0.000         0.000
+ INTREN1        0.000         0.000         0.000
+ INTRFR1        0.000         1.000         0.000
+ INTRMA2        0.000         0.000         0.000
+ INTRDE2        0.000         0.000         0.000
+ INTREN2        1.000         0.000         0.000
+ INTRFR2        0.000         1.000         1.000
+ INTRMA3        0.000         0.000         0.000
+ INTRDE3        0.000         0.000         0.000
+ INTREN3        2.000         0.000         0.000
+ INTRFR3        0.000         1.000         2.000
+
+
+           THETA
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1        0.555
+ INTRDE1        0.000         0.394
+ INTREN1        0.000         0.000         0.279
+ INTRFR1        0.000         0.000         0.000         0.528
+ INTRMA2        0.000         0.000         0.000         0.000         0.566
+ INTRDE2        0.000         0.000         0.000         0.000         0.000
+ INTREN2        0.000         0.000         0.000         0.000         0.000
+ INTRFR2        0.000         0.000         0.000         0.000         0.000
+ INTRMA3        0.000         0.000         0.000         0.000         0.000
+ INTRDE3        0.000         0.000         0.000         0.000         0.000
+ INTREN3        0.000         0.000         0.000         0.000         0.000
+ INTRFR3        0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        0.464
+ INTREN2        0.000         0.277
+ INTRFR2        0.000         0.000         0.518
+ INTRMA3        0.000         0.000         0.000         0.574
+ INTRDE3        0.000         0.000         0.000         0.000         0.455
+ INTREN3        0.000         0.000         0.000         0.000         0.000
+ INTRFR3        0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3        0.252
+ INTRFR3        0.000         0.549
+
+
+           ALPHA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                3.030        -0.094         3.082        -0.087         3.824
+
+
+           ALPHA
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.009         2.935        -0.102
+
+
+           BETA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000         0.000         0.000         0.000         0.000
+ SMA            0.000         0.000         0.000         0.000         0.000
+ IDE            0.000         0.000         0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              SEN           IFR           SFR
+              ________      ________      ________
+ IMA            0.000         0.000         0.000
+ SMA            0.000         0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000
+ IEN            0.000         0.000         0.000
+ SEN            0.000         0.000         0.000
+ IFR            0.000         0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+           PSI
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+     STARTING VALUES FOR LATENT CLASS 2
+
+
+           NU
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              INTREN3       INTRFR3
+              ________      ________
+                0.000         0.000
+
+
+           LAMBDA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ INTRMA1        1.000         0.000         0.000         0.000         0.000
+ INTRDE1        0.000         0.000         1.000         0.000         0.000
+ INTREN1        0.000         0.000         0.000         0.000         1.000
+ INTRFR1        0.000         0.000         0.000         0.000         0.000
+ INTRMA2        1.000         1.000         0.000         0.000         0.000
+ INTRDE2        0.000         0.000         1.000         1.000         0.000
+ INTREN2        0.000         0.000         0.000         0.000         1.000
+ INTRFR2        0.000         0.000         0.000         0.000         0.000
+ INTRMA3        1.000         2.000         0.000         0.000         0.000
+ INTRDE3        0.000         0.000         1.000         2.000         0.000
+ INTREN3        0.000         0.000         0.000         0.000         1.000
+ INTRFR3        0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              SEN           IFR           SFR
+              ________      ________      ________
+ INTRMA1        0.000         0.000         0.000
+ INTRDE1        0.000         0.000         0.000
+ INTREN1        0.000         0.000         0.000
+ INTRFR1        0.000         1.000         0.000
+ INTRMA2        0.000         0.000         0.000
+ INTRDE2        0.000         0.000         0.000
+ INTREN2        1.000         0.000         0.000
+ INTRFR2        0.000         1.000         1.000
+ INTRMA3        0.000         0.000         0.000
+ INTRDE3        0.000         0.000         0.000
+ INTREN3        2.000         0.000         0.000
+ INTRFR3        0.000         1.000         2.000
+
+
+           THETA
+              INTRMA1       INTRDE1       INTREN1       INTRFR1       INTRMA2
+              ________      ________      ________      ________      ________
+ INTRMA1        0.555
+ INTRDE1        0.000         0.394
+ INTREN1        0.000         0.000         0.279
+ INTRFR1        0.000         0.000         0.000         0.528
+ INTRMA2        0.000         0.000         0.000         0.000         0.566
+ INTRDE2        0.000         0.000         0.000         0.000         0.000
+ INTREN2        0.000         0.000         0.000         0.000         0.000
+ INTRFR2        0.000         0.000         0.000         0.000         0.000
+ INTRMA3        0.000         0.000         0.000         0.000         0.000
+ INTRDE3        0.000         0.000         0.000         0.000         0.000
+ INTREN3        0.000         0.000         0.000         0.000         0.000
+ INTRFR3        0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              INTRDE2       INTREN2       INTRFR2       INTRMA3       INTRDE3
+              ________      ________      ________      ________      ________
+ INTRDE2        0.464
+ INTREN2        0.000         0.277
+ INTRFR2        0.000         0.000         0.518
+ INTRMA3        0.000         0.000         0.000         0.574
+ INTRDE3        0.000         0.000         0.000         0.000         0.455
+ INTREN3        0.000         0.000         0.000         0.000         0.000
+ INTRFR3        0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              INTREN3       INTRFR3
+              ________      ________
+ INTREN3        0.252
+ INTRFR3        0.000         0.549
+
+
+           ALPHA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                3.030        -0.094         3.082        -0.087         3.824
+
+
+           ALPHA
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.009         2.935        -0.102
+
+
+           BETA
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000         0.000         0.000         0.000         0.000
+ SMA            0.000         0.000         0.000         0.000         0.000
+ IDE            0.000         0.000         0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              SEN           IFR           SFR
+              ________      ________      ________
+ IMA            0.000         0.000         0.000
+ SMA            0.000         0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000
+ IEN            0.000         0.000         0.000
+ SEN            0.000         0.000         0.000
+ IFR            0.000         0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+           PSI
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+     STARTING VALUES FOR LATENT CLASS REGRESSION MODEL PART
+
+
+           ALPHA(C)
+              INTR_P#1      INTR_P#2
+              ________      ________
+                0.000         0.000
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL FOR CLASS 1
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                3.068        -0.094         2.785        -0.097         3.479
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.034         2.556        -0.130
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                0.069         0.038         0.062         0.045         0.079
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.036         0.072         0.041
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+               44.595        -2.476        44.584        -2.147        44.141
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.950        35.253        -3.197
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                0.000         0.013         0.000         0.032         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.342         0.000         0.001
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            1.000
+ SMA            1.000         1.000
+ IDE            1.000         1.000         1.000
+ SDE            1.000         1.000         1.000         1.000
+ IEN            1.000         1.000         1.000         1.000         1.000
+ SEN            1.000         1.000         1.000         1.000         1.000
+ IFR            1.000         1.000         1.000         1.000         1.000
+ SFR            1.000         1.000         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            1.000
+ IFR            1.000         1.000
+ SFR            1.000         1.000         1.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA          999.000
+ SMA          999.000       999.000
+ IDE          999.000       999.000       999.000
+ SDE          999.000       999.000       999.000       999.000
+ IEN          999.000       999.000       999.000       999.000       999.000
+ SEN          999.000       999.000       999.000       999.000       999.000
+ IFR          999.000       999.000       999.000       999.000       999.000
+ SFR          999.000       999.000       999.000       999.000       999.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN          999.000
+ IFR          999.000       999.000
+ SFR          999.000       999.000       999.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA          999.000         0.000
+ IDE          999.000       999.000         0.000
+ SDE          999.000       999.000       999.000         0.000
+ IEN          999.000       999.000       999.000       999.000         0.000
+ SEN          999.000       999.000       999.000       999.000       999.000
+ IFR          999.000       999.000       999.000       999.000       999.000
+ SFR          999.000       999.000       999.000       999.000       999.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR          999.000         0.000
+ SFR          999.000       999.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA          999.000
+ SMA            1.000       999.000
+ IDE            1.000         1.000       999.000
+ SDE            1.000         1.000         1.000       999.000
+ IEN            1.000         1.000         1.000         1.000       999.000
+ SEN            1.000         1.000         1.000         1.000         1.000
+ IFR            1.000         1.000         1.000         1.000         1.000
+ SFR            1.000         1.000         1.000         1.000         1.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN          999.000
+ IFR            1.000       999.000
+ SFR            1.000         1.000       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.317         0.000
+ IDE            0.317         0.317         0.000
+ SDE            0.317         0.317         0.317         0.000
+ IEN            0.317         0.317         0.317         0.317         0.000
+ SEN            0.317         0.317         0.317         0.317         0.317
+ IFR            0.317         0.317         0.317         0.317         0.317
+ SFR            0.317         0.317         0.317         0.317         0.317
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.317         0.000
+ SFR            0.317         0.317         0.000
+
+
+     ESTIMATES DERIVED FROM THE MODEL FOR CLASS 2
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                2.951        -0.050         3.311        -0.048         4.097
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.011         3.201        -0.102
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                0.063         0.023         0.113         0.032         0.065
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.024         0.117         0.028
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+               46.601        -2.143        29.191        -1.519        62.620
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.470        27.460        -3.631
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+                0.000         0.032         0.000         0.129         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+                0.639         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.000         0.000
+ IDE            0.000         0.000         0.000
+ SDE            0.000         0.000         0.000         0.000
+ IEN            0.000         0.000         0.000         0.000         0.000
+ SEN            0.000         0.000         0.000         0.000         0.000
+ IFR            0.000         0.000         0.000         0.000         0.000
+ SFR            0.000         0.000         0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.000         0.000
+ SFR            0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            1.000
+ SMA            1.000         1.000
+ IDE            1.000         1.000         1.000
+ SDE            1.000         1.000         1.000         1.000
+ IEN            1.000         1.000         1.000         1.000         1.000
+ SEN            1.000         1.000         1.000         1.000         1.000
+ IFR            1.000         1.000         1.000         1.000         1.000
+ SFR            1.000         1.000         1.000         1.000         1.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            1.000
+ IFR            1.000         1.000
+ SFR            1.000         1.000         1.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA          999.000
+ SMA          999.000       999.000
+ IDE          999.000       999.000       999.000
+ SDE          999.000       999.000       999.000       999.000
+ IEN          999.000       999.000       999.000       999.000       999.000
+ SEN          999.000       999.000       999.000       999.000       999.000
+ IFR          999.000       999.000       999.000       999.000       999.000
+ SFR          999.000       999.000       999.000       999.000       999.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN          999.000
+ IFR          999.000       999.000
+ SFR          999.000       999.000       999.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA          999.000         0.000
+ IDE          999.000       999.000         0.000
+ SDE          999.000       999.000       999.000         0.000
+ IEN          999.000       999.000       999.000       999.000         0.000
+ SEN          999.000       999.000       999.000       999.000       999.000
+ IFR          999.000       999.000       999.000       999.000       999.000
+ SFR          999.000       999.000       999.000       999.000       999.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR          999.000         0.000
+ SFR          999.000       999.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA          999.000
+ SMA            1.000       999.000
+ IDE            1.000         1.000       999.000
+ SDE            1.000         1.000         1.000       999.000
+ IEN            1.000         1.000         1.000         1.000       999.000
+ SEN            1.000         1.000         1.000         1.000         1.000
+ IFR            1.000         1.000         1.000         1.000         1.000
+ SFR            1.000         1.000         1.000         1.000         1.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN          999.000
+ IFR            1.000       999.000
+ SFR            1.000         1.000       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IMA           SMA           IDE           SDE           IEN
+              ________      ________      ________      ________      ________
+ IMA            0.000
+ SMA            0.317         0.000
+ IDE            0.317         0.317         0.000
+ SDE            0.317         0.317         0.317         0.000
+ IEN            0.317         0.317         0.317         0.317         0.000
+ SEN            0.317         0.317         0.317         0.317         0.317
+ IFR            0.317         0.317         0.317         0.317         0.317
+ SFR            0.317         0.317         0.317         0.317         0.317
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              SEN           IFR           SFR
+              ________      ________      ________
+ SEN            0.000
+ IFR            0.317         0.000
+ SFR            0.317         0.317         0.000
+
+
+     Beginning Time:  23:11:26
+        Ending Time:  23:14:21
+       Elapsed Time:  00:02:55
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2020 Muthen & Muthen
